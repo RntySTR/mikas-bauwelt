@@ -4453,6 +4453,7 @@ const tut = {
   ],
   i: 0, done: !!store.get(TUT_KEY), shown: new Set(), timer: null,
   show(text, ms){
+    if (tourOn()) return;   // während der Anleitung keine zusätzlichen Hinweise
     const el = $('#hint'); el.textContent = text; el.hidden = false;
     el.style.animation = 'none'; void el.offsetWidth; el.style.animation = '';
     clearTimeout(this.timer); if (ms) this.timer = setTimeout(() => { el.hidden = true; }, ms);
@@ -6134,6 +6135,7 @@ const TOUR = [
   ] }
 ];
 let tour = null;
+function tourOn(){ return !!tour; }
 function openTourMenu(){
   const box = $('#tourList'); box.textContent = '';
   const all = document.createElement('button'); all.type = 'button'; all.className = 'mtile primary'; all.innerHTML = `<svg viewBox="0 0 24 24" aria-hidden="true">${MICON.play}</svg><span class="mt-l">Alles der Reihe nach</span><span class="mt-s">${TOUR.reduce((s, c) => s + c.steps.length, 0)} kurze Schritte</span>`;
@@ -6154,6 +6156,7 @@ function startTour(chapters){
   const steps = [];
   for (const c of chapters) c.steps.forEach((s, i) => steps.push({ ...s, chap: c.title, n: i + 1, of: c.steps.length }));
   tour = { steps, i: 0, entered: false };
+  $('#hint').hidden = true; tut.done = true; store.set(TUT_KEY, true);
   $('#tour').hidden = false;
   showTourStep();
   store.set('mikasBauwelt.tourSeen', true);
