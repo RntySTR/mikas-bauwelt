@@ -3139,7 +3139,7 @@ class Vehicle {
     const fwd = _v1.set(0, 0, 1).applyQuaternion(q), vel = _v2.set(b.velocity.x, b.velocity.y, b.velocity.z);
     const vF = vel.dot(fwd); this.speed = vel.length(); this.vF = vF;
     if (rv){
-      const steerMax = lerp(0.62, 0.14, clamp(Math.abs(vF) / 70, 0, 1));
+      const steerMax = lerp(0.5, 0.08, clamp(Math.abs(vF) / 60, 0, 1));   // bei Tempo weniger Lenkeinschlag
       const nW = this.wheels.length;
       // Antrieb: Zugkraft begrenzt, dann Leistung, dann Drehzahl der Räder
       let F = 0;
@@ -3186,7 +3186,7 @@ class Vehicle {
         else { const e = Math.atan2(Math.sin(hdg - this.hdgHold), Math.cos(hdg - this.hdgHold)); bankT = clamp(e * 1.5, -0.3, 0.3); }
       }
       const wantRoll = clamp((bankT - bank) * 2.2, -1.6, 1.6);
-      // Knüppel vor/zurück = Nase hoch/runter (bis 30°); neutral hält er die Höhe, in Kurven wird etwas gezogen
+      // Knüppel zu sich/nach vorn = Nase hoch/runter (bis 30°); neutral hält er die Höhe, in Kurven wird etwas gezogen
       // Gas weg = sanfter Sinkflug; kurz über dem Boden fängt sie ab, damit die Landung weich wird
       const alt = b.position.y + this.lowest - groundY(b.position.x, b.position.z);
       let vyT = c.power < 0.45 ? -7 * (0.45 - c.power) / 0.45 : 0;
@@ -5043,7 +5043,12 @@ function driveInput(dt){
   const v = driving, c = v.ctl;
   const kx = (keys.right ? 1 : 0) - (keys.left ? 1 : 0), ky = (keys.up ? 1 : 0) - (keys.down ? 1 : 0);
   if (v.kind === 'car'){
-    c.steer = clamp(ctl.x + kx, -1, 1);
+    // Lenkung weniger empfindlich: kleiner Totbereich, feine Mitte, Lenkrad dreht mit begrenzter Geschwindigkeit
+    const raw = clamp(ctl.x + kx, -1, 1), mag = Math.max(0, Math.abs(raw) - 0.08) / 0.92;
+    const target = Math.sign(raw) * Math.pow(mag, 1.7), cur = v.steerS || 0;
+    const rate = Math.abs(target) > Math.abs(cur) && Math.sign(target) === Math.sign(cur || target) ? 1.8 : 3.5;
+    v.steerS = cur + clamp(target - cur, -rate * dt, rate * dt);
+    c.steer = v.steerS;
     const fwd = ctl.gas || ky > 0 || ctl.y > 0.4, back = ctl.brake || ky < 0 || keys.space;
     const vF = v.vF || 0;
     c.gas = 0; c.brake = 0;
@@ -5056,7 +5061,7 @@ function driveInput(dt){
     if (keys.ctrl) ctl.power = Math.max(0, ctl.power - dt * 0.6);
     if (thrEl && (keys.shift || keys.ctrl)) thrEl.show();
     c.power = ctl.power;
-    c.roll = clamp(ctl.x + kx, -1, 1); c.pitch = clamp(ctl.y + ky, -1, 1);
+    c.roll = clamp(ctl.x + kx, -1, 1); c.pitch = clamp(-(ctl.y + ky), -1, 1);   // Höhenruder wie im echten Flugzeug: nach vorn drücken = Nase runter
     c.yaw = (keys.e ? 1 : 0) - (keys.q ? 1 : 0);
     c.steer = v.onGround ? c.roll : 0;
     c.brake = ctl.brake || keys.space ? 1 : (v.onGround && ctl.power < 0.02 ? 0.35 : 0); c.gas = 0;
@@ -5619,7 +5624,7 @@ const GOALS = {
   jump:    { t: 'Über die große Schanze springen und heil landen', h: 'Die Probefahrt startet kurz vor der großen Schanze. Gib Vollgas und fahr gerade darauf zu. Es darf kein Teil abfallen.', dyn: true },
   crash:   { t: 'Mit 40 km/h gegen die Mauer: Sitz und Motor bleiben heil', h: 'Die Probefahrt startet vor der Mauer. Eine Stoßstange vorn und Steine vor Motor und Sitz schützen.', dyn: true },
   lap30:   { t: 'Eine Runde um die Bauplatte in unter 30 Sekunden', h: 'Fahr durch alle vier Tore auf der Ringstraße. Die Zeit läuft ab dem ersten Tor.', dyn: true },
-  alt10:   { t: '10 Meter hoch fliegen', h: 'Gashebel ganz nach oben. Wenn das Flugzeug schnell genug ist, den Knüppel leicht nach hinten ziehen.', dyn: true },
+  alt10:   { t: '10 Meter hoch fliegen', h: 'Gashebel ganz nach oben. Wenn das Flugzeug schnell genug ist, den Knüppel leicht zu dir ziehen, also nach unten.', dyn: true },
   alt30:   { t: '30 Meter hoch fliegen', h: 'Die Höhe steht oben in der Anzeige.', dyn: true },
   land:    { t: 'Auf der Landebahn landen und anhalten', h: 'Flieg zurück zur Landebahn. Gashebel auf ein Viertel: Das Flugzeug sinkt langsam und fängt kurz vor dem Boden ab. Unten den Gashebel ganz zurück, dann bremst es.', dyn: true },
   rings:   { t: 'Durch alle 5 Ringe fliegen', h: 'Der gelbe Ring ist der nächste. Die Anzeige oben sagt, wie weit er weg ist.', dyn: true },
@@ -6246,7 +6251,7 @@ const TOUR = [
     { sel: '#pad .pbtn.mini', t: 'Fahrzeug holen', x: 'Stellt ein Fahrzeug aus deiner Werkstatt direkt vor deine Figur.' },
     { t: 'Einsteigen', x: 'Lauf zu einem Fahrzeug. Erscheint der gelbe Knopf „Einsteigen“, tippe darauf. „Aussteigen“ bringt dich wieder hinaus.' },
     { t: 'Auto fahren', x: 'Links lenkst du, rechts sind Gas und Bremse. Daneben liegen Hupe, Licht und Blaulicht. Nach einem Unfall baut „Reparieren“ alles wieder zusammen.' },
-    { t: 'Fliegen', x: 'Schieb den Gashebel nach oben. Ist das Flugzeug schnell genug, zieh den Knüppel leicht nach hinten. Seitlich legt es sich in die Kurve.' },
+    { t: 'Fliegen', x: 'Schieb den Gashebel nach oben. Ist das Flugzeug schnell genug, zieh den Knüppel leicht zu dir, also nach unten: Die Nase hebt sich. Nach vorn drücken senkt die Nase. Seitlich legt es sich in die Kurve.' },
     { t: 'Landen', x: 'Gashebel auf ein Viertel: Das Flugzeug sinkt langsam und fängt kurz vor dem Boden von selbst ab. Unten den Gashebel ganz zurück, dann bremst es.' },
     { t: 'Fallschirm', x: 'Ab 6 m Höhe erscheint im Flugzeug „Abspringen“. Der Schirm geht von selbst auf oder mit „Schirm auf“. Mit dem Knüppel lenkst du ihn zur Landung.' },
     { sel: '#btnFigure', t: 'Meine Figur', x: 'Frisur, Hut, Gesicht, Kleidung und Farben.' },
