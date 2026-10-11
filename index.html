@@ -304,6 +304,7 @@ body[data-mode="play"] .mcard{left:calc(env(safe-area-inset-left,0px) + var(--ga
 .play-btn:active{transform:translateY(2px)}
 body[data-mode="play"] .tools,body[data-mode="play"] .colors,body[data-mode="play"] .tray,body[data-mode="play"] .build-only,body[data-mode="play"] .play-btn,body[data-mode="play"] .vinfo{display:none!important}
 body:not([data-mode="play"]) .play-only{display:none!important}
+body[data-mode="play"] .hint{top:calc(env(safe-area-inset-top,0px) + 232px)}
 body[data-kind="garage"] .tool[data-tool="terrain"]{display:none}
 .vinfo{position:fixed;z-index:4;left:50%;transform:translateX(-50%);top:calc(env(safe-area-inset-top,0px) + 76px);max-width:min(560px,calc(100vw - 220px));padding:9px 16px;font-weight:800;font-size:14.5px;line-height:1.35;text-align:center;text-wrap:balance}
 .vinfo .warn{display:block;color:#b8450f;margin-top:2px}
@@ -4662,7 +4663,7 @@ addEventListener('keydown', e => {
   if (mode === 'play'){
     const m = KEYMAP[k];
     if (m){ keys[m] = true; e.preventDefault(); if (m === 'space' && !driving) fig.jump = true; if (m !== 'e') return; }
-    if (k === 'e'){ if (driving && !garageTest) exitVehicle(); else if (!driving && fig.near) enterNear(); }
+    if (k === 'e'){ if (driving && (!garageTest || (driving.kind !== 'car' && skyHigh(driving)))) exitVehicle(); else if (!driving && fig.near) enterNear(); }
     else if (k === 'h' && driving) driving.horn = true;
     else if (k === 'b' && driving && driving.hasBlue){ driving.siren = !driving.siren; padState = ''; renderPad(); }
     else if (k === 'l' && driving){ driving.lightsOn = !driving.lightsOn; padState = ''; renderPad(); }
@@ -4756,7 +4757,7 @@ function makeFigure(cfg, plain){
 // Figur im Spiel
 const figMat = new CANNON.Material('figur');
 world.addContactMaterial(new CANNON.ContactMaterial(figMat, world.defaultMaterial, { friction: 0, restitution: 0 }));
-const fig = { active: false, body: null, m: null, yaw: 0, phase: 0, grounded: false, jump: false, near: null, swim: false };
+const fig = { active: false, body: null, m: null, yaw: 0, phase: 0, grounded: false, jump: false, near: null, swim: false, sky: false, chute: null, fallT: 0, hudT: 0 };
 function rebuildFigure(){
   const keep = fig.m && fig.m.root.parent, pos = fig.m ? fig.m.root.position.clone() : null, rot = fig.m ? fig.m.root.rotation.y : 0;
   if (fig.m && keep) keep.remove(fig.m.root);
@@ -4779,6 +4780,8 @@ function figPose(kind, t){
     return;
   }
   if (kind === 'air'){ m.legs[0].rotation.x = -0.5; m.legs[1].rotation.x = 0.3; m.arms[0].rotation.x = -2.4; m.arms[1].rotation.x = -2.4; return; }
+  if (kind === 'chute'){ m.arms[0].rotation.x = m.arms[1].rotation.x = -2.75; m.legs[0].rotation.x = Math.sin(fig.phase) * 0.25; m.legs[1].rotation.x = -m.legs[0].rotation.x; m.body.position.y = 0; return; }
+  if (kind === 'fall'){ m.arms[0].rotation.x = -1.9 + Math.sin(fig.phase * 3) * 0.3; m.arms[1].rotation.x = -1.9 - Math.sin(fig.phase * 3) * 0.3; m.legs[0].rotation.x = 0.5; m.legs[1].rotation.x = -0.3; m.body.position.y = 0; return; }
   const a = Math.sin(fig.phase) * (0.7 + 0.35 * run) * sp;
   m.legs[0].rotation.x = a; m.legs[1].rotation.x = -a;
   m.arms[0].rotation.x = -a * (0.9 + 0.3 * run); m.arms[1].rotation.x = a * (0.9 + 0.3 * run);
@@ -4833,9 +4836,29 @@ function updateFigure(dt){
   fig.swim = wy > b.position.y + 2.0;
   // Tempo wie ein Mensch in Figurengröße (1 Einheit ≈ 1/3 m): Gehen gut 5 km/h, Laufen knapp 20 km/h
   const run = keys.shift ? 0 : smoothstep(0.45, 0.95, ml);
-  const speed = ml < 0.08 ? 0 : fig.swim ? 5 : lerp(4.5, 16, run), k = 1 - Math.exp(-dt * (fig.grounded || fig.swim ? 10 : 2.5));
   const ux = ml > 0.08 ? mx / ml : 0, uz = ml > 0.08 ? mz / ml : 0;
-  b.velocity.x += (ux * speed - b.velocity.x) * k; b.velocity.z += (uz * speed - b.velocity.z) * k;
+  if (fig.sky && (fig.grounded || fig.swim)) chuteLanded();
+  if (fig.sky){
+    // Absprung aus dem Flugzeug: erst freier Fall, dann trägt der Schirm; mit dem Knüppel lenken
+    const alt = b.position.y - Math.max(groundY(b.position.x, b.position.z), waterY(b.position.x, b.position.z));
+    fig.fallT += dt;
+    // spätestens nach 1,6 s oder 20 m über Grund geht der Schirm von selbst auf
+    if (!fig.chute && (fig.jump || fig.fallT > 1.6 || alt < 58)) openChute();
+    if (fig.chute){
+      const kh = 1 - Math.exp(-dt * 1.3), sp = 10 * Math.min(1, ml);
+      b.velocity.x += (ux * sp - b.velocity.x) * kh; b.velocity.z += (uz * sp - b.velocity.z) * kh;
+      b.velocity.y += (-6 - b.velocity.y) * (1 - Math.exp(-dt * 4)) + G_VEH * dt;   // der Schirm trägt: Schwerkraft ausgleichen, gleichmäßig sinken
+      if (alt < 10 && b.velocity.y < -7) b.velocity.y = -7;
+    } else {
+      const kh = 1 - Math.exp(-dt * 0.35);
+      b.velocity.x += (ux * 6 - b.velocity.x) * kh; b.velocity.z += (uz * 6 - b.velocity.z) * kh;
+      if (b.velocity.y < -45) b.velocity.y = -45;
+    }
+    fig.jump = false;
+  } else {
+    const speed = ml < 0.08 ? 0 : fig.swim ? 5 : lerp(4.5, 16, run), k = 1 - Math.exp(-dt * (fig.grounded || fig.swim ? 10 : 2.5));
+    b.velocity.x += (ux * speed - b.velocity.x) * k; b.velocity.z += (uz * speed - b.velocity.z) * k;
+  }
   if (fig.swim){ b.velocity.y += (Math.max(-2, Math.min(3, (wy - 2.3 - b.position.y) * 3)) - b.velocity.y) * (1 - Math.exp(-dt * 4)); }
   if (fig.jump && (fig.grounded || fig.swim)){ b.velocity.y = fig.swim ? 9 : 13.5; audio.swish(); }
   fig.jump = false;
@@ -4846,8 +4869,77 @@ function syncFigure(dt){
   if (!fig.active || !fig.m) return;
   const b = fig.body, sp = Math.hypot(b.velocity.x, b.velocity.z);
   fig.m.root.position.set(b.position.x, b.position.y, b.position.z); fig.m.root.rotation.y = fig.yaw;
+  if (fig.sky){
+    fig.phase += dt * 2.2;
+    figPose(fig.chute ? 'chute' : 'fall', 0);
+    if (fig.chute){
+      const c = fig.chute, k = Math.min(1, (now() - c.t0) / 650), e = 1 - (1 - k) ** 3;
+      c.g.scale.set(0.15 + 0.85 * e, 0.4 + 0.6 * e, 0.15 + 0.85 * e);
+      c.g.rotation.z = Math.sin(fig.phase * 0.9) * 0.07; c.g.rotation.x = Math.sin(fig.phase * 0.7 + 1) * 0.05;
+    }
+    if (now() > fig.hudT){
+      fig.hudT = now() + 120;
+      const alt = b.position.y - Math.max(groundY(b.position.x, b.position.z), waterY(b.position.x, b.position.z));
+      $('#hudSpeed').textContent = Math.round(Math.hypot(sp, b.velocity.y) * KMH);
+      $('#hudAlt').textContent = Math.max(0, Math.round(alt * 0.35));
+    }
+    return;
+  }
   fig.phase += dt * sp * 1.9 / (1 + sp / 8);   // längere Schritte beim Laufen
   figPose(fig.swim ? 'swim' : !fig.grounded && Math.abs(b.velocity.y) > 3 ? 'air' : 'walk', sp / 4);
+}
+// Fallschirm
+const chuteMats = { a: new THREE.MeshStandardMaterial({ vertexColors: true, side: THREE.DoubleSide, roughness: 0.65 }), line: new THREE.LineBasicMaterial({ color: '#3a434d' }) };
+function makeChute(){
+  const g = new THREE.Group(), R = 4.8, cap = 0.42, segs = 12;
+  const geo = new THREE.SphereGeometry(R, segs * 3, 8, 0, Math.PI * 2, 0, Math.PI * cap).toNonIndexed();
+  const pos = geo.attributes.position, cols = [], cA = new THREE.Color('#e4432d'), cB = new THREE.Color('#ffffff'), cC = new THREE.Color('#ffc629');
+  for (let i = 0; i < pos.count; i += 3){
+    const x = (pos.getX(i) + pos.getX(i + 1) + pos.getX(i + 2)) / 3, z = (pos.getZ(i) + pos.getZ(i + 1) + pos.getZ(i + 2)) / 3;
+    const k = Math.floor(((Math.atan2(z, x) + Math.PI) / (Math.PI * 2)) * segs) % 3, c = k === 0 ? cA : k === 1 ? cB : cC;
+    for (let j = 0; j < 3; j++) cols.push(c.r, c.g, c.b);
+  }
+  geo.setAttribute('color', new THREE.Float32BufferAttribute(cols, 3)); geo.computeVertexNormals();
+  const dome = new THREE.Mesh(geo, chuteMats.a); dome.castShadow = true;
+  const rimY = R * Math.cos(Math.PI * cap), rimR = R * Math.sin(Math.PI * cap), top = 8.2;
+  dome.position.y = top - rimY; g.add(dome);
+  const lp = [];
+  for (let i = 0; i < 8; i++){ const a = i / 8 * Math.PI * 2; lp.push(Math.cos(a) * rimR, top, Math.sin(a) * rimR, (i % 2 ? 0.75 : -0.75), 3.0, 0); }
+  const lg = new THREE.BufferGeometry(); lg.setAttribute('position', new THREE.Float32BufferAttribute(lp, 3));
+  g.add(new THREE.LineSegments(lg, chuteMats.line));
+  return g;
+}
+function openChute(){
+  if (fig.chute || !fig.m) return;
+  const g = makeChute(); fig.m.root.add(g);
+  fig.chute = { g, t0: now() };
+  audio.swish(); pcam.dist = 30; padState = ''; renderPad();
+}
+function closeChute(){
+  if (!fig.chute) return;
+  const g = fig.chute.g; if (g.parent) g.parent.remove(g);
+  g.traverse(o => { if (o.geometry) o.geometry.dispose(); });
+  fig.chute = null;
+}
+// Aus dem Flugzeug springen
+function figPlaceAir(x, y, z, yaw, vel){
+  figEnsureBody();
+  const b = fig.body;
+  b.position.set(x, y, z); b.velocity.set(vel.x, Math.min(vel.y, 2), vel.z);
+  if (!b.world) world.addBody(b);
+  gBodies.add(b);
+  fig.yaw = yaw; fig.active = true; fig.sky = true; fig.fallT = 0; fig.grounded = false; closeChute();
+  if (!fig.m) rebuildFigure();
+  if (fig.m.root.parent) fig.m.root.parent.remove(fig.m.root);
+  scene.add(fig.m.root); fig.m.root.position.set(x, y, z); fig.m.root.rotation.y = yaw;
+  pcam.dist = 26;
+}
+function chuteLanded(){
+  const b = fig.body, had = !!fig.chute;
+  fig.sky = false; closeChute();
+  pcam.dist = 0; padState = ''; renderPad();
+  audio.plopp(); toast(fig.swim ? 'Platsch! Gelandet im Wasser.' : 'Gelandet!', 1600);
+  missionChuteLanded(b.position.x, b.position.z, had && !fig.swim);
 }
 // Eingaben im Spielmodus
 const ctl = { x: 0, y: 0, gas: false, brake: false, power: 0 };
@@ -4868,6 +4960,7 @@ const joyEnd = e => { if (e.pointerId !== joyId) return; joyId = null; ctl.x = c
 joyEl.addEventListener('pointerup', joyEnd); joyEl.addEventListener('pointercancel', joyEnd);
 // Knöpfe rechts: je nach Lage Laufen, Auto, Flugzeug
 const ICON = {
+  chute: '<path d="M3 11a9 7 0 0 1 18 0z"/><path d="M3 11l8 7M21 11l-8 7M9 11l2.2 7M15 11l-2.2 7"/><circle cx="12" cy="19.5" r="1.6"/>',
   jump: '<path d="M12 20V6M6 11l6-6 6 6"/>',
   enter: '<rect x="4" y="9" width="16" height="9" rx="2.5"/><path d="M7 9l2-4h6l2 4"/><circle cx="8" cy="18" r="1.6"/><circle cx="16" cy="18" r="1.6"/>',
   exit: '<path d="M14 4h5v16h-5"/><path d="M10 16l-4-4 4-4M6 12h10"/>',
@@ -4903,13 +4996,19 @@ function thrSlider(){
 }
 let thrEl = null;
 function renderPad(){
-  const v = driving, st = !v ? 'walk' + (fig.near ? '+' : '') : (v.kind + (v.hasBlue ? 'b' : '') + (garageTest ? 'g' : ''));
+  const v = driving, st = !v ? 'walk' + (fig.near ? '+' : '') + (fig.sky ? (fig.chute ? 'C' : 'S') : '') : (v.kind + (v.hasBlue ? 'b' : '') + (garageTest ? 'g' : ''));
   if (st === padState) return;
   padState = st;
   const pad = $('#pad'); pad.textContent = ''; thrEl = null;
   joyAxis = v && v.kind === 'car' ? 'x' : 'xy';
   const col = (...els) => { const c = document.createElement('div'); c.className = 'pcol'; c.append(...els); return c; };
   if (!v){
+    if (fig.sky){
+      // Fallschirmsprung: Höhe und Tempo oben, Schirm öffnen per Knopf
+      if (!fig.chute) pad.append(pbtn('big hot', 'chute', 'Schirm auf', () => openChute()));
+      $('#hud').hidden = false; $('#hudPowBox').hidden = true; $('#hudAltBox').hidden = false; $('#hudWarn').hidden = true;
+      return;
+    }
     const tools = col(pbtn('mini', 'shop', 'Holen', () => openGarageList()));
     if (fig.near) tools.prepend(pbtn('big hot', 'enter', 'Einsteigen', () => enterNear()));
     pad.append(tools, pbtn('big', 'jump', 'Springen', () => { fig.jump = true; }));
@@ -4919,6 +5018,7 @@ function renderPad(){
   const leave = garageTest ? pbtn('mini', 'garage', 'Werkstatt', () => endTestDrive()) : pbtn('mini', 'exit', 'Aussteigen', () => exitVehicle());
   const fix = pbtn('mini', 'fix', 'Reparieren', () => repairVehicle());
   const side = [leave, fix];
+  if (v.kind !== 'car'){ const jb = pbtn('mini hot', 'chute', 'Abspringen', () => exitVehicle()); jb.id = 'btnJumpOut'; jb.hidden = !skyHigh(v); side.splice(1, 0, jb); }
   if (v.kind === 'car') side.push(pbtn('mini', 'horn', 'Hupe', () => { v.horn = true; }, () => { v.horn = false; }));
   if (v.lamps.some(l => l.kind === 'head')) side.push(togBtn('light', 'Licht', () => v.lightsOn, x => { v.lightsOn = x; }));
   if (v.hasBlue) side.push(togBtn('blue', 'Blaulicht', () => v.siren, x => { v.siren = x; }));
@@ -4967,6 +5067,7 @@ let hudT = 0;
 function updateHud(t){
   if (!driving || t < hudT) return;
   hudT = t + 120;
+  const jb = $('#btnJumpOut'); if (jb) jb.hidden = !skyHigh(driving);
   const v = driving, b = v.body;
   $('#hudSpeed').textContent = Math.round((v.speed || 0) * KMH);
   if (v.kind !== 'car'){ $('#hudAlt').textContent = Math.max(0, Math.round((b.position.y + v.lowest - groundY(b.position.x, b.position.z)) * 0.35)); $('#hudPow').textContent = Math.round(v.ctl.power * 100); }
@@ -4995,9 +5096,9 @@ function updatePlayCamera(dt, t){
     cam.g.dist = pcam.dist;
   } else if (fig.active){
     const b = fig.body;
-    cam.g.target.set(b.position.x, b.position.y + 2.6, b.position.z);
+    cam.g.target.set(b.position.x, b.position.y + (fig.chute ? 5 : 2.6), b.position.z);
     if (!pcam.dist) pcam.dist = 17;
-    cam.g.dist = pcam.dist; cam.g.el = pcam.el;
+    cam.g.dist = pcam.dist; cam.g.el = fig.sky ? 0.2 : pcam.el;
   }
 }
 // Einsteigen, Aussteigen, Einparken
@@ -5065,9 +5166,21 @@ function onVehicleChanged(v){
 }
 function exitVehicle(){
   const v = driving; if (!v) return;
+  const b = v.body, q = qOf(b);
+  if (v.kind !== 'car' && skyHigh(v)){
+    // Absprung mit Fallschirm: seitlich hinaus, mit dem Schwung des Flugzeugs
+    driving = null; vAudio.stop();
+    v.ctl.gas = 0; v.ctl.power = 0; v.ctl.brake = 1; v.siren = false; v.horn = false; ctl.power = 0;
+    if (fig.m && fig.m.root.parent) fig.m.root.parent.remove(fig.m.root);
+    const seat = _v1.copy(v.seatPos).applyQuaternion(q).add(b.position), side = _v2.set(v.bounds.x1 + 2.5, -1.5, 0).applyQuaternion(q);
+    const f = _v3.set(0, 0, 1).applyQuaternion(q);
+    figPlaceAir(seat.x + side.x, seat.y + side.y, seat.z + side.z, Math.atan2(f.x, f.z), b.velocity);
+    padState = ''; renderPad();
+    toast('Abgesprungen! Gleich öffnet sich der Schirm.', 2200);
+    return;
+  }
   driving = null; vAudio.stop();
   v.ctl.gas = 0; v.ctl.power = 0; v.ctl.brake = 1; v.siren = false; v.horn = false;
-  const b = v.body, q = qOf(b);
   // Figur links neben dem Fahrzeug absetzen
   const side = _v1.set(v.bounds.x1 + 1.4, 0, v.seatPos.z).applyQuaternion(q).add(b.position);
   if (fig.m && fig.m.root.parent) fig.m.root.parent.remove(fig.m.root);
@@ -5076,6 +5189,11 @@ function exitVehicle(){
   figPlace(side.x, side.z, yaw);
   padState = ''; renderPad();
   changed();
+}
+// Hoch genug für einen Fallschirmsprung (mehr als 6 m über Grund)?
+function skyHigh(v){
+  const b = v.body;
+  return !v.onGround && (b.position.y + v.lowest - Math.max(groundY(b.position.x, b.position.z), waterY(b.position.x, b.position.z))) * 0.35 > 6;
 }
 // Steht das Fahrzeug gerade auf der Platte, wird es wieder zu Bausteinen im Raster
 function tryPark(v){
@@ -5150,6 +5268,8 @@ function startTestDrive(){
 function endTestDrive(){
   const v = driving;
   if (v){ driving = null; vAudio.stop(); v.dispose(); }
+  for (const t of vehicles.filter(x => x.test)) t.dispose();
+  if (fig.sky){ fig.sky = false; closeChute(); }
   garageTest = false;
   resetProps();
   leavePlay();
@@ -5174,6 +5294,7 @@ function startWalk(){
 }
 function leavePlay(){
   if (driving && !garageTest) exitVehicle();
+  if (fig.sky){ fig.sky = false; closeChute(); }
   figRemoveBody();
   if (fig.m && fig.m.root.parent) fig.m.root.parent.remove(fig.m.root);
   mode = 'build'; document.body.dataset.mode = 'build';
@@ -5506,6 +5627,7 @@ const GOALS = {
   lake:    { t: 'Über den großen See fliegen', h: 'Der See liegt links hinter dem Start, südlich der Bauplatte.', dyn: true },
   peak:    { t: 'Genau über dem Gipfel des großen Bergs fliegen', h: 'Der Berg liegt nördlich der Bauplatte. Steig vorher hoch genug.', dyn: true },
   landAfter: { t: 'Danach auf der Landebahn landen und anhalten', h: 'Gashebel auf ein Viertel, die Flughilfe fängt kurz vor dem Boden ab.', dyn: true },
+  chuteLand: { t: 'Mit dem Fallschirm auf der Bauplatte landen', h: 'Starte, flieg über die Bauplatte (westlich der Landebahn) und tippe in mindestens 6 m Höhe auf „Abspringen“. Mit dem Knüppel lenkst du den Schirm.', dyn: true },
   kmh150:  { t: '150 km/h schnell fliegen', h: 'Ein großer Propeller oder Düsen machen schnell. Flieg dazu gerade aus.', dyn: true }
 };
 const MISSIONS = [
@@ -5525,6 +5647,7 @@ const MISSIONS = [
   { id: 'c7', cat: 'car', title: 'Lastwagen', text: 'Ein schwerer Lastwagen, der trotzdem flott fährt.', goals: ['wheels6', 'heavy80', 'kmh60'] },
   { id: 'p1', cat: 'plane', title: 'Abheben!', text: 'Dein erstes Flugzeug soll in die Luft.', goals: ['alt10'] },
   { id: 'p2', cat: 'plane', title: 'Platzrunde', text: 'Starten, eine Runde drehen und sicher wieder landen.', goals: ['alt30', 'land'] },
+  { id: 'p8', cat: 'plane', title: 'Zielsprung', text: 'Spring über der Bauplatte aus dem Flugzeug und lande mit dem Fallschirm genau darauf.', goals: ['chuteLand'] },
   { id: 'p3', cat: 'plane', title: 'Ringflug', text: 'Fünf Ringe hängen am Himmel. Flieg durch alle, einen nach dem anderen.', rings: true, goals: ['rings'] },
   { id: 'p4', cat: 'plane', title: 'Zum See und zurück', text: 'Ein Ausflug über den großen See, dann zurück nach Hause.', goals: ['lake', 'landAfter'] },
   { id: 'p5', cat: 'plane', title: 'Schnellflug', text: 'Bau ein Flugzeug, das schneller ist als alle anderen.', goals: ['kmh150'] },
@@ -5752,6 +5875,7 @@ function missionTick(dt){
       if (air && lakeE(x, z) < 0.85){ if (!mrun.flags.has('lake') && m.goals.includes('lake')) note('Über dem See! Jetzt zurück zur Landebahn.', 'lakeok'); mrun.flags.add('lake'); latch(m, 'lake'); }
       if (air && nearPeak(x, b.position.y, z)){ if (!mrun.flags.has('peak') && m.goals.includes('peak')) note('Über dem Gipfel! Jetzt zurück zur Landebahn.', 'peakok'); mrun.flags.add('peak'); latch(m, 'peak'); }
       if (m.rings) hud = ringTick(m, b.position) || hud;
+      if (m.goals.includes('chuteLand')) hud = plateText(x, z);
       if (mrun.airborne && mrun.maxAlt >= 12 && v.onGround && kmh < 3){
         if (onRunway(x, z) && (v.lost || 0) === mrun.lost0 && !v.destroyed){
           latch(m, 'land');
@@ -5761,7 +5885,18 @@ function missionTick(dt){
       }
     }
     if (mrun.t > mrun.hudT){ mrun.hudT = mrun.t + 0.1; setMhud(hud); }
-  } else if (fig.active && m.setup === 'river') figCrossTick(m);
+  } else if (fig.active){
+    if (m.setup === 'river') figCrossTick(m);
+    if (m.goals.includes('chuteLand') && garageTest && fig.body){ mrun.hudT2 = mrun.hudT2 || 0; if (now() > mrun.hudT2){ mrun.hudT2 = now() + 150; setMhud(fig.sky ? plateText(fig.body.position.x, fig.body.position.z) : ''); } }
+  }
+}
+const plateText = (x, z) => { const dx = Math.max(-x, 0, x - GRID), dz = Math.max(-z, 0, z - GRID), d = Math.hypot(dx, dz); return d < 1 ? 'Über der Bauplatte!' : 'Bauplatte: ' + Math.round(d / 3) + ' m'; };
+function missionChuteLanded(x, z, ok){
+  const m = activeMission(); if (!m || !m.goals.includes('chuteLand')) return;
+  setMhud('');
+  if (!ok) return note('Ohne offenen Schirm oder im Wasser gelandet. Versuch es noch einmal.', 'chuteNo');
+  if (x >= 0 && x < GRID && z >= 0 && z < GRID) latch(m, 'chuteLand');
+  else note('Gelandet, aber neben der Bauplatte. Spring näher an ihr ab.', 'chuteMiss');
 }
 function lapTick(m, x, z){
   const L = mrun.lap || (mrun.lap = { first: -1, seen: new Set(), t0: 0, last: -1 });
@@ -6113,6 +6248,7 @@ const TOUR = [
     { t: 'Auto fahren', x: 'Links lenkst du, rechts sind Gas und Bremse. Daneben liegen Hupe, Licht und Blaulicht. Nach einem Unfall baut „Reparieren“ alles wieder zusammen.' },
     { t: 'Fliegen', x: 'Schieb den Gashebel nach oben. Ist das Flugzeug schnell genug, zieh den Knüppel leicht nach hinten. Seitlich legt es sich in die Kurve.' },
     { t: 'Landen', x: 'Gashebel auf ein Viertel: Das Flugzeug sinkt langsam und fängt kurz vor dem Boden von selbst ab. Unten den Gashebel ganz zurück, dann bremst es.' },
+    { t: 'Fallschirm', x: 'Ab 6 m Höhe erscheint im Flugzeug „Abspringen“. Der Schirm geht von selbst auf oder mit „Schirm auf“. Mit dem Knüppel lenkst du ihn zur Landung.' },
     { sel: '#btnFigure', t: 'Meine Figur', x: 'Frisur, Hut, Gesicht, Kleidung und Farben.' },
     { sel: '#btnBack', t: 'Zurück zum Bauen', x: 'Damit kommst du wieder in den Baumodus.' }
   ] },
