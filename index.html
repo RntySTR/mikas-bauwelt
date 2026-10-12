@@ -306,6 +306,7 @@ body[data-mode="play"] .tools,body[data-mode="play"] .colors,body[data-mode="pla
 body:not([data-mode="play"]) .play-only{display:none!important}
 body[data-mode="play"] .hint{top:calc(env(safe-area-inset-top,0px) + 232px)}
 body[data-kind="garage"] .tool[data-tool="terrain"]{display:none}
+body:not([data-kind="garage"]) .garage-only{display:none!important}
 .vinfo{position:fixed;z-index:4;left:50%;transform:translateX(-50%);top:calc(env(safe-area-inset-top,0px) + 76px);max-width:min(560px,calc(100vw - 220px));padding:9px 16px;font-weight:800;font-size:14.5px;line-height:1.35;text-align:center;text-wrap:balance}
 .vinfo .warn{display:block;color:#b8450f;margin-top:2px}
 .vinfo b{font-variant-numeric:tabular-nums}
@@ -550,6 +551,7 @@ body[data-kind="garage"] .tool[data-tool="terrain"]{display:none}
   <button class="tool" type="button" data-tool="paint" aria-pressed="false"><svg viewBox="0 0 24 24"><rect x="3.5" y="3" width="13" height="6" rx="2"/><path d="M16.5 6h3v5.5l-7.5 2v2.5"/><rect x="10.5" y="16" width="3" height="5.5" rx="1"/></svg><span>Malen</span></button>
   <button class="tool" type="button" data-tool="remove" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="m10 6.5 4.5-4.5 5 5L15 11.5z"/><path d="M12.2 8.8 3.8 17.2a1.9 1.9 0 0 0 2.7 2.7l8.4-8.4"/></svg><span>Abreißen</span></button>
   <button class="tool" type="button" data-tool="pick" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M17.5 3.5a2.1 2.1 0 0 1 3 3L18 9l-3-3z"/><path d="m15 6 3 3-8.5 8.5H6.5v-3z"/><path d="M4 21h4"/></svg><span>Kopieren</span></button>
+  <button id="btnBock" class="tool garage-only" type="button" aria-pressed="false" aria-label="Fahrzeug aufbocken"><svg viewBox="0 0 24 24"><path d="M4 21h16"/><path d="m8 21 2.5-8h3L16 21"/><path d="M7 13h10"/><path class="up" d="M12 10V3M9.5 5.5 12 3l2.5 2.5"/><path class="down" d="M12 3v7M9.5 7.5 12 10l2.5-2.5" style="display:none"/></svg><span>Aufbocken</span></button>
   <button class="tool" type="button" data-tool="terrain" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M2.5 19.5 9 9l4 6 2.5-3.5 6 8z"/><circle cx="17" cy="5.5" r="2"/></svg><span>Landschaft</span></button>
   <div class="tools-sep" aria-hidden="true"></div>
   <button id="btnRotate" class="tool rotate" type="button" aria-label="Teil drehen"><svg viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.4-5.7"/><path d="M20 4v5h-5"/></svg><span>Drehen</span></button>
@@ -1131,10 +1133,12 @@ PARTS.forEach(buildLayout);
 const MIN_L = -10, MAX_TL = 60, WNONE = -32768, N2 = GRID * GRID;
 const terrH = new Int16Array(N2), terrG = new Uint8Array(N2), terrW = new Int16Array(N2).fill(WNONE);
 const ti = (x, z) => z * GRID + x;
+const BOCK_G = 7, BOCK_H = 18;   // Montageböcke in der Werkstatt: Bodenart und Höhe in Plattenlagen
+let bockCache = null;
 const inGrid = (x, z) => x >= 0 && z >= 0 && x < GRID && z < GRID;
 const GROUND = [null,
   { name: 'Wiese', hex: '#4B9F4A' }, { name: 'Sand', hex: '#E4CD9E' }, { name: 'Erde', hex: '#7A4E2D' },
-  { name: 'Fels', hex: '#8B8E92' }, { name: 'Schnee', hex: '#F1F4F7' }, { name: 'Straße', hex: '#55595E' }];
+  { name: 'Fels', hex: '#8B8E92' }, { name: 'Schnee', hex: '#F1F4F7' }, { name: 'Straße', hex: '#55595E' }, { name: 'Bock', hex: '#F2CD37' }];
 for (const g of GROUND) if (g) g.col = new THREE.Color(g.hex);
 const ROAD = 6;
 function groundType(x, z){
@@ -1659,12 +1663,13 @@ for (let cz = 0; cz < NCH; cz++) for (let cx = 0; cx < NCH; cx++){
   chunks.push(ch);
 }
 function markTerrain(x, z){
+  bockCache = null;
   for (let dz = -1; dz <= 1; dz++) for (let dx = -1; dx <= 1; dx++){
     const X = x + dx, Z = z + dz;
     if (inGrid(X, Z)) chunks[((Z / CH) | 0) * NCH + ((X / CH) | 0)].dirty = true;
   }
 }
-function markAllTerrain(){ for (const ch of chunks) ch.dirty = true; }
+function markAllTerrain(){ bockCache = null; for (const ch of chunks) ch.dirty = true; }
 function tquad(P4, n, c4, uv4, pos, nor, col, uvs){
   const [a, b, c, d] = P4;
   const ux = b[0] - a[0], uy = b[1] - a[1], uz = b[2] - a[2], vx = c[0] - a[0], vy = c[1] - a[1], vz = c[2] - a[2];
@@ -1753,6 +1758,7 @@ function flushTerrain(){
   if (any){
     waterCells = 0; for (let i = 0; i < N2; i++) if (terrW[i] !== WNONE) waterCells++;
     shadowDirty = true; dirty = true;
+    renderBockBtn();
   }
   return any;
 }
@@ -2243,12 +2249,12 @@ function setColor(rec, c){
    gegen die Haltekraft geprüft. Mehrfach gestützte Bereiche gelten als stabil (nur Zug wird geprüft). */
 function buildGraph(){
   const adj = new Map([[0, []]]);
-  const link = (lower, upper, st, y) => { const e = { lower, upper, studs: st, y }; adj.get(lower).push(e); adj.get(upper).push(e); };
+  const link = (lower, upper, st, y) => { const e = { lower, upper, studs: st, y }; adj.get(lower).push(e); adj.get(upper).push(e); return e; };
   for (const rec of parts.values()) adj.set(rec.id, []);
   for (const rec of parts.values()){
     const p = PARTS[rec.t], L = p.rot[rec.r];
     const gc = groundCells(rec.t, rec.x, rec.y, rec.z, rec.r);
-    if (gc.length) link(0, rec.id, gc, rec.y * P);
+    if (gc.length){ const e = link(0, rec.id, gc, rec.y * P); if (gc.some(([cx, cz]) => terrG[ti(cx | 0, cz | 0)] === BOCK_G)) e.bock = true; }
     const up = new Map();
     for (const [x, z] of L.tops){
       const id = sockets.get(K(rec.x + x, rec.y + p.h, rec.z + z));
@@ -2308,7 +2314,7 @@ function analyzeWorst(f, opts){
     const dy = Math.abs(my[i] / W - e.y);
     if (qk){ cx += qk.dx * qk.q * dy; cz += qk.dz * qk.q * dy; }
     if (hi !== undefined && hi >= i && hi < i + size[i]){ const s = hit.F * Math.abs(hit.y - e.y) / W; cx += hit.dx * s; cz += hit.dz * s; }
-    const ratio = cover[i] === 0 ? connRatio(e, W, cx, cz, hanging, f) : (hanging ? (W / (cover[i] + 1)) / (e.studs.length * f) : 0);
+    const ratio = e.bock ? 0 : cover[i] === 0 ? connRatio(e, W, cx, cz, hanging, f) : (hanging ? (W / (cover[i] + 1)) / (e.studs.length * f) : 0);   // Böcke halten das Fahrzeug fest
     if (ratio > 1 && (!worst || ratio > worst.ratio)) worst = { ratio, i, e };
   }
   if (!worst) return null;
@@ -4007,22 +4013,45 @@ function computePlacement(hit, t, r){
   const cX = () => clamp(Math.round(pt.x - L.W / 2), 0, GRID - L.W);
   const cZ = () => clamp(Math.round(pt.z - L.D / 2), 0, GRID - L.D);
   let ax, ay, az;
+  // Passt das Teil nicht mittig, suche eine Lage auf derselben Höhe, die das angetippte Feld enthält
+  const fitAround = (hx, hz, ay0, ax0, az0) => {
+    let best = null, bd = Infinity;
+    for (let x = hx - L.W + 1; x <= hx; x++) for (let z = hz - L.D + 1; z <= hz; z++){
+      if (!inBounds(t, x, ay0, z, r) || collides(t, x, ay0, z, r)) continue;
+      const d = Math.abs(x - ax0) + Math.abs(z - az0);
+      if (d < bd){ bd = d; best = [x, z]; }
+    }
+    return best;
+  };
   if (ny === 1){
     ax = cX(); az = cZ(); ay = hit.cell[1] + 1;
-    for (let k = 0; k < 80 && collides(t, ax, ay, az, r); k++) ay++;
+    if (collides(t, ax, ay, az, r)){
+      const f = fitAround(hit.cell[0], hit.cell[2], ay, ax, az);
+      if (f) [ax, az] = f;
+      else for (let k = 0; k < 80 && collides(t, ax, ay, az, r); k++) ay++;
+    }
   } else if (ny === -1){
     ax = cX(); az = cZ(); ay = hit.cell[1] - p.h;
   } else {
     ax = nx === 1 ? hit.cell[0] + 1 : nx === -1 ? hit.cell[0] - L.W : cX();
     az = nz === 1 ? hit.cell[2] + 1 : nz === -1 ? hit.cell[2] - L.D : cZ();
     const rec = hit.kind === 'part' ? parts.get(hit.id) : null; ay = rec ? rec.y : hit.cell[1];
+    if (collides(t, ax, ay, az, r)){
+      const f = fitAround(hit.cell[0] + nx, hit.cell[2] + nz, ay, ax, az);
+      if (f) [ax, az] = f;
+    }
     if (inBounds(t, ax, Math.max(MIN_L, ay), az, r)){
       if (collides(t, ax, ay, az, r)){ for (let k = 0; k < 80 && collides(t, ax, ay, az, r); k++) ay++; }
       else { while (ay > MIN_L && !supportedBelow(t, ax, ay, az, r) && !collides(t, ax, ay - 1, az, r)) ay--; }
     }
   }
-  const ok = inBounds(t, ax, ay, az, r) && !collides(t, ax, ay, az, r) && isConnected(t, ax, ay, az, r) && !hitsVehicle(t, ax, ay, az, r);
-  return { t, ax, ay, az, r, ok };
+  let ok = inBounds(t, ax, ay, az, r) && isConnected(t, ax, ay, az, r) && !hitsVehicle(t, ax, ay, az, r), rebock = null;
+  if (ok && collides(t, ax, ay, az, r)){
+    ok = false;
+    const bc = bockCells();
+    if (bc.length && !collidesBesideBocks(t, ax, ay, az, r, bc)){ const plan = planBocks(voxKeys(t, ax, ay, az, r)); if (plan){ ok = true; rebock = plan; } }
+  }
+  return { t, ax, ay, az, r, ok, rebock };
 }
 function hitsVehicle(t, ax, ay, az, r){
   if (!vehicles.length) return false;
@@ -4063,12 +4092,14 @@ function groundPointAt(sx, sy){
 const undoStack = [], redoStack = [];
 function pushUndo(a){ undoStack.push(a); if (undoStack.length > 300) undoStack.shift(); redoStack.length = 0; updateUndoButtons(); }
 function doPlace(pl){
+  const moved = pl.rebock ? moveBocks(pl.rebock) : null;
   const rec = addPart({ id: nextId++, t: pl.t, c: sel.c, x: pl.ax, y: pl.ay, z: pl.az, r: pl.r }, true);
   const s = snap(rec), L = PARTS[rec.t].rot[rec.r];
   emit('sparkle', rec.x + L.W / 2, (rec.y + PARTS[rec.t].h) * P + 0.2, rec.z + L.D / 2);
   audio.snap(PARTS[rec.t].size);
   const fx = runStatics();
-  pushUndo({ type: 'add', rec: s, fx });
+  pushUndo({ type: 'add', rec: s, fx, bockBefore: moved && moved.before, bockAfter: moved && moved.after });
+  if (moved) tut.toastOnce('bockmove', 'Die Böcke sind ein Stück zur Seite gerückt.');
   if (fx.fell.length) setTimeout(() => tut.toastOnce('heavy', 'Zu viel Gewicht an zu wenig Noppen. Die Verbindung hat nicht gehalten.'), 500);
   wakeDebris();
   tut.mark('place');
@@ -4122,8 +4153,14 @@ function apply(a, dir){
   // dir = -1: rückgängig, +1: wiederholen. Zuerst Brüche zurücknehmen, die zur Aktion gehören.
   if (dir < 0) undoFx(a.fx);
   if (a.type === 'add'){
-    if (dir < 0){ const rec = parts.get(a.rec.id); if (rec){ removePartRaw(rec); popFx(a.rec); } wakeDebris(); }
-    else { addPart({ ...a.rec }, true); a.fx = runStatics(); }
+    if (dir < 0){ const rec = parts.get(a.rec.id); if (rec){ removePartRaw(rec); popFx(a.rec); } if (a.bockBefore) setTerrainCells(a.bockBefore); wakeDebris(); }
+    else { if (a.bockAfter) setTerrainCells(a.bockAfter); addPart({ ...a.rec }, true); a.fx = runStatics(); }
+  } else if (a.type === 'bock'){
+    // Aufbocken: erst Teile heben, dann Böcke stellen. Absenken: erst Böcke weg, dann Teile auf den Boden.
+    const raise = (a.on && dir > 0) || (!a.on && dir < 0);
+    if (raise){ shiftAll(dir > 0 ? a.dy : -a.dy); setTerrainCells(dir > 0 ? a.after : a.before); }
+    else { setTerrainCells(dir > 0 ? a.after : a.before); shiftAll(dir > 0 ? a.dy : -a.dy); if (dir > 0) a.fx = runStatics(); }
+    bockView();
   } else if (a.type === 'remove'){
     if (dir < 0) addPart({ ...a.rec }, true);
     else { const rec = parts.get(a.rec.id); if (rec) a.fx = removeWithFall(rec).fx; }
@@ -4205,8 +4242,50 @@ function brushCells(cx, cz, r){
   return out;
 }
 function touchCell(i){ if (!stroke.touched.has(i)) stroke.touched.set(i, [i, terrH[i], terrG[i], terrW[i]]); }
+// Wasser in eine Vertiefung gießen: Es steigt bis zum niedrigsten Rand, über den es abfließen würde.
+// Mauern aus Steinen halten das Wasser wie ein Damm.
+function barrierH(i){ let h = terrH[i]; const x = i % GRID, z = (i / GRID) | 0; while (h < MAXL && vox.has(K(x, h, z))) h++; return h; }
+function fillBasin(sx, sz){
+  const s0 = ti(sx, sz);
+  if (terrW[s0] !== WNONE) return 0;
+  const OFF = -MIN_L, best = new Int16Array(N2).fill(32767), buckets = [];
+  const push = (i, p) => { (buckets[p + OFF] || (buckets[p + OFF] = [])).push(i); };
+  best[s0] = terrH[s0]; push(s0, terrH[s0]);
+  let L = null;
+  for (let p = terrH[s0] + OFF; p < buckets.length && L === null; p++){
+    const b = buckets[p]; if (!b) continue;
+    while (b.length){
+      const i = b.pop(), pr = p - OFF;
+      if (pr > best[i]) continue;
+      const x = i % GRID, z = (i / GRID) | 0;
+      if (x === 0 || z === 0 || x === GRID - 1 || z === GRID - 1){ L = pr; break; }
+      for (const [dx, dz] of [[1, 0], [-1, 0], [0, 1], [0, -1]]){
+        const j = ti(x + dx, z + dz), q = Math.max(pr, barrierH(j));
+        if (q < best[j]){ best[j] = q; push(j, q); }
+      }
+    }
+  }
+  if (L === null || L <= terrH[s0] || barrierH(s0) > terrH[s0]) return 0;
+  // alle Felder unterhalb des Wasserspiegels, die mit der Stelle verbunden sind
+  const seen = new Uint8Array(N2), stack = [s0]; seen[s0] = 1; let n = 0;
+  while (stack.length){
+    const i = stack.pop(), x = i % GRID, z = (i / GRID) | 0;
+    touchCell(i); terrW[i] = L; markTerrain(x, z); n++;
+    for (const [dx, dz] of [[1, 0], [-1, 0], [0, 1], [0, -1]]){
+      const X = x + dx, Z = z + dz; if (!inGrid(X, Z)) continue;
+      const j = ti(X, Z); if (seen[j] || barrierH(j) >= L) continue;
+      seen[j] = 1; stack.push(j);
+    }
+  }
+  return n;
+}
 function applyBrush(cx, cz){
   let any = false, lowered = false;
+  if (brush.mode === 'water' && inGrid(cx, cz) && fillBasin(cx, cz)){
+    flushTerrain(); changed(); wakeDebris(); audio.splash();
+    tut.toastOnce('lake', 'Das Wasser steigt bis zum Rand.');
+    return true;
+  }
   for (const [x, z] of brushCells(cx, cz, BR[brush.size])){
     const i = ti(x, z), h = terrH[i];
     if (brush.mode === 'raise'){
@@ -4264,6 +4343,115 @@ function setTerrainCells(list){
   flushTerrain(); changed(); wakeDebris();
 }
 
+/* ---------- Werkstatt: Fahrzeug aufbocken ----------
+   Das Fahrzeug wird angehoben und steht auf gelben Böcken aus Steinen (Gelände mit Noppen, Bodenart „Bock“).
+   Darunter ist Platz für Fahrwerk, Räder und Kufen; die Kamera darf dann unter das Fahrzeug schauen.
+   Die Böcke halten das Fahrzeug fest. Soll ein Teil an die Stelle eines Bocks, rücken die Böcke aus. */
+function bockCells(){
+  if (bockCache) return bockCache;
+  const out = [];
+  if (curKind === 'garage') for (let z = GB0; z < GB1; z++) for (let x = GB0; x < GB1; x++){ const i = ti(x, z); if (terrG[i] === BOCK_G) out.push(i); }
+  return (bockCache = out);
+}
+const bocked = () => bockCells().length > 0;
+function voxKeys(t, ax, ay, az, r){ const s = new Set(); for (const [x, l, z] of PARTS[t].rot[r].vox) s.add(K(ax + x, ay + l, az + z)); return s; }
+function collidesBesideBocks(t, ax, ay, az, r, bc){
+  const set = new Set(bc);
+  for (const [x, l, z] of PARTS[t].rot[r].vox){
+    const X = ax + x, Y = ay + l, Z = az + z, i = ti(X, Z);
+    if (vox.has(K(X, Y, Z)) || Y < (set.has(i) ? 0 : terrH[i])) return true;
+  }
+  return false;
+}
+// Wohin die Böcke kommen: 2×2-Säulen unter der tragenden Unterseite, frei von allem, was darunter hängt
+function planBocks(extra){
+  const all = [...parts.values()]; if (!all.length) return null;
+  const solid = all.filter(r => !PARTS[r.t].rests), pool = solid.length ? solid : all;
+  const baseY = Math.min(...pool.map(r => r.y));
+  if (baseY <= 0 || baseY > MAX_TL) return null;
+  const top = new Set();
+  for (const r of pool) if (r.y === baseY){ const L = PARTS[r.t].rot[r.r]; for (const [x, z] of (PARTS[r.t].rests ? L.base : L.bottoms)) top.add(ti(r.x + x, r.z + z)); }
+  const freeCol = i => { const x = i % GRID, z = (i / GRID) | 0; for (let y = 0; y < baseY; y++){ const k = K(x, y, z); if (vox.has(k) || (extra && extra.has(k))) return false; } return true; };
+  const ok = new Set([...top].filter(freeCol));
+  let cand = [];
+  for (const i of ok){ const x = i % GRID, z = (i / GRID) | 0, c = [i, ti(x + 1, z), ti(x, z + 1), ti(x + 1, z + 1)]; if (x + 1 < GB1 && z + 1 < GB1 && c.every(j => ok.has(j))) cand.push({ x: x + 1, z: z + 1, cells: c }); }
+  if (!cand.length) cand = [...ok].map(i => ({ x: (i % GRID) + 0.5, z: ((i / GRID) | 0) + 0.5, cells: [i] }));
+  if (!cand.length) return null;
+  let x0 = Infinity, z0 = Infinity, x1 = -Infinity, z1 = -Infinity;
+  for (const i of top){ const x = i % GRID, z = (i / GRID) | 0; x0 = Math.min(x0, x); z0 = Math.min(z0, z); x1 = Math.max(x1, x + 1); z1 = Math.max(z1, z + 1); }
+  const alongX = x1 - x0 >= z1 - z0, len = alongX ? x1 - x0 : z1 - z0, cx = (x0 + x1) / 2, cz = (z0 + z1) / 2;
+  const fr = len >= 10 ? [0.22, 0.78] : len >= 5 ? [0.3, 0.7] : [0.5];
+  const used = new Set(), cells = [];
+  for (const f of fr){
+    const tx = alongX ? x0 + f * (x1 - x0) : cx, tz = alongX ? cz : z0 + f * (z1 - z0);
+    let best = null, bd = Infinity;
+    for (const c of cand){ if (c.cells.some(j => used.has(j))) continue; const d = Math.hypot(c.x - tx, c.z - tz); if (d < bd){ bd = d; best = c; } }
+    if (best) for (const j of best.cells){ used.add(j); cells.push(j); }
+  }
+  return cells.length ? { baseY, cells } : null;
+}
+function moveBocks(plan){
+  const old = bockCells(), now2 = new Set(plan.cells), aff = [...new Set([...old, ...plan.cells])];
+  const before = aff.map(i => [i, terrH[i], terrG[i], terrW[i]]), after = aff.map(i => now2.has(i) ? [i, plan.baseY, BOCK_G, WNONE] : [i, 0, 4, WNONE]);
+  setTerrainCells(after);
+  return { before, after };
+}
+function shiftAll(dy){
+  if (!dy) return;
+  const snaps = [...parts.values()].map(snap);
+  for (const r of [...parts.values()]) removePartRaw(r);
+  for (const s of snaps) addPart({ ...s, y: s.y + dy });
+}
+function setBock(on){
+  if (curKind !== 'garage' || mode !== 'build' || opening || quake.active) return;
+  if (on === bocked()) return;
+  if (on){
+    const all = [...parts.values()];
+    if (!all.length){ toast('Bau zuerst ein Fahrzeug, dann kannst du es aufbocken.', 2200); audio.tock(); return; }
+    const solid = all.filter(r => !PARTS[r.t].rests), pool = solid.length ? solid : all;
+    const dy = Math.max(BOCK_H - Math.min(...pool.map(r => r.y)), 2 - Math.min(...all.map(r => r.y)));
+    shiftAll(dy);
+    const plan = planBocks();
+    if (!plan){ shiftAll(-dy); toast('Unter diesem Fahrzeug ist kein Platz für Böcke.', 2400); audio.tock(); return; }
+    const before = plan.cells.map(i => [i, terrH[i], terrG[i], terrW[i]]), after = plan.cells.map(i => [i, plan.baseY, BOCK_G, WNONE]);
+    setTerrainCells(after);
+    pushUndo({ type: 'bock', on: true, dy, before, after });
+    audio.swish(); bockView();
+    toast('Aufgebockt!', 1600);
+    tut.toastOnce('bock', 'Jetzt siehst du die Unterseite. Tipp sie an, dann setzt du dort Fahrwerk, Räder oder Kufen an. Mit zwei Fingern drehst du die Ansicht.');
+  } else {
+    const cells = bockCells(), before = cells.map(i => [i, terrH[i], terrG[i], terrW[i]]), after = cells.map(i => [i, 0, 4, WNONE]);
+    setTerrainCells(after);
+    const dy = parts.size ? -Math.min(...[...parts.values()].map(r => r.y)) : 0;
+    shiftAll(dy);
+    const fx = runStatics();
+    pushUndo({ type: 'bock', on: false, dy, before, after, fx });
+    audio.plopp(); bockView();
+    if (fx.fell.length) toast('Beim Absenken hat etwas nicht gehalten. Rückgängig hebt es wieder an.', 2600);
+  }
+}
+// Kamera: aufgebockt schräg von unten, sonst normal von oben
+function bockView(){
+  const b = bounds(); if (!b) return;
+  const cx = (b.x0 + b.x1) / 2, cz = (b.z0 + b.z1) / 2, size = Math.max(b.x1 - b.x0, b.z1 - b.z0);
+  if (bocked()){ cam.g.target.set(cx, BOCK_H * P - 0.6, cz); cam.g.dist = clamp(size * 1.2 + 14, 22, 70); cam.g.el = minEl() + 0.04; }
+  else { cam.g.target.set(cx, (b.y0 + b.y1) / 3, cz); cam.g.dist = clamp(size * 1.5 + 10, 12, 280); if (cam.g.el < 0.25) cam.g.el = 0.45; }
+}
+// Tiefster Blickwinkel: aufgebockt bis knapp über den Boden, sonst schräg von oben
+function minEl(){
+  if (!(curKind === 'garage' && mode === 'build' && bocked())) return 0.1;
+  const g = cam.g;
+  return Math.max(-0.55, Math.asin(clamp((0.9 - g.target.y) / Math.max(1, g.dist), -0.95, 0.95)));
+}
+function clampEl(){ cam.g.el = clamp(cam.g.el, minEl(), 1.5); }
+function renderBockBtn(){
+  const b = document.getElementById('btnBock'); if (!b || !window.__booted) return;
+  const on = bocked();
+  b.setAttribute('aria-pressed', String(on));
+  b.querySelector('span').textContent = on ? 'Absenken' : 'Aufbocken';
+  b.querySelector('.up').style.display = on ? 'none' : ''; b.querySelector('.down').style.display = on ? '' : 'none';
+}
+
 /* ---------- Kamera ---------- */
 const cam = { target: new THREE.Vector3(65, 2, 64), az: 0.55, el: 0.5, dist: 36, g: { target: new THREE.Vector3(65, 2, 64), az: 0.55, el: 0.5, dist: 36 } };
 function updateCamera(dt){
@@ -4277,12 +4465,13 @@ function updateCamera(dt){
   const after = cam.dist + cam.az + cam.el + cam.target.x + cam.target.y + cam.target.z;
   return Math.abs(after - before) > 1e-4;
 }
-function clampTarget(v){ if (mode === 'play') return; v.x = clamp(v.x, -16, GRID + 16); v.z = clamp(v.z, -16, GRID + 16); v.y = clamp(v.y, 0, 90); }
-function orbit(dx, dy){ cam.g.az -= dx * 0.0075; cam.g.el = clamp(cam.g.el + dy * 0.006, 0.1, 1.5); }
+function clampTarget(v){ if (mode === 'play') return; v.x = clamp(v.x, -16, GRID + 16); v.z = clamp(v.z, -16, GRID + 16); v.y = clamp(v.y, curKind === 'garage' && bocked() ? BOCK_H * P * 0.55 : 0, 90); }
+function orbit(dx, dy){ cam.g.az -= dx * 0.0075; cam.g.el = clamp(cam.g.el + dy * 0.006, minEl(), 1.5); }
 function zoomAt(f, point){
   const nd = clamp(cam.g.dist * f, 5, 280), k = nd / cam.g.dist;
   if (point){ cam.g.target.lerp(point, 1 - k); clampTarget(cam.g.target); }
   cam.g.dist = nd;
+  if (cam.g.el < 0.1) clampEl();
 }
 function pan(dx, dy){
   const s = cam.g.dist * 0.0017, a = cam.g.az;
@@ -4544,6 +4733,7 @@ function renderTerrBar(){
 for (const b of document.querySelectorAll('#terrBar [data-mode]')) b.addEventListener('click', () => { const m = b.dataset.mode; brush.mode = /^\d$/.test(m) ? +m : m; renderTerrBar(); audio.ui(); });
 for (const b of document.querySelectorAll('#terrBar [data-size]')) b.addEventListener('click', () => { brush.size = +b.dataset.size; renderTerrBar(); audio.ui(); });
 for (const b of document.querySelectorAll('.tool[data-tool]')) b.addEventListener('click', () => setTool(b.dataset.tool));
+$('#btnBock').addEventListener('click', () => { setBock(!bocked()); audio.ui(); });
 let rotTurns = 0;
 function rotateSel(){
   sel.r = (sel.r + 1) % 4; rotTurns++;
@@ -6561,7 +6751,7 @@ const TOUR = [
     { sel: '#btnCenter', t: 'Bauwerk zeigen', x: 'Holt die Kamera zurück zu deinem Bauwerk.' }
   ] },
   { id: 'landschaft', title: 'Landschaft und Wetter', sub: 'Hügel, Wasser, Sonne und Nacht', steps: [
-    { sel: '.tools [data-tool="terrain"]', mode: 'build', t: 'Landschaft', x: 'Hügel, Graben, Wasser und Straße. Wähle unten das Werkzeug und streiche über die Platte. Gedrückt halten lässt einen Hügel wachsen.' },
+    { sel: '.tools [data-tool="terrain"]', mode: 'build', t: 'Landschaft', x: 'Hügel, Graben, Wasser und Straße. Wähle unten das Werkzeug und streiche über die Platte. Gedrückt halten lässt einen Hügel wachsen. Wasser in einer Grube läuft bis zum Rand voll.' },
     { sel: '#btnWeather', t: 'Wetter und Tageszeit', x: 'Sonne, Wolken, Regen, Gewitter, Schnee und Nebel. Mit dem Regler stellst du die Uhrzeit ein, auch Nacht.' }
   ] },
   { id: 'spielen', title: 'Spielen und Fahren', sub: 'Figur, Autos und Fliegen', steps: [
@@ -6583,6 +6773,7 @@ const TOUR = [
     { sel: '#cats [data-cat="air"]', t: 'Flugzeugteile', x: 'Flügel, Leitwerke, Propeller in drei Größen, Düse, Kuppel und Fahrwerk.' },
     { t: 'Was schnell macht', x: 'Große Räder machen ein Auto schnell, kleine geben mehr Kraft. Ein größerer Propeller oder mehr Motoren machen ein Flugzeug schneller. Jedes Teil wiegt etwas.' },
     { t: 'Die Fahrzeugdaten', x: 'In der Werkstatt steht oben, wie schwer dein Fahrzeug ist, wie schnell es wird und was ihm noch fehlt.' },
+    { sel: '#btnBock', t: 'Aufbocken', x: 'Hebt das Fahrzeug auf gelbe Böcke. Dann schaust du von unten und baust Fahrwerk, Räder oder Kufen an die Unterseite. „Absenken“ stellt es wieder auf den Boden.' },
     { t: 'Probefahrt', x: 'Autos starten auf der Teststrecke mit Schanzen, Pylonen und einer Mauer. Flugzeuge starten auf der Landebahn. Bei Unfällen fallen Teile ab, wie in echt.' }
   ] },
   { id: 'missionen', title: 'Missionen', sub: 'Aufträge mit Stufen', steps: [
@@ -7345,7 +7536,7 @@ async function start(data){
   if ('serviceWorker' in navigator && document.querySelector('link[rel="manifest"]')){ try { navigator.serviceWorker.register('sw.js').catch(() => {}); } catch (err) {} }
   window.__booted = true;
   { const e0 = curEntry(); if (e0 && !thumbs.get(e0.id)){ updateCamera(1); makeThumb(); } }
-  renderHome();
+  renderHome(); renderBockBtn();
   try { figPrevInit(); } catch (err) {}
   renderMission();
 }
