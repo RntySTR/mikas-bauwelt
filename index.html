@@ -523,6 +523,143 @@ body:not([data-kind="garage"]) .garage-only{display:none!important}
   .toast{bottom:calc(env(safe-area-inset-bottom,0px) + 128px)}
 }
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* Ausweise */
+.sheet-card.lic-sheet{width:min(1080px,100%)}
+.lic-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin-top:14px}
+.lic{--lc:#1f6fd1;--ld:#15529e;display:flex;flex-direction:column;border-radius:22px;background:linear-gradient(180deg,#fff 0,#f7f9fc 100%);box-shadow:inset 0 0 0 2px var(--lc),0 8px 20px rgba(28,43,59,.1);overflow:hidden;min-width:0}
+.lic.focus{box-shadow:inset 0 0 0 3px var(--lc),0 0 0 4px rgba(255,198,41,.7),0 8px 20px rgba(28,43,59,.1)}
+.lic-band{display:flex;align-items:center;gap:10px;padding:12px 16px;background:var(--lc);color:#fff;box-shadow:inset 0 -4px 0 var(--ld)}
+.lic-band svg{width:28px;height:28px;flex:none;fill:none;stroke:currentColor;stroke-width:2.1;stroke-linecap:round;stroke-linejoin:round}
+.lic-band h3{margin:0;font-family:var(--font-display);font-weight:400;font-size:24px;letter-spacing:.3px;text-shadow:0 2px 0 rgba(0,0,0,.18)}
+.lic-id{display:flex;align-items:center;gap:14px;padding:14px 16px 6px}
+.lic-pic{width:84px;height:84px;flex:none;border-radius:16px;background:linear-gradient(180deg,#e6f1fc,#cfe2f6);box-shadow:inset 0 0 0 2px rgba(28,43,59,.08);object-fit:cover}
+.lic-who{display:grid;grid-template-columns:auto;row-gap:1px;min-width:0}
+.lic-who small{font-size:11px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft)}
+.lic-who b{font-size:19px;font-weight:900;line-height:1.15;margin-bottom:5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lic-stamps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;padding:8px 14px 4px}
+.stamp{display:grid;place-items:center}
+.stamp .ring{width:min(96px,100%);aspect-ratio:1;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;text-align:center;border:2.5px dashed var(--line);color:var(--ink-soft);padding:6px}
+.stamp b{font-size:11.5px;letter-spacing:-.1px;font-weight:900;line-height:1.1;overflow-wrap:anywhere}
+.stamp small{font-size:10.5px;font-weight:800;opacity:.85;font-variant-numeric:tabular-nums}
+.stamp.next .ring{border-color:var(--lc);color:var(--ink)}
+.stamp.on .ring{border:3px double var(--lc);color:var(--lc);background:color-mix(in srgb,var(--lc) 9%,#fff);transform:rotate(var(--rot));box-shadow:inset 0 0 0 3px #fff,inset 0 0 0 5px color-mix(in srgb,var(--lc) 35%,transparent)}
+.stamp.fresh .ring{animation:stampIn .55s cubic-bezier(.2,1.6,.4,1) both}
+@keyframes stampIn{from{transform:scale(1.8) rotate(-20deg);opacity:0}to{transform:rotate(var(--rot));opacity:1}}
+.lic-next{padding:8px 16px 4px}
+.lic-h{margin:0 0 6px;font-size:13px;font-weight:900;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-soft)}
+.lic-h.done{color:var(--leaf)}
+.lic-tasks{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px}
+.lic-tasks li{display:flex;align-items:center;gap:8px}
+.lic-tasks .ck{width:24px;height:24px;flex:none;border-radius:50%;display:grid;place-items:center;box-shadow:inset 0 0 0 2px var(--line);color:transparent}
+.lic-tasks .ck svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.lic-tasks li.ok .ck{background:var(--leaf);box-shadow:none;color:#fff}
+.lic-tasks button{border:0;background:none;padding:6px 0;font:inherit;font-weight:900;font-size:16px;color:var(--ink);text-align:left;text-decoration:underline;text-decoration-color:color-mix(in srgb,var(--lc) 45%,transparent);text-underline-offset:3px;min-height:36px}
+.lic-tasks li.ok button{color:var(--ink-soft);text-decoration:none}
+.lic-rw{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:auto;padding:12px 14px 14px;border-top:1.5px dashed var(--line)}
+.rw{display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center;opacity:.5;filter:grayscale(.75)}
+.rw.open{opacity:1;filter:none}
+.rw-vis{width:var(--s,72px);height:var(--s,72px);border-radius:14px;background:var(--well-top);box-shadow:inset 0 0 0 1px var(--line);display:grid;place-items:center;overflow:hidden;flex:none}
+.rw-vis canvas,.rw-vis img{width:100%;height:100%;display:block;object-fit:cover}
+.rw-chrome{width:62%;height:62%;border-radius:50%;background:radial-gradient(circle at 32% 30%,#fff 0 12%,#dfe6ee 26%,#8f9aa6 52%,#eef2f6 70%,#6d7782 100%);box-shadow:0 2px 4px rgba(0,0,0,.2)}
+.rw-t{display:flex;flex-direction:column;min-width:0}
+.rw-t b{font-size:13px;font-weight:900;line-height:1.15}
+.rw-t small{font-size:11px;font-weight:800;color:var(--ink-soft)}
+.licup{--lc:#1f6fd1;--ld:#15529e;text-align:center;display:flex;flex-direction:column;align-items:center;gap:6px}
+.lu-lic{font-size:13px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;color:var(--lc)}
+.lu-stamp{width:96px;height:96px;border-radius:50%;display:grid;place-items:center;background:var(--lc);color:#fff;box-shadow:inset 0 -6px 0 var(--ld),0 0 0 6px #fff,0 0 0 9px var(--lc);animation:stampIn .6s cubic-bezier(.2,1.6,.4,1) both;--rot:-8deg;margin:8px 0 6px}
+.lu-stamp svg{width:54px;height:54px;fill:none;stroke:currentColor;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.licup h2{margin:0;font-family:var(--font-display);font-weight:400;font-size:38px;line-height:1.05}
+.licup p{margin:0;font-weight:700;color:var(--ink-soft);max-width:40ch}
+.lu-reward{display:flex;align-items:center;gap:14px;margin:12px 0 6px;padding:12px 16px 12px 12px;border-radius:18px;background:#fff6d6;box-shadow:inset 0 0 0 2px var(--sun);text-align:left;max-width:100%}
+.lu-reward .rw-t small{font-size:11.5px;letter-spacing:.06em;text-transform:uppercase}
+.lu-reward .rw-t b{font-size:20px;margin:2px 0}
+.lu-reward .rw-t span{font-size:14px;font-weight:700;color:var(--ink-soft)}
+.part.locked canvas,.swatch.locked,.chip.locked{opacity:.38;filter:grayscale(.8)}
+.part.locked,.swatch.locked{position:relative}
+.part.locked::after,.swatch.locked::after,.chip.locked::before{content:"";position:absolute;right:6px;top:6px;width:18px;height:18px;border-radius:6px;background:var(--ink) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect x='6' y='11' width='12' height='9' rx='2' fill='white'/%3E%3Cpath d='M9 11V8a3 3 0 0 1 6 0v3' stroke='white' stroke-width='2.4' fill='none'/%3E%3C/svg%3E") center/14px no-repeat}
+.swatch.locked::after{right:-4px;top:-4px}
+.chip.locked{position:relative;padding-left:30px}
+.chip.locked::before{left:7px;top:50%;transform:translateY(-50%);right:auto}
+@media (max-width:520px){.lic-pic{width:70px;height:70px}.lic-band h3{font-size:21px}}
+
+/* Bauanleitungen */
+.gc-step{display:flex;align-items:baseline;gap:8px;margin-top:2px}
+.gc-step b{font-family:var(--font-display);font-weight:400;font-size:30px;line-height:1}
+.gc-step span{font-weight:900;font-size:15px;color:var(--ink-soft)}
+.gc-bar{height:9px;border-radius:5px;background:var(--well-bottom);overflow:hidden;margin:8px 0 10px}
+.gc-bar i{display:block;height:100%;width:0;border-radius:5px;background:var(--leaf);transition:width .35s}
+.gc-parts{display:flex;flex-wrap:wrap;gap:8px}
+.gc-part{position:relative;width:78px;height:78px;border:0;border-radius:16px;padding:4px;background:var(--well-top);box-shadow:inset 0 0 0 2px var(--sun)}
+.gc-part canvas{width:100%;height:100%;display:block}
+.gc-part.ok{box-shadow:inset 0 0 0 2px var(--leaf);opacity:.55}
+.gc-n{position:absolute;right:3px;bottom:3px;min-width:30px;height:26px;padding:0 7px;border-radius:13px;background:var(--ink);color:#fff;font-weight:900;font-size:14px;line-height:26px;font-variant-numeric:tabular-nums}
+.gc-part.ok .gc-n{background:var(--leaf)}
+.gc-hint{margin-top:10px}
+.gcard .mc-btns{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.sheet-card.gl-sheet{width:min(1000px,100%)}
+.gl-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px;margin-top:12px}
+.gl-card{display:flex;flex-direction:column;gap:6px;border:0;border-radius:20px;padding:10px 12px 12px;background:var(--well-top);box-shadow:inset 0 0 0 1px var(--line);text-align:left;color:var(--ink);min-width:0}
+.gl-card canvas{width:100%;aspect-ratio:4/3;height:auto;display:block;border-radius:14px;background:linear-gradient(180deg,#eaf3fc,#d9e8f5)}
+.gl-card.done{box-shadow:inset 0 0 0 2px var(--leaf);background:#eef8f1}
+.gl-t{display:flex;flex-direction:column;gap:2px}
+.gl-t b{font-family:var(--font-display);font-weight:400;font-size:22px;line-height:1.05}
+.gl-t small{font-size:13.5px;font-weight:700;line-height:1.35;color:var(--ink-soft)}
+.gl-meta{display:flex;align-items:center;gap:10px;margin-top:auto;font-size:12.5px;font-weight:900;color:var(--ink-soft)}
+.gl-diff{display:flex;gap:3px}
+.gl-diff i{width:14px;height:9px;border-radius:3px;background:var(--well-bottom);box-shadow:inset 0 -2px 0 rgba(0,0,0,.08)}
+.gl-diff i.on{background:var(--sun-deep)}
+
+/* Hauptmenü: Abenteuer-Kacheln */
+.home-adv{grid-column:1/-1;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.hadv{position:relative;display:flex;align-items:center;gap:10px;border:0;border-radius:20px;padding:10px 12px 10px 10px;min-height:68px;background:#fff;color:var(--ink);text-align:left;box-shadow:inset 0 -5px 0 rgba(28,43,59,.08),0 8px 18px rgba(28,43,59,.1);min-width:0}
+.hadv-ic{flex:none;width:46px;height:46px;border-radius:14px;background:var(--a);color:#fff;display:grid;place-items:center;box-shadow:inset 0 -4px 0 var(--ad)}
+.hadv-ic svg{width:26px;height:26px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.hadv-t{display:flex;flex-direction:column;gap:1px;min-width:0}
+.hadv-t b{font-family:var(--font-display);font-weight:400;font-size:clamp(16px,1.9vw,21px);line-height:1.05;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hadv-t small{font-weight:800;font-size:12.5px;color:var(--ink-soft);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-variant-numeric:tabular-nums}
+.hadv-t small:empty{display:none}
+.hnew{position:absolute;top:6px;right:8px;padding:3px 9px;border-radius:999px;background:var(--tomato);color:#fff;font-style:normal;font-weight:900;font-size:12px;box-shadow:0 3px 8px rgba(228,67,45,.35);animation:pop .4s cubic-bezier(.2,1.5,.4,1)}
+.hadv:disabled{filter:saturate(.6);opacity:.75}
+@media (max-width:520px){
+  .home-adv{gap:8px}
+  .hadv{flex-direction:column;align-items:center;text-align:center;padding:10px 6px 10px;gap:6px}
+  .hadv-t{align-items:center}
+  .hadv-t b{font-size:15px;white-space:normal}
+  .hadv-t small{white-space:normal;text-align:center;line-height:1.2}
+  .hadv-ic{width:40px;height:40px}
+}
+
+/* Schatzkarte */
+.sheet-card.tr-sheet{width:min(980px,100%)}
+.tr-body{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:18px;margin-top:12px;align-items:start}
+#trMap{width:100%;height:auto;aspect-ratio:1;border-radius:20px;box-shadow:inset 0 0 0 2px var(--line),0 6px 16px rgba(28,43,59,.12);background:#cfe4f2}
+.tr-areas{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.tr-areas li{display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-rows:auto auto;column-gap:10px;row-gap:3px;padding:10px 14px;border-radius:16px;background:var(--well-top);box-shadow:inset 0 0 0 1px var(--line)}
+.tr-areas li.ok{background:#fff6d6;box-shadow:inset 0 0 0 2px var(--sun)}
+.tr-areas b{font-weight:900;font-size:15.5px}
+.tr-areas small{grid-column:2;grid-row:1;align-self:center;font-weight:800;font-size:12.5px;color:var(--ink-soft);white-space:nowrap}
+.tr-dots{grid-column:1/3;display:flex;gap:5px}
+.tr-dots i{width:15px;height:11px;border-radius:3px;background:var(--well-bottom);box-shadow:inset 0 -2px 0 rgba(0,0,0,.08)}
+.tr-dots i.on{background:#e7b416;box-shadow:inset 0 -2px 0 #a87600}
+@media (max-width:760px){.tr-body{grid-template-columns:minmax(0,1fr)}}
+
+@media (max-width:860px){ .hadv{padding:10px 8px} .hadv-ic{width:40px;height:40px;border-radius:12px} .hadv-ic svg{width:23px;height:23px} }
+/* Bauanleitung auf schmalen Bildschirmen: kompakt zwischen Werkzeugleiste und Farben */
+@media (max-width:700px){
+  .gcard{left:calc(env(safe-area-inset-left,0px) + var(--gap) + var(--toolw) + 10px);right:calc(env(safe-area-inset-right,0px) + var(--gap) + 62px);width:auto;padding:10px 12px 12px;max-height:calc(100vh - 300px)}
+  .gcard .mc-lv,.gcard .gc-hint,.gcard #gcAll{display:none}
+  .gcard .mc-head{position:absolute;right:8px;top:8px;margin:0}
+  .gcard .gc-title{font-size:16px;padding-right:34px}
+  .gc-step b{font-size:22px}
+  .gc-step span{font-size:13px}
+  .gc-bar{margin:6px 0 8px;height:7px}
+  .gc-parts{gap:6px}
+  .gc-part{width:54px;height:54px;border-radius:12px;padding:3px}
+  .gc-n{min-width:24px;height:20px;line-height:20px;font-size:12px;padding:0 5px;border-radius:10px;right:2px;bottom:2px}
+  .gcard .mc-btns{margin-top:8px}
+  #gcLook{min-height:38px;padding:0 12px;font-size:13.5px}
+}
 </style>
 </head>
 <body>
@@ -675,6 +812,11 @@ body:not([data-kind="garage"]) .garage-only{display:none!important}
           <span id="hmNext" class="hmis-next"></span>
         </button>
       </div>
+      <div class="home-adv">
+          <button class="hadv" type="button" data-act="guides" style="--a:#7a44b0;--ad:#5b2f88" disabled><span class="hadv-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 5.5C6.5 4 9.5 4 12 6c2.5-2 5.5-2 8-.5V19c-2.5-1.5-5.5-1.5-8 .5-2.5-2-5.5-2-8-.5z"/><path d="M12 6v13.5"/></svg></span><span class="hadv-t"><b>Bauanleitungen</b><small id="hgdCount"></small></span></button>
+          <button class="hadv" type="button" data-act="licenses" style="--a:#1f6fd1;--ad:#15529e" disabled><span class="hadv-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2.5"/><circle cx="8.5" cy="11" r="2.2"/><path d="M5.5 16c.6-1.6 1.7-2.3 3-2.3s2.4.7 3 2.3M14 10h4M14 13.5h4"/></svg></span><span class="hadv-t"><b>Ausweise</b><small id="hlicLv"></small></span><i id="hlicNew" class="hnew" hidden>Neu</i></button>
+          <button class="hadv" type="button" data-act="treasure" style="--a:#d99a00;--ad:#a87600" disabled><span class="hadv-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 10.5h16V19a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 19z"/><path d="M4 10.5V9a5 5 0 0 1 5-5h6a5 5 0 0 1 5 5v1.5"/><path d="M10 13h4v3h-4z"/></svg></span><span class="hadv-t"><b>Schatzsuche</b><small id="htrCount"></small></span></button>
+        </div>
     </div>
     <nav class="home-more" aria-label="Weitere">
       <button class="hchip" type="button" data-act="gallery" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="7" height="7" rx="1.6"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.6"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.6"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.6"/></svg><span>Meine Bauwerke</span><b id="hgCount"></b></button>
@@ -714,10 +856,50 @@ body:not([data-kind="garage"]) .garage-only{display:none!important}
   <ul class="mgoals"></ul>
   <div class="mc-btns"><button class="btn mc-all" type="button">Alle Missionen</button><button class="btn primary mc-next" type="button" hidden></button></div>
 </div>
+<div id="gcard" class="mcard gcard panel" hidden>
+  <div class="mc-head"><span class="mc-lv">Bauanleitung</span><button class="icon-btn gc-close" type="button" aria-label="Anleitung beenden"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+  <h3 class="mc-title gc-title"></h3>
+  <div class="gc-step"><b id="gcNum"></b><span id="gcOf"></span></div>
+  <div class="gc-bar"><i></i></div>
+  <div id="gcParts" class="gc-parts"></div>
+  <p id="gcHint" class="mc-text gc-hint"></p>
+  <div class="mc-btns"><button id="gcAll" class="btn" type="button">Alle Anleitungen</button><button id="gcLook" class="btn primary" type="button">Zeig mir die Stelle</button></div>
+</div>
+<div id="guideSheet" class="sheet" hidden>
+  <div class="sheet-card wide gl-sheet" role="dialog" aria-modal="true" aria-labelledby="glTitle">
+    <div class="sheet-head"><h2 id="glTitle">Bauanleitungen</h2><span class="grow"></span><button class="icon-btn" type="button" data-close aria-label="Schließen"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+    <p class="note">Bau Schritt für Schritt nach. Die leuchtenden Teile zeigen, wohin der nächste Stein kommt.</p>
+    <div id="guideList" class="gl-list"></div>
+  </div>
+</div>
+<div id="treasureSheet" class="sheet" hidden>
+  <div class="sheet-card wide tr-sheet" role="dialog" aria-modal="true" aria-labelledby="trTitle">
+    <div class="sheet-head"><h2 id="trTitle">Schatzkarte</h2><span id="trCount" class="grow"></span><button class="icon-btn" type="button" data-close aria-label="Schließen"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+    <p class="note">Überall in der Landschaft liegen goldene Steine. Manche findest du zu Fuß oder mit dem Auto, manche schweben über Schanzen, Gipfeln und in den Wolken. Fahr oder flieg einfach hindurch.</p>
+    <div class="tr-body"><canvas id="trMap" width="640" height="640" aria-label="Karte der Landschaft"></canvas><ul id="trAreas" class="tr-areas"></ul></div>
+  </div>
+</div>
 <div id="missionSheet" class="sheet" hidden>
   <div class="sheet-card wide" role="dialog" aria-modal="true" aria-labelledby="mTitle">
     <div class="sheet-head"><h2 id="mTitle">Missionen</h2><span id="mProg" class="grow"></span><button id="mBack" class="btn" type="button" hidden>Übersicht</button><button class="icon-btn" type="button" data-close aria-label="Schließen"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
     <div id="mBoard" class="mboard"></div>
+  </div>
+</div>
+<div id="licSheet" class="sheet" hidden>
+  <div class="sheet-card wide lic-sheet" role="dialog" aria-modal="true" aria-labelledby="licTitle">
+    <div class="sheet-head"><h2 id="licTitle">Meine Ausweise</h2><span class="grow"></span><button id="btnLicMissions" class="btn" type="button">Alle Missionen</button><button class="icon-btn" type="button" data-close aria-label="Schließen"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+    <p class="note">Jede Stufe ist eine Prüfung. Schaffst du alle Missionen einer Stufe, bekommst du einen Stempel und eine Belohnung.</p>
+    <div id="licCards" class="lic-cards"></div>
+  </div>
+</div>
+<div id="licUpSheet" class="sheet" hidden>
+  <div class="sheet-card confirm-card licup" role="alertdialog" aria-modal="true" aria-labelledby="luTitle">
+    <span id="luLic" class="lu-lic"></span>
+    <div class="lu-stamp" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m6 12.5 4 4 8-9"/></svg></div>
+    <h2 id="luTitle"></h2>
+    <p id="luText"></p>
+    <div id="luReward" class="lu-reward"></div>
+    <div class="btn-row"><button id="luNext" class="btn" type="button">Weiter</button><button id="luShow" class="btn primary" type="button">Ausweis ansehen</button></div>
   </div>
 </div>
 <div id="mdoneSheet" class="sheet" hidden>
@@ -813,14 +995,14 @@ const COLOR_DATA = [
   ['Blau','#0055BF','solid','blue'], ['Nachtblau','#0A3463','solid','blue'], ['Mittelblau','#5A93DB','solid','blue'], ['Hellblau','#9FC3E9','solid','blue'], ['Azurblau','#078BC9','solid','blue'], ['Himmelblau','#36AEBF','solid','blue'], ['Türkis','#008F9B','solid','blue'], ['Aqua','#ADC3C0','solid','blue'], ['Sandblau','#6074A1','solid','blue'],
   ['Hellnougat','#F6D7B3','solid','brown'], ['Nougat','#D09168','solid','brown'], ['Mittelnougat','#AA7D55','solid','brown'], ['Beige','#E4CD9E','solid','brown'], ['Dunkelbeige','#958A73','solid','brown'], ['Braun','#582A12','solid','brown'], ['Dunkelbraun','#352100','solid','brown'],
   ['Glas klar','#EEF6F8','trans','glass'], ['Glas rot','#D0281A','trans','glass'], ['Glas orange','#F08F1C','trans','glass'], ['Glas gelb','#F5CD2F','trans','glass'], ['Glas grün','#5FA86E','trans','glass'], ['Glas neongrün','#E2EE5C','trans','glass'], ['Glas hellblau','#AEEFEC','trans','glass'], ['Glas blau','#2050C0','trans','glass'], ['Glas lila','#A5A5CB','trans','glass'], ['Glas pink','#DF6695','trans','glass'], ['Glas rauch','#635F52','trans','glass'],
-  ['Silber','#A3A6AB','metal','metal'], ['Gold','#D2A64A','metal','metal'], ['Kupfer','#BC7A55','metal','metal'], ['Perlgrau','#6D6E73','metal','metal']
+  ['Silber','#A3A6AB','metal','metal'], ['Gold','#D2A64A','metal','metal'], ['Kupfer','#BC7A55','metal','metal'], ['Perlgrau','#6D6E73','metal','metal'], ['Chrom','#EEF2F6','chrome','metal']
 ];
 const COLORS = COLOR_DATA.map(([name, hex, cls, fam], i) => ({ i, name, hex, cls, fam, col: new THREE.Color(hex) }));
 const colorByName = new Map(COLORS.map(c => [c.name, c.i]));
 const FAMILIES = [['neutral','Weiß bis Schwarz'],['red','Rot und Rosa'],['purple','Lila'],['orange','Orange und Gelb'],['green','Grün'],['blue','Blau'],['brown','Braun und Beige'],['glass','Glas'],['metal','Metall']];
 
 /* ---------- Teilekatalog ---------- */
-const CATS = [['bricks','Steine'],['plates','Platten'],['tiles','Fliesen'],['slopes','Dach'],['rounds','Rund'],['arches','Bögen'],['light','Licht'],['veh','Fahrzeug'],['air','Flugzeug']];
+const CATS = [['bricks','Steine'],['plates','Platten'],['tiles','Fliesen'],['slopes','Dach'],['rounds','Rund'],['arches','Bögen'],['light','Licht'],['veh','Fahrzeug'],['air','Flugzeug'],['star','Belohnungen']];
 const PARTS = [];
 const partByKey = new Map();
 function def(o){ o.idx = PARTS.length; PARTS.push(o); partByKey.set(o.key, o.idx); return o; }
@@ -902,6 +1084,11 @@ def({ key:'turbofan', cat:'air', name:'Mantelstromtriebwerk', label:'Triebwerk',
 def({ key:'gear_n', cat:'air', name:'Bugfahrwerk', label:'Bugrad', kind:'gear', w:2, d:2, h:14, rests:true, massMul:0.6, wr:0.55, layout: p => AK.gearLayout(p), build: p => AK.gearLeg(p), extras: p => AK.gearWheels(p), wheel:{ r: 0.55, cx: 0, cy: 0.55, cz: 0, width: 1.2 } });
 def({ key:'gear_m', cat:'air', name:'Hauptfahrwerk', label:'Hauptrad', kind:'gear', w:2, d:2, h:14, rests:true, massMul:0.6, wr:0.7, layout: p => AK.gearLayout(p), build: p => AK.gearLeg(p), extras: p => AK.gearWheels(p), wheel:{ r: 0.7, cx: 0, cy: 0.7, cz: 0, width: 1.3 } });
 def({ key:'nav', cat:'air', name:'Positionslicht', label:'Pos.-Licht', kind:'round', w:1, d:1, h:2, mainCls:'glow', layout: () => ({ vox: [[0, 0, 0], [0, 1, 0]], tops: [], bottoms: [[0, 0]] }), build: p => AK.navLight(p), light:{ y:0.6, r:1.6 } });
+// Belohnungen aus den Ausweisen: erst nach der jeweiligen Stufe verfügbar
+def({ key:'flag', cat:'star', name:'Fahne', label:'Fahne', kind:'flag', w:1, d:1, h:15, reward:'r_flag', layout: p => GK.full(p, false, true), build: p => RK.flagCloth(p), extras: p => RK.flagPole(p) });
+def({ key:'cup', cat:'star', name:'Pokal', label:'Pokal', kind:'cup', w:2, d:2, h:6, reward:'r_cup', layout: p => GK.full(p, false, true), build: p => RK.cup(p) });
+def({ key:'spoiler', cat:'star', name:'Heckflügel', label:'Heckflügel', kind:'spoiler', w:4, d:2, h:4, reward:'r_spoiler', layout: p => GK.full(p, false, true), build: p => RK.spoiler(p), extras: p => RK.spoilerPosts(p) });
+def({ key:'smoke', cat:'star', name:'Rauchpatrone', label:'Rauch', kind:'smoke', w:1, d:2, h:2, reward:'r_smoke', layout: p => GK.full(p, false, true), build: p => RK.smoke(p), extras: p => RK.smokeNozzle(p), smoke:{ pos:[0, 0.4, -1.15] } });
 def({ key:'strobe', cat:'air', name:'Blitzlicht', label:'Blitzlicht', kind:'round', w:1, d:1, h:2, mainCls:'strobe', layout: () => ({ vox: [[0, 0, 0], [0, 1, 0]], tops: [], bottoms: [[0, 0]] }), build: p => AK.navLight(p) });
 
 function rotXZ(x, z, r){ switch (r & 3){ case 0: return [x, z]; case 1: return [z, -x]; case 2: return [-x, -z]; default: return [-z, x]; } }
@@ -1348,6 +1535,45 @@ const AK = {
   },
   gearWheels(p){ return [...GK.wheelSet(p, p.wr, -0.33, 0, 0.42, '#E8ECEF'), ...GK.wheelSet(p, p.wr, 0.33, 0, 0.42, '#E8ECEF')]; },
   navLight(p){ return mergeGeometries([GK.lathe([[0.001, 0], [0.46, 0], [0.48, 0.03], [0.48, 0.37], [0.45, 0.4], [0.001, 0.4]], 'y', 0, 0, 0, 24), GK.lathe([[0.001, 0.4], [0.3, 0.4], [0.3, 0.5], [0.22, 0.68], [0.001, 0.74]], 'y', 0, 0, 0, 20)]); }
+};
+// Bausatz Belohnungen: Fahne, Pokal, Heckflügel, Rauchpatrone
+const RK = {
+  flagCloth(p){
+    const H = p.h * P, g = new THREE.BoxGeometry(2.5, 1.6, 0.05, 16, 1, 1).translate(1.35, H - 1.15, 0);
+    const a = g.attributes.position;
+    for (let i = 0; i < a.count; i++){ const x = a.getX(i); a.setZ(i, a.getZ(i) + Math.sin(x * 2.3) * 0.13 * Math.min(1, x / 0.6)); }
+    g.computeVertexNormals();
+    return cleanGeo(g);
+  },
+  flagPole(p){
+    const H = p.h * P;
+    const base = cleanGeo(new THREE.LatheGeometry([V2(0.001, 0), V2(0.44, 0), V2(0.47, 0.03), V2(0.47, 0.34), V2(0.44, 0.38), V2(0.12, 0.4), V2(0.001, 0.4)], 24));
+    const pole = GK.cyl(0.075, 0.085, H - 0.5, 'y', 0, 0.4 + (H - 0.5) / 2, 0, 12);
+    const ball = cleanGeo(new THREE.SphereGeometry(0.16, 14, 10).translate(0, H - 0.02, 0));
+    return [{ geo: mergeGeometries([base, pole]), hex: '#F4F4F4', cls: 'solid' }, { geo: ball, hex: '#D2A64A', cls: 'metal' }];
+  },
+  cup(p){
+    const plinth = GK.box(-0.95, 0, -0.95, 0.95, 0.42, 0.95, 0.06);
+    const body = cleanGeo(new THREE.LatheGeometry([V2(0.001, 0.42), V2(0.58, 0.42), V2(0.58, 0.52), V2(0.32, 0.66), V2(0.15, 0.86), V2(0.15, 1.2), V2(0.3, 1.32), V2(0.66, 1.5), V2(0.8, 1.86), V2(0.86, 2.3), V2(0.82, 2.36), V2(0.76, 2.32), V2(0.71, 1.92), V2(0.58, 1.62), V2(0.001, 1.56)], 32));
+    const handle = s => cleanGeo(new THREE.TorusGeometry(0.3, 0.065, 8, 18, Math.PI).rotateZ(-s * Math.PI / 2).translate(s * 0.8, 1.92, 0));
+    return mergeGeometries([plinth, body, handle(1), handle(-1)]);
+  },
+  spoiler(p){
+    const blade = cleanGeo(new RoundedBoxGeometry(3.9, 0.16, 1.5, 2, 0.06).rotateX(-0.14).translate(0, 1.42, -0.05));
+    const plate = s => GK.box(s * 1.95 - 0.08, 1.0, -0.92, s * 1.95 + 0.08, 1.62, 0.82, 0.03);
+    const foot = GK.box(-1.98, 0, -0.98, 1.98, 0.36, 0.98, 0.05);
+    return mergeGeometries([blade, plate(1), plate(-1), foot]);
+  },
+  spoilerPosts(){
+    const post = s => GK.box(s * 1.05 - 0.14, 0.36, -0.3, s * 1.05 + 0.14, 1.36, 0.3, 0.04);
+    return [{ geo: mergeGeometries([post(1), post(-1)]), hex: '#1B1F24', cls: 'solid' }];
+  },
+  smoke(p){
+    return mergeGeometries([GK.box(-0.46, 0, -0.96, 0.46, 0.2, 0.96, 0.04), GK.cyl(0.36, 0.36, 1.7, 'z', 0, 0.44, 0.02, 20), cleanGeo(new THREE.SphereGeometry(0.36, 18, 10, 0, Math.PI * 2, 0, Math.PI / 2).rotateX(Math.PI / 2).translate(0, 0.44, 0.87))]);
+  },
+  smokeNozzle(){
+    return [{ geo: GK.cyl(0.22, 0.34, 0.34, 'z', 0, 0.44, -0.98, 16), hex: '#3B3F44', cls: 'metal' }];
+  }
 };
 PARTS.forEach(buildLayout);
 
@@ -2262,10 +2488,11 @@ const BASE = {
   trans: () => new THREE.MeshPhysicalMaterial({ color: 0xffffff, roughness: 0.06, metalness: 0, transparent: true, opacity: 0.5, clearcoat: 1, clearcoatRoughness: 0.05, depthWrite: false }),
   metal: () => new THREE.MeshPhysicalMaterial({ color: 0xffffff, roughness: 0.3, metalness: 0.88, clearcoat: 0.4, clearcoatRoughness: 0.2 }),
   glow: () => new THREE.MeshPhysicalMaterial({ color: 0xffffff, roughness: 0.14, metalness: 0, transparent: true, opacity: 0.88, clearcoat: 1, clearcoatRoughness: 0.06 }),
-  rubber: () => new THREE.MeshPhysicalMaterial({ color: 0xffffff, roughness: 0.86, metalness: 0 })
+  rubber: () => new THREE.MeshPhysicalMaterial({ color: 0xffffff, roughness: 0.86, metalness: 0 }),
+  chrome: () => new THREE.MeshPhysicalMaterial({ color: 0xffffff, roughness: 0.06, metalness: 1, clearcoat: 1, clearcoatRoughness: 0.04 })
 };
 // Materialklasse → Grundmaterial und Leuchtart
-const CLS_BASE = { solid: 'solid', trans: 'trans', metal: 'metal', glow: 'glow', rubber: 'rubber', beacon: 'glow', flash: 'glow', strobe: 'glow' };
+const CLS_BASE = { solid: 'solid', trans: 'trans', metal: 'metal', chrome: 'chrome', glow: 'glow', rubber: 'rubber', beacon: 'glow', flash: 'glow', strobe: 'glow' };
 const CLS_KIND = { glow: 'glow', beacon: 'beacon', flash: 'flash', strobe: 'strobe' };
 const SHADOWLESS = new Set(['trans', 'glow', 'beacon', 'flash', 'strobe']);
 function newMat(cls, uOn){ const m = BASE[CLS_BASE[cls]](); if (uOn) m.userData.uOn = uOn; return patchMat(m, CLS_KIND[cls] || 'std'); }
@@ -3476,6 +3703,7 @@ function vehicleData(bp, alive, seatR, seatI){
     lamps: items.filter(it => it.p.lamp || it.p.blue).map(it => ({ it, pos: P3(it, 0, (it.p.light ? it.p.light.y : 1.5) * P, it.p.lamp ? 0.55 : 0), kind: it.p.lamp || 'blue' })),
     hasBlue: items.some(it => it.p.blue),
     exhausts: items.filter(it => it.p.exhaust).map(it => ({ pos: P3(it, ...it.p.exhaust.pos), dir: D3(it, 0, 0, -1) })),
+    smokes: items.filter(it => it.p.smoke).map(it => ({ it, pos: P3(it, ...it.p.smoke.pos), col: COLORS[it.c].col })),
     seatPos: seat ? P3(seat, ...seat.p.seat.pos) : new THREE.Vector3(0, y1, 0),
     surfaces, wingArea, AR, wheelsRaw, adj,
     kind: (props.length || jets.length) ? 'air' : 'car'
@@ -3934,7 +4162,7 @@ world.addEventListener('postStep', () => {
   for (const v of vehicles) if (!v.destroyed){ v.forces(); v.contacts(world.dt); }
 });
 function setDriving(v){ driving = v; if (v) v.body.wakeUp(); }
-let smokeT = 0;
+let smokeT = 0, trailT = 0;
 const SMOKE = new THREE.Color('#5a5a5a'), EXH = new THREE.Color('#c9c9c9');
 // Scheinwerferkegel des gefahrenen Fahrzeugs (nur nachts, ab mittlerer Grafikqualität)
 const headSpot = new THREE.SpotLight('#fff1d6', 0, 80, 0.5, 0.65, 1.2);
@@ -3962,6 +4190,12 @@ function updateVehicles(dt){
   updateHeadSpot();
   // Abgaswolken und Rauch aus beschädigten Motoren
   const t = now();
+  // Rauchpatronen ziehen eine farbige Spur, solange das Fahrzeug Gas gibt und Fahrt hat
+  if (driving && !driving.destroyed && driving.smokes.length && t > trailT){
+    trailT = t + 45;
+    const v = driving, b = v.body, q = qOf(b);
+    if ((v.speed || 0) > 6 && (v.ctl.power > 0.05 || v.ctl.gas > 0.05)) for (const sm of v.smokes){ if (!v.alive.has(sm.it.i)) continue; const p = _v1.copy(sm.pos).applyQuaternion(q).add(b.position); emit('trail', p.x, p.y, p.z, sm.col); }
+  }
   if (driving && !driving.destroyed && t > smokeT){
     smokeT = t + 140;
     const v = driving, b = v.body, q = qOf(b);
@@ -3974,7 +4208,7 @@ function updateVehicles(dt){
 }
 
 /* ---------- Effekte: Partikel und Animationen ---------- */
-const PMAX = 500;
+const PMAX = 1000;
 const pPos = new Float32Array(PMAX * 3), pCol = new Float32Array(PMAX * 4), pSize = new Float32Array(PMAX);
 const pGeo = new THREE.BufferGeometry();
 pGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3).setUsage(THREE.DynamicDrawUsage));
@@ -3993,7 +4227,7 @@ points.frustumCulled = false; points.renderOrder = 8;
 scene.add(points);
 const particles = [];
 function emit(kind, x, y, z, color){
-  const n = kind === 'sparkle' ? 14 : kind === 'puff' ? 16 : kind === 'splash' ? 18 : 9;
+  const n = kind === 'sparkle' ? 14 : kind === 'puff' ? 16 : kind === 'splash' ? 18 : kind === 'trail' ? 1 : kind === 'gold' ? 26 : 9;
   for (let i = 0; i < n && particles.length < PMAX; i++){
     const a = Math.random() * Math.PI * 2, u = Math.random();
     let p;
@@ -4005,6 +4239,13 @@ function emit(kind, x, y, z, color){
       const s = 1.2 + u * 2.4;
       const c = color ? [color.r, color.g, color.b].map(v => 0.75 + v * 0.25) : [1, 1, 1];
       p = { x, y, z, vx: Math.cos(a) * s, vy: 0.6 + Math.random() * 1.8, vz: Math.sin(a) * s, g: 0, drag: 3.5, life: 0, max: 0.5 + u * 0.35, size: 0.35 + u * 0.3, grow: 1.4, c, alpha: 0.85 };
+    } else if (kind === 'trail'){
+      // Rauchspur der Rauchpatrone: dick, langsam, bleibt lange stehen
+      const c = color ? [color.r, color.g, color.b].map(v => 0.25 + v * 0.75) : [1, 1, 1];
+      p = { x: x + (Math.random() - 0.5) * 0.3, y: y + (Math.random() - 0.5) * 0.3, z: z + (Math.random() - 0.5) * 0.3, vx: Math.cos(a) * 0.4, vy: 0.15, vz: Math.sin(a) * 0.4, g: 0, drag: 0.8, life: 0, max: 3.2 + u * 1.2, size: 1.1 + u * 0.4, grow: 2.6, c, alpha: 0.75 };
+    } else if (kind === 'gold'){
+      const s = 3 + u * 7;
+      p = { x, y, z, vx: Math.cos(a) * s, vy: 5 + Math.random() * 9, vz: Math.sin(a) * s, g: -16, drag: 1.2, life: 0, max: 0.8 + u * 0.6, size: 0.3 + u * 0.3, grow: 0, c: Math.random() < 0.6 ? [1, 0.8, 0.25] : [1, 0.97, 0.75], alpha: 1 };
     } else if (kind === 'splash'){
       const s = 1 + u * 3;
       p = { x, y, z, vx: Math.cos(a) * s, vy: 4 + Math.random() * 6, vz: Math.sin(a) * s, g: -30, drag: 0.8, life: 0, max: 0.45 + u * 0.3, size: 0.14 + u * 0.14, grow: 0, c: [0.82, 0.93, 1], alpha: 0.9 };
@@ -4363,7 +4604,7 @@ function hitsVehicle(t, ax, ay, az, r){
 function placementAt(sx, sy){
   const ray = rayFrom(sx, sy), hit = castVoxel(ray.origin, ray.direction);
   if (!hit || (hit.kind === 'ground' && !hit.inside)) return null;
-  return computePlacement(hit, sel.t, sel.r);
+  return guideSnap(hit, computePlacement(hit, sel.t, sel.r));
 }
 function pickTarget(sx, sy){
   const ray = rayFrom(sx, sy), vh = castVoxel(ray.origin, ray.direction);
@@ -4909,6 +5150,23 @@ const thumb = (() => {
       r.render(sc, cm);
       ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
       ctx.drawImage(r.domElement, 0, 0, ctx.canvas.width, ctx.canvas.height);
+    },
+    // ganzes Modell (Bauanleitung) als Vorschaubild
+    drawModel(items, ctx, view = [1, 0.75, 1.3]){
+      holder.clear();
+      const g = new THREE.Group();
+      for (const it of items){
+        const L = PARTS[it.t].rot[it.r], m = partMesh(it.t, it.c, tmat);
+        m.position.set(it.x + L.W / 2, it.y * P, it.z + L.D / 2); m.rotation.y = it.r * Math.PI / 2; g.add(m);
+      }
+      const box = new THREE.Box3().setFromObject(g), bs = box.getBoundingSphere(new THREE.Sphere());
+      g.position.copy(bs.center).negate(); holder.add(g);
+      const d = new THREE.Vector3(...view).normalize();
+      cm.position.copy(d).multiplyScalar(bs.radius / Math.sin(THREE.MathUtils.degToRad(cm.fov / 2)) * 0.98); cm.lookAt(0, 0, 0);
+      r.render(sc, cm);
+      ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+      ctx.drawImage(r.domElement, 0, 0, ctx.canvas.width, ctx.canvas.height);
+      holder.clear();
     }
   };
 })();
@@ -4951,13 +5209,15 @@ function renderTiles(){
     const cv = document.createElement('canvas'); cv.width = cv.height = 160;
     const lab = document.createElement('span'); lab.className = 'size'; lab.textContent = p.label;
     b.append(cv, lab);
-    b.addEventListener('click', () => selectPart(p.idx));
+    if (p.reward && !rewardOpen(p.reward)){ b.classList.add('locked'); b.setAttribute('aria-label', p.name + ', noch gesperrt'); }
+    b.addEventListener('click', () => { if (partLocked(p.idx)){ toast(p.name + ': ' + rewardHint(p.reward), 2600); audio.ui(); return; } selectPart(p.idx); });
     box.append(b); p.cv = cv;
   }
   drawThumbs();
 }
 function drawThumbs(){ for (const p of PARTS) if (p.cv) thumb.draw(p.idx, sel.c, p.cv.getContext('2d')); }
 function selectPart(t, quiet){
+  if (partLocked(t)) return;
   sel.t = t; ghost.geometry = ghostGeoFor(PARTS[t]);
   if (PARTS[t].cat !== curCat){ curCat = PARTS[t].cat; renderCats(); renderTiles(); }
   for (const b of document.querySelectorAll('.part')) b.setAttribute('aria-pressed', String(+b.dataset.t === t));
@@ -4969,7 +5229,7 @@ function selectPart(t, quiet){
 function swatch(el, c){
   const col = COLORS[c];
   el.style.setProperty('--c', col.hex);
-  el.classList.toggle('glass', col.cls === 'trans'); el.classList.toggle('metal', col.cls === 'metal');
+  el.classList.toggle('glass', col.cls === 'trans'); el.classList.toggle('metal', col.cls === 'metal' || col.cls === 'chrome');
   el.title = col.name;
 }
 function renderColors(){
@@ -4983,6 +5243,7 @@ function renderColors(){
   }
 }
 function selectColor(c){
+  if (colorLocked(c)){ toast(COLORS[c].name + ': ' + rewardHint(COLOR_REWARD[COLORS[c].name]), 2600); return; }
   sel.c = c;
   recent = [c, ...recent.filter(x => x !== c)].slice(0, 7);
   renderColors(); drawThumbs();
@@ -4999,7 +5260,8 @@ function buildPalette(){
       const b = document.createElement('button'); b.type = 'button'; b.className = 'swatch'; swatch(b, col.i);
       b.setAttribute('aria-label', col.name);
       b.addEventListener('pointerenter', () => { $('#palName').textContent = col.name; });
-      b.addEventListener('click', () => { selectColor(col.i); closeSheet('#paletteSheet'); });
+      if (colorLocked(col.i)){ b.classList.add('locked'); b.setAttribute('aria-label', col.name + ', noch gesperrt'); }
+      b.addEventListener('click', () => { if (colorLocked(col.i)){ selectColor(col.i); return; } selectColor(col.i); closeSheet('#paletteSheet'); });
       grid.append(b);
     }
     body.append(h, grid);
@@ -5367,8 +5629,8 @@ const FIG_OPT = {
   hair: ['#1B1F24', '#5A3A22', '#A0522D', '#E6B65C', '#F2E2B0', '#D0281A', '#7A44B0', '#2F9E52'],
   cloth: ['#C91A09', '#FE8A18', '#F2CD37', '#4B9F4A', '#0055BF', '#5A93DB', '#2B3A55', '#3F3691', '#C870A0', '#F4F4F4', '#6C6E68', '#1B1F24', '#582A12'],
   hairStyle: [['kurz', 'Kurz'], ['strubbel', 'Strubbel'], ['zopf', 'Zopf'], ['lang', 'Lang'], ['glatze', 'Ohne']],
-  hatStyle: [['keine', 'Kein Hut'], ['kappe', 'Kappe'], ['helm', 'Feuerwehr'], ['polizei', 'Polizei'], ['pilot', 'Pilot'], ['krone', 'Krone']],
-  pattern: [['uni', 'Einfarbig'], ['streifen', 'Streifen'], ['stern', 'Stern'], ['blitz', 'Blitz']],
+  hatStyle: [['keine', 'Kein Hut'], ['kappe', 'Kappe'], ['helm', 'Feuerwehr'], ['polizei', 'Polizei'], ['pilot', 'Pilot'], ['krone', 'Krone'], ['bauhelm', 'Bauhelm'], ['rennhelm', 'Rennhelm'], ['kapitaen', 'Kapitän']],
+  pattern: [['uni', 'Einfarbig'], ['streifen', 'Streifen'], ['stern', 'Stern'], ['blitz', 'Blitz'], ['schwingen', 'Schwingen']],
   face: [['lacht', 'Lacht'], ['froh', 'Froh'], ['brille', 'Brille'], ['cool', 'Sonnenbrille']]
 };
 const figCfg = () => Object.assign({}, FIG_DEF, settings.figure || {});
@@ -5393,6 +5655,12 @@ function makeFigure(cfg, plain){
       : [[0.08, 0.34], [-0.2, -0.02], [-0.02, -0.02], [-0.1, -0.34], [0.2, 0.06], [0.02, 0.06]];
     pts.forEach(([x, y], k) => k ? sh.lineTo(x, y) : sh.moveTo(x, y));
     front(new THREE.ExtrudeGeometry(sh, { depth: 0.04, bevelEnabled: false }), 2.3);
+  } else if (cfg.pattern === 'schwingen'){
+    // Pilotenabzeichen: zwei Schwingen mit Plakette
+    const sh = new THREE.Shape();
+    sh.moveTo(0.1, 0.06); sh.lineTo(0.62, 0.16); sh.lineTo(0.56, 0.08); sh.lineTo(0.5, 0.05); sh.lineTo(0.44, 0.0); sh.lineTo(0.36, -0.04); sh.lineTo(0.1, -0.06); sh.lineTo(0.1, 0.06);
+    for (const k of [1, -1]){ const g = new THREE.ExtrudeGeometry(sh, { depth: 0.04, bevelEnabled: false }); if (k < 0) g.scale(-1, 1, 1); const m = front(g, 2.42); m.material = M(cfg.accent, 0.3, 0.6); }
+    const c = front(new THREE.CylinderGeometry(0.12, 0.12, 0.05, 18).rotateX(Math.PI / 2), 2.42); c.material = M(cfg.accent, 0.3, 0.6);
   }
   body.add(mesh(new THREE.CylinderGeometry(0.2, 0.24, 0.3, 14).translate(0, 3.0, 0), cfg.skin));
   const head = new THREE.Group(); head.position.y = 3.1; body.add(head);
@@ -5422,6 +5690,9 @@ function makeFigure(cfg, plain){
   if (cfg.hatStyle === 'helm'){ head.add(mesh(cap(1.14), cfg.hat, 0.25)); const b = mesh(new THREE.CylinderGeometry(0.98, 1.0, 0.06, 28), cfg.hat, 0.25); b.position.y = 0.78; b.scale.z = 1.08; b.position.z = -0.08; head.add(b); const c = mesh(new THREE.BoxGeometry(0.1, 0.16, 0.9), '#F2CD37', 0.3, 0.6); c.position.set(0, 1.28, 0); head.add(c); }
   if (cfg.hatStyle === 'polizei'){ head.add(mesh(new THREE.CylinderGeometry(0.82, 0.72, 0.36, 24).translate(0, 1.12, 0), cfg.hat)); const v = mesh(new THREE.CylinderGeometry(0.45, 0.45, 0.05, 20, 1, false, -Math.PI / 2, Math.PI), '#1B1F24', 0.2); v.position.set(0, 0.95, 0.42); head.add(v); const bd = mesh(new THREE.CylinderGeometry(0.74, 0.74, 0.1, 24), '#F4F4F4'); bd.position.y = 0.98; head.add(bd); }
   if (cfg.hatStyle === 'pilot'){ head.add(mesh(cap(1.1), '#7A4E2D', 0.7)); for (const s of [-1, 1]){ const g = mesh(new THREE.TorusGeometry(0.14, 0.05, 8, 16), '#A3A6AB', 0.25, 0.8); g.position.set(s * 0.22, 1.02, 0.5); g.rotation.x = -0.6; head.add(g); } }
+  if (cfg.hatStyle === 'bauhelm'){ head.add(mesh(cap(1.13), cfg.hat, 0.35)); const b = mesh(new THREE.CylinderGeometry(0.98, 1.02, 0.05, 30), cfg.hat, 0.35); b.position.set(0, 0.78, 0.06); b.scale.z = 1.12; head.add(b); const r = mesh(new THREE.BoxGeometry(0.16, 0.12, 1.3), cfg.hat, 0.35); r.position.set(0, 1.42, -0.02); r.rotation.x = 0.06; head.add(r); }
+  if (cfg.hatStyle === 'rennhelm'){ const h = mesh(new THREE.SphereGeometry(0.72 * 1.2, 26, 18).scale(1, 0.98, 1).translate(0, 0.56, -0.02), cfg.hat, 0.2); head.add(h); const v = mesh(new THREE.SphereGeometry(0.72 * 1.215, 24, 10, -Math.PI * 0.32, Math.PI * 0.64, Math.PI * 0.36, Math.PI * 0.2).translate(0, 0.56, -0.02), '#1B1F24', 0.08, 0.3); head.add(v); const st = mesh(new THREE.BoxGeometry(0.2, 0.05, 1.5), '#F4F4F4', 0.25); st.position.set(0, 1.42, -0.05); head.add(st); }
+  if (cfg.hatStyle === 'kapitaen'){ head.add(mesh(new THREE.CylinderGeometry(0.86, 0.74, 0.42, 26).translate(0, 1.16, 0), cfg.hat, 0.3)); head.add(mesh(new THREE.CylinderGeometry(0.75, 0.75, 0.16, 26).translate(0, 0.94, 0), '#1B1F24', 0.4)); const v = mesh(new THREE.CylinderGeometry(0.48, 0.48, 0.05, 20, 1, false, -Math.PI / 2, Math.PI), '#1B1F24', 0.15); v.position.set(0, 0.88, 0.5); v.rotation.x = 0.18; head.add(v); const bd = mesh(new THREE.SphereGeometry(0.11, 12, 8), '#D2A64A', 0.25, 0.9); bd.scale.z = 0.4; bd.position.set(0, 1.08, 0.82); head.add(bd); }
   if (cfg.hatStyle === 'krone'){ const k = mesh(new THREE.CylinderGeometry(0.5, 0.46, 0.34, 10, 1, true).translate(0, 1.32, 0), '#D2A64A', 0.25, 0.9); k.material.side = THREE.DoubleSide; head.add(k); for (let i = 0; i < 5; i++){ const a = i / 5 * Math.PI * 2, s = mesh(new THREE.ConeGeometry(0.1, 0.22, 6), '#D2A64A', 0.25, 0.9); s.position.set(Math.cos(a) * 0.48, 1.58, Math.sin(a) * 0.46); head.add(s); } }
   const arms = [-1, 1].map(s => {
     const arm = new THREE.Group(); arm.position.set(s * 0.86, 2.72, 0); body.add(arm);
@@ -6013,7 +6284,7 @@ function endTestDrive(){
 // Modus wechseln
 function enterPlay(){
   if (mode === 'play') return;
-  mode = 'play'; document.body.dataset.mode = 'play';
+  mode = 'play'; document.body.dataset.mode = 'play'; guideRefresh(); setTimeout(lifeSoon, 400);
   setGhost(null); showHighlight(null); showRing(null); closeQuakePop(); closeWeatherPop();
   playSaved = { target: cam.g.target.clone(), az: cam.g.az, el: cam.g.el, dist: cam.g.dist };
   pcam.dist = 0; pcam.off = 0; pcam.el = 0.32;
@@ -6032,7 +6303,7 @@ function leavePlay(){
   if (fig.sky){ fig.sky = false; closeChute(); }
   figRemoveBody();
   if (fig.m && fig.m.root.parent) fig.m.root.parent.remove(fig.m.root);
-  mode = 'build'; document.body.dataset.mode = 'build';
+  mode = 'build'; document.body.dataset.mode = 'build'; guideSoon(); treasureHide();
   vAudio.stop();
   if (playSaved){ cam.g.target.copy(playSaved.target); cam.g.az = playSaved.az; cam.g.el = playSaved.el; cam.g.dist = playSaved.dist; }
   ctl.x = ctl.y = 0; ctl.gas = ctl.brake = false;
@@ -6232,6 +6503,7 @@ function updatePlay(dt, t){
   if (driving){ driveInput(dt); vAudio.update(driving, t); updateHud(t); }
   else { updateFigure(dt); findNear(t); }
   missionTick(dt);
+  treasureTick(dt, t);
   return true;
 }
 // Figurenauswahl
@@ -6288,7 +6560,12 @@ function renderFigOpts(){
   const box = $('#figOpts'), cfg = figCfg(); box.textContent = '';
   const group = (label, els) => { const h = document.createElement('div'); h.className = 'group-label'; h.textContent = label; const r = document.createElement('div'); r.className = 'fig-row'; r.append(...els); box.append(h, r); };
   const sw = (k, list) => list.map(hex => { const b = document.createElement('button'); b.type = 'button'; b.className = 'swatch'; b.style.setProperty('--c', hex); b.setAttribute('aria-label', hex); b.setAttribute('aria-pressed', String(cfg[k] === hex)); b.addEventListener('click', () => setFig(k, hex)); return b; });
-  const chips = (k, list) => list.map(([id, name]) => { const b = document.createElement('button'); b.type = 'button'; b.className = 'chip'; b.textContent = name; b.setAttribute('aria-pressed', String(cfg[k] === id)); b.addEventListener('click', () => setFig(k, id)); return b; });
+  const chips = (k, list) => list.map(([id, name]) => {
+    const b = document.createElement('button'); b.type = 'button'; b.className = 'chip'; b.textContent = name; b.setAttribute('aria-pressed', String(cfg[k] === id));
+    const lock = figLocked(k, id); if (lock) b.classList.add('locked');
+    b.addEventListener('click', () => { if (figLocked(k, id)){ toast(name + ': ' + rewardHint(FIG_REWARD[k][id]), 2600); audio.ui(); return; } setFig(k, id); });
+    return b;
+  });
   group('Haut', sw('skin', FIG_OPT.skin));
   group('Haare', [...chips('hairStyle', FIG_OPT.hairStyle), ...sw('hair', FIG_OPT.hair)]);
   group('Hut', [...chips('hatStyle', FIG_OPT.hatStyle), ...sw('hat', FIG_OPT.cloth.slice(0, 8))]);
@@ -6302,7 +6579,7 @@ $('#btnFigure').addEventListener('click', openFigureEditor);
 
 /* ---------- Speichern und Laden ---------- */
 let saveTimer = null;
-function changed(){ dirty = true; shadowDirty = true; saveSoon(); if (curKind === 'garage') updateVehInfo(); missionChanged(); }
+function changed(){ dirty = true; shadowDirty = true; saveSoon(); if (curKind === 'garage') updateVehInfo(); missionChanged(); guideSoon(); lifeSoon(); }
 function saveSoon(){ clearTimeout(saveTimer); saveTimer = setTimeout(save, 800); }
 function serialize(){
   return {
@@ -6337,7 +6614,7 @@ function mergeProg(raw){
     for (const g of list || []) if (!cur.has(g)){ cur.add(g); ch = true; }
     mprog.got[id] = [...cur];
   }
-  if (ch){ store.set(M_KEY, mprog); renderMission(); }
+  if (ch){ store.set(M_KEY, mprog); renderMission(); if (typeof licSilent === 'function') licSilent(); }
   return ch;
 }
 const RIVER = { x0: 56, x1: 72, h: -6, w: -1 };
@@ -6389,6 +6666,8 @@ const GOALS = {
   peak:    { t: 'Genau über dem Gipfel des Matterhorns fliegen', h: 'Das Matterhorn ist der spitze Berg im Norden, sein Gipfel liegt gut 100 m hoch. Steig vorher hoch genug. Oben wartet jemand auf dich.', dyn: true },
   landAfter: { t: 'Danach auf der Landebahn landen und anhalten', h: 'Gashebel auf ein Viertel, die Flughilfe fängt kurz vor dem Boden ab.', dyn: true },
   chuteLand: { t: 'Mit dem Fallschirm auf der Bauplatte landen', h: 'Starte, flieg über die Bauplatte (westlich der Landebahn) und tippe in mindestens 6 m Höhe auf „Abspringen“. Mit dem Knüppel lenkst du den Schirm.', dyn: true },
+  stall:   { t: 'Strömungsabriss in mindestens 15 m Höhe', h: 'Steig auf 15 m. Gashebel ganz zurück und den Knüppel ganz zu dir ziehen, bis „Strömungsabriss“ erscheint und ein Ton piept.', dyn: true },
+  recover: { t: 'Danach wieder abfangen, ohne den Boden zu berühren', h: 'Knüppel loslassen und Gas geben. Die Nase geht nach unten, das Flugzeug wird schneller und fängt sich.', dyn: true },
   kmh150:  { t: '150 km/h schnell fliegen', h: 'Ein großer Propeller oder Düsen machen schnell. Flieg dazu gerade aus.', dyn: true }
 };
 const MISSIONS = [
@@ -6401,23 +6680,24 @@ const MISSIONS = [
   { id: 'h7', cat: 'house', title: 'Wolkenkratzer', text: 'Ein Hochhaus mit vielen Stockwerken, das sogar ein starkes Beben aushält.', goals: ['tower25', 'story3', 'quake2'] },
   { id: 'c1', cat: 'car', title: 'Mein erstes Auto', text: 'Bau ein Auto, das fährt.', goals: ['wheels4', 'seat', 'engine', 'drive100'] },
   { id: 'c2', cat: 'car', title: 'Polizeiauto', text: 'Die Polizei braucht ein neues Einsatzfahrzeug mit Blaulicht.', goals: ['blue', 'head2', 'tail2', 'siren50'] },
+  { id: 'c6', cat: 'car', title: 'Rundkurs', text: 'Eine schnelle Runde auf der Ringstraße um die Bauplatte.', spawn: { x: -36, z: 104, yaw: Math.PI }, goals: ['lap30'] },
   { id: 'c3', cat: 'car', title: 'Schanzenspringer', text: 'Spring über die große Schanze, ohne dass etwas abfällt.', spawn: { x: -330, z: 64, yaw: -Math.PI / 2 }, goals: ['jump'] },
+  { id: 'c7', cat: 'car', title: 'Lastwagen', text: 'Ein schwerer Lastwagen, der trotzdem flott fährt.', goals: ['wheels6', 'heavy80', 'kmh60'] },
   { id: 'c4', cat: 'car', title: 'Rennwagen', text: 'Bau den schnellsten Wagen der Stadt.', goals: ['kmh100'] },
   { id: 'c5', cat: 'car', title: 'Crashtest', text: 'Ein sicheres Auto schützt den Fahrer, auch wenn es kracht.', spawn: { x: -560, z: 64, yaw: -Math.PI / 2 }, goals: ['crash'] },
-  { id: 'c6', cat: 'car', title: 'Rundkurs', text: 'Eine schnelle Runde auf der Ringstraße um die Bauplatte.', spawn: { x: -36, z: 104, yaw: Math.PI }, goals: ['lap30'] },
-  { id: 'c7', cat: 'car', title: 'Lastwagen', text: 'Ein schwerer Lastwagen, der trotzdem flott fährt.', goals: ['wheels6', 'heavy80', 'kmh60'] },
   { id: 'p1', cat: 'plane', title: 'Abheben!', text: 'Dein erstes Flugzeug soll in die Luft.', goals: ['alt10'] },
   { id: 'p2', cat: 'plane', title: 'Platzrunde', text: 'Starten, eine Runde drehen und sicher wieder landen.', goals: ['alt30', 'land'] },
-  { id: 'p8', cat: 'plane', title: 'Zielsprung', text: 'Spring über der Bauplatte aus dem Flugzeug und lande mit dem Fallschirm genau darauf.', goals: ['chuteLand'] },
   { id: 'p3', cat: 'plane', title: 'Ringflug', text: 'Fünf Ringe hängen am Himmel. Flieg durch alle, einen nach dem anderen.', rings: true, goals: ['rings'] },
+  { id: 'p9', cat: 'plane', title: 'Strömungsabriss', text: 'Ein Pilot weiß, was passiert, wenn das Flugzeug zu langsam wird: Die Strömung reißt ab und es sackt durch. Probier es in sicherer Höhe aus und fang es wieder ab.', goals: ['stall', 'recover', 'land'] },
   { id: 'p4', cat: 'plane', title: 'Zum See und zurück', text: 'Ein Ausflug über den großen See, dann zurück nach Hause.', goals: ['lake', 'landAfter'] },
+  { id: 'p8', cat: 'plane', title: 'Zielsprung', text: 'Spring über der Bauplatte aus dem Flugzeug und lande mit dem Fallschirm genau darauf.', goals: ['chuteLand'] },
   { id: 'p5', cat: 'plane', title: 'Schnellflug', text: 'Bau ein Flugzeug, das schneller ist als alle anderen.', goals: ['kmh150'] },
   { id: 'p6', cat: 'plane', title: 'Zweimotorig', text: 'Ein Flugzeug mit zwei Motoren fliegt die Ringe auf Zeit.', rings: true, goals: ['twin', 'rings60'] },
   { id: 'p7', cat: 'plane', title: 'Über das Matterhorn', text: 'Flieg über den Gipfel des Matterhorns und komm sicher zurück.', goals: ['peak', 'landAfter'] }
 ];
 const MISSION_BY_ID = new Map(MISSIONS.map(m => [m.id, m]));
 const missionLevel = m => MISSIONS.filter(x => x.cat === m.cat).indexOf(m) + 1;
-const missionUnlocked = m => { const list = MISSIONS.filter(x => x.cat === m.cat), i = list.indexOf(m); return i === 0 || !!mprog.done[list[i - 1].id]; };
+const missionUnlocked = m => { const list = MISSIONS.filter(x => x.cat === m.cat), i = list.indexOf(m); return i === 0 || !!mprog.done[m.id] || !!mprog.done[list[i - 1].id]; };
 const activeMission = () => { const e = gallery && curEntry(); return e && e.mission ? MISSION_BY_ID.get(e.mission) || null : null; };
 const hasGot = (m, k) => (mprog.got[m.id] || []).includes(k);
 
@@ -6635,6 +6915,19 @@ function missionTick(dt){
       if (air && kmh >= 150) latch(m, 'kmh150');
       if (air && lakeE(x, z) < 0.85){ if (!mrun.flags.has('lake') && m.goals.includes('lake')) note('Über dem See! Jetzt zurück zur Landebahn.', 'lakeok'); mrun.flags.add('lake'); latch(m, 'lake'); }
       if (air && nearPeak(x, b.position.y, z)){ if (!mrun.flags.has('peak') && m.goals.includes('peak')) note('Über dem Gipfel! Jetzt zurück zur Landebahn.', 'peakok'); mrun.flags.add('peak'); latch(m, 'peak'); }
+      // Strömungsabriss üben: abreißen lassen und wieder abfangen
+      if (m.goals.includes('stall')){
+        if (v.stallEp >= 0 && !mrun.inStall){
+          mrun.inStall = true; mrun.stallLost = v.lost || 0; mrun.stallOk = alt >= 15;
+          if (mrun.stallOk) latch(m, 'stall'); else note('Zu tief für den Versuch. Steig erst auf 15 m.', 'stalllow');
+        } else if (mrun.inStall && v.stallEp < 0){
+          mrun.inStall = false;
+          if (mrun.stallOk && !v.onGround && !v.destroyed && (v.lost || 0) === mrun.stallLost) latch(m, 'recover');
+          else if (mrun.stallOk) note('Das Flugzeug hat den Boden berührt. Versuch es weiter oben.', 'stallgnd');
+        }
+        if (!hasGot(m, 'stall') && air) hud = alt < 15 ? 'Höhe ' + Math.round(alt) + ' m · steig auf 15 m' : 'Gas ganz zurück, Knüppel ganz zu dir';
+        else if (mrun.inStall) hud = 'Knüppel loslassen, Gas geben!';
+      }
       if (m.rings) hud = ringTick(m, b.position) || hud;
       if (m.goals.includes('chuteLand')) hud = plateText(x, z);
       if (mrun.airborne && mrun.maxAlt >= 12 && v.onGround && kmh < 3){
@@ -6775,6 +7068,7 @@ function mvisPaint(){
 let mcardOpen = false;
 function renderMission(){
   const m = activeMission(), chip = $('#btnMission'), card = $('#mcard');
+  guideSoon();
   if (!m){ chip.hidden = true; card.hidden = true; placeVehInfo(); return; }
   const S = missionStats(m), okN = m.goals.filter(k => goalOk(m, k, S)).length, done = !!mprog.done[m.id];
   chip.hidden = false; chip.classList.toggle('done', done);
@@ -6782,7 +7076,7 @@ function renderMission(){
   chip.setAttribute('aria-expanded', String(mcardOpen));
   card.hidden = !mcardOpen;
   if (!mcardOpen){ placeVehInfo(); return; }
-  card.querySelector('.mc-lv').textContent = CAT_INFO[m.cat][0] + ' · Stufe ' + missionLevel(m);
+  card.querySelector('.mc-lv').textContent = CAT_INFO[m.cat][0] + ' · Prüfung ' + missionLevelName(m);
   card.querySelector('.mc-title').textContent = m.title;
   card.querySelector('.mc-text').textContent = done ? 'Geschafft! Du kannst hier weiterbauen oder die nächste Mission starten.' : m.text;
   const ul = card.querySelector('.mgoals'); ul.textContent = '';
@@ -6800,7 +7094,7 @@ function renderMission(){
 }
 // In der Werkstatt stehen die Fahrzeugdaten unter der Missionskarte statt dahinter
 function placeVehInfo(){
-  const vi = $('#vehInfo'), card = $('#mcard');
+  const vi = $('#vehInfo'), card = !$('#mcard').hidden ? $('#mcard') : $('#gcard');
   if (!card.hidden && curKind === 'garage' && mode === 'build'){
     const r = card.getBoundingClientRect();
     Object.assign(vi.style, { top: (r.bottom + 10) + 'px', left: r.left + 'px', transform: 'none', maxWidth: r.width + 'px', textAlign: 'left' });
@@ -6810,7 +7104,7 @@ function placeVehInfo(){
 // Hinweisblase und Missionsanzeige weichen Missionskarte, Fahrzeugdaten und Tacho aus
 function layoutTop(){
   const vis = el => el && !el.hidden && el.getClientRects().length > 0;
-  const W = innerWidth, card = $('#mcard'), cr = vis(card) ? card.getBoundingClientRect() : null;
+  const W = innerWidth, card = vis($('#mcard')) ? $('#mcard') : $('#gcard'), cr = vis(card) ? card.getBoundingClientRect() : null;
   const mh = $('#mhud'); mh.style.left = mh.style.top = '';
   if (vis(mh) && cr){
     const r = mh.getBoundingClientRect();
@@ -6857,10 +7151,10 @@ function renderMissionBoard(){
       const b = document.createElement('button'); b.type = 'button';
       b.className = 'mcb' + (done ? ' done' : !open ? ' locked' : isNext ? ' next' : '');
       b.innerHTML = '<span class="lv"></span><span class="tt"></span><span class="st"></span>';
-      b.querySelector('.lv').textContent = 'Stufe ' + missionLevel(m);
+      b.querySelector('.lv').textContent = 'Prüfung ' + missionLevelName(m);
       b.querySelector('.tt').textContent = m.title;
       b.querySelector('.st').textContent = done ? '✓ Geschafft' : !open ? 'Gesperrt' : isNext ? 'Als Nächstes' : 'Offen';
-      b.addEventListener('click', () => { audio.ui(); if (!open){ toast('Schaff zuerst Stufe ' + (missionLevel(m) - 1) + '.', 1800); return; } openMissionDetail(m); });
+      b.addEventListener('click', () => { audio.ui(); if (!open){ const list = MISSIONS.filter(x => x.cat === m.cat); toast('Schaff zuerst „' + list[list.indexOf(m) - 1].title + '“.', 2000); return; } openMissionDetail(m); });
       grid.append(b);
     }
     sec.append(grid); box.append(sec);
@@ -6872,7 +7166,7 @@ function openMissionDetail(m){
   $('#mBack').hidden = false;
   const d = document.createElement('div'); d.className = 'mdetail';
   d.innerHTML = '<span class="lv"></span><h3></h3><p class="mtext"></p><ul class="mgoals"></ul><div class="btn-row"></div>';
-  d.querySelector('.lv').textContent = CAT_INFO[m.cat][0] + ' · Stufe ' + missionLevel(m) + (mprog.done[m.id] ? ' · geschafft' : '');
+  d.querySelector('.lv').textContent = CAT_INFO[m.cat][0] + ' · Prüfung ' + missionLevelName(m) + (mprog.done[m.id] ? ' · geschafft' : '');
   d.querySelector('h3').textContent = m.title;
   d.querySelector('.mtext').textContent = m.text + (CAT_INFO[m.cat][1] === 'garage' ? ' Du baust in der Werkstatt und testest mit „Losfahren“.' : '');
   const ul = d.querySelector('.mgoals');
@@ -6913,6 +7207,7 @@ function riverSetup(){
   cam.g.target.set(64, 0, 64); cam.g.az = 0.25; cam.g.el = 0.62; cam.g.dist = 62;
 }
 function celebrate(m){
+  if (licCelebrate()) return;
   const c = cam.target;
   for (let i = 0; i < 6; i++) setTimeout(() => emit('sparkle', c.x + (Math.random() - 0.5) * 10, c.y + 3 + Math.random() * 4, c.z + (Math.random() - 0.5) * 10), i * 120);
   audio.cheer();
@@ -6921,6 +7216,956 @@ function celebrate(m){
   $('#mdText').textContent = 'Mission geschafft!' + (next ? ' Als Nächstes wartet: „' + next.title + '“.' : ' Du hast alle Missionen geschafft.');
   const nb = $('#mdNext'); nb.hidden = !next; nb.onclick = () => { closeSheet('#mdoneSheet'); if (next) openMissionDetail(next); };
   openSheet('#mdoneSheet');
+}
+
+/* ---------- Ausweise: Pilotenschein, Führerschein, Baumeisterbrief ----------
+   Jede Stufe ist eine Prüfung aus Missionen. Wer sie besteht, bekommt einen Stempel und eine Belohnung:
+   ein Teil, eine Farbe oder etwas für die Figur. Gebaut werden kann immer alles andere. */
+const LICENSES = [
+  { id: 'plane', name: 'Pilotenschein', color: '#1f6fd1', dark: '#15529e', icon: 'plane', levels: [
+    { name: 'Flugschüler', missions: ['p1', 'p2'], reward: 'r_wings' },
+    { name: 'Pilot', missions: ['p3', 'p9', 'p4'], reward: 'r_captain' },
+    { name: 'Kapitän', missions: ['p8', 'p5', 'p6', 'p7'], reward: 'r_smoke' }] },
+  { id: 'car', name: 'Führerschein', color: '#e4432d', dark: '#b52d1c', icon: 'car', levels: [
+    { name: 'Fahrschüler', missions: ['c1', 'c2'], reward: 'r_racehelm' },
+    { name: 'Fahrer', missions: ['c6', 'c3', 'c7'], reward: 'r_spoiler' },
+    { name: 'Rennprofi', missions: ['c4', 'c5'], reward: 'r_chrome' }] },
+  { id: 'house', name: 'Baumeisterbrief', color: '#f07c1a', dark: '#c25e0b', icon: 'world', levels: [
+    { name: 'Lehrling', missions: ['h1', 'h2'], reward: 'r_buildhelm' },
+    { name: 'Geselle', missions: ['h3', 'h4', 'h5'], reward: 'r_flag' },
+    { name: 'Meister', missions: ['h6', 'h7'], reward: 'r_cup' }] }
+];
+const REWARDS = {
+  r_wings:     { kind: 'pattern', id: 'schwingen', name: 'Schwingen', text: 'Pilotenabzeichen für das Oberteil deiner Figur' },
+  r_captain:   { kind: 'hat', id: 'kapitaen', name: 'Kapitänsmütze', text: 'für deine Figur' },
+  r_smoke:     { kind: 'part', id: 'smoke', color: 'Orange', name: 'Rauchpatrone', text: 'zieht beim Fliegen eine Rauchspur in ihrer Farbe' },
+  r_racehelm:  { kind: 'hat', id: 'rennhelm', name: 'Rennhelm', text: 'für deine Figur' },
+  r_spoiler:   { kind: 'part', id: 'spoiler', color: 'Feuerwehrrot', name: 'Heckflügel', text: 'für schnelle Autos' },
+  r_chrome:    { kind: 'color', id: 'Chrom', name: 'Chrom', text: 'eine Farbe, die glänzt wie ein Spiegel' },
+  r_buildhelm: { kind: 'hat', id: 'bauhelm', name: 'Bauhelm', text: 'für deine Figur' },
+  r_flag:      { kind: 'part', id: 'flag', color: 'Feuerwehrrot', name: 'Fahne', text: 'für Haus, Burg und Gipfel' },
+  r_cup:       { kind: 'part', id: 'cup', color: 'Gold', name: 'Pokal', text: 'für echte Baumeister' }
+};
+const REWARD_OF = {};   // Ausweis und Stufe zu jeder Belohnung
+LICENSES.forEach(lic => lic.levels.forEach((lv, i) => { REWARD_OF[lv.reward] = { lic, i }; }));
+const FIG_REWARD = { hatStyle: { kapitaen: 'r_captain', rennhelm: 'r_racehelm', bauhelm: 'r_buildhelm' }, pattern: { schwingen: 'r_wings' } };
+const COLOR_REWARD = { Chrom: 'r_chrome' };
+const LIC_BY_ID = new Map(LICENSES.map(l => [l.id, l]));
+const levelDone = lv => lv.missions.every(id => !!mprog.done[id]);
+function licLevel(lic){ let n = 0; for (const lv of lic.levels){ if (levelDone(lv)) n++; else break; } return n; }
+function rewardOpen(rid){ const o = REWARD_OF[rid]; return !o || licLevel(o.lic) > o.i; }
+function rewardHint(rid){ const o = REWARD_OF[rid]; return o ? 'Gibt es mit dem ' + o.lic.name + ', Stufe „' + o.lic.levels[o.i].name + '“.' : ''; }
+const partLocked = t => !!PARTS[t].reward && !rewardOpen(PARTS[t].reward);
+const colorLocked = c => !!COLOR_REWARD[COLORS[c].name] && !rewardOpen(COLOR_REWARD[COLORS[c].name]);
+const figLocked = (k, id) => !!(FIG_REWARD[k] && FIG_REWARD[k][id]) && !rewardOpen(FIG_REWARD[k][id]);
+// Prüfungsname einer Mission, z. B. „Prüfung Pilot“
+function missionLevelName(m){
+  const lic = LIC_BY_ID.get(m.cat); if (!lic) return '';
+  const lv = lic.levels.find(l => l.missions.includes(m.id));
+  return lv ? lv.name : '';
+}
+// Neue Stufen merken: beim Start still, danach mit Feier
+function licSeen(){ return new Set(mprog.got.lic || []); }
+function licNewLevels(){
+  const seen = licSeen(), out = [];
+  for (const lic of LICENSES){ const n = licLevel(lic); for (let i = 0; i < n; i++) if (!seen.has(lic.id + ':' + (i + 1))) out.push({ lic, i }); }
+  return out;
+}
+function licMarkSeen(list){
+  if (!list.length) return;
+  const seen = licSeen(); for (const { lic, i } of list) seen.add(lic.id + ':' + (i + 1));
+  mprog.got.lic = [...seen];
+  settings.licNew = [...new Set([...(settings.licNew || []), ...list.map(({ lic, i }) => lic.id + ':' + (i + 1))])]; store.set(SET_KEY, settings);
+  saveProg(); rewardsChanged();
+}
+function rewardsChanged(){ if (window.__booted){ buildPalette(); if (!$('#parts').hidden) renderTiles(); renderColors(); if (!$('#figureSheet').hidden) renderFigOpts(); } }
+// Porträt der eigenen Figur für den Ausweis (optional mit anderer Kopfbedeckung)
+function figPortrait(over){
+  figPrevInit();
+  const r = figPrev.r, cv = r.domElement, sc = figPrev.sc;
+  const m = makeFigure(Object.assign(figCfg(), over || {}), true);
+  if (figPrev.m) figPrev.m.root.visible = false;
+  sc.add(m.root); m.root.rotation.y = 0.32;
+  r.setSize(256, 256, false);
+  const cam = new THREE.PerspectiveCamera(26, 1, 0.1, 100); cam.position.set(0.6, 3.5, 7.4); cam.lookAt(0, 3.05, 0);
+  r.render(sc, cam);
+  const url = cv.toDataURL('image/png');
+  sc.remove(m.root); if (figPrev.m) figPrev.m.root.visible = true;
+  figPrev.w = 0; r.setSize(cv.clientWidth || 220, cv.clientHeight || 280, false);
+  return url;
+}
+function rewardVisual(rid, size = 72){
+  const rw = REWARDS[rid], box = document.createElement('span'); box.className = 'rw-vis';
+  if (rw.kind === 'part'){ const cv = document.createElement('canvas'); cv.width = cv.height = 160; thumb.draw(partByKey.get(rw.id), colorByName.get(rw.color), cv.getContext('2d')); box.append(cv); }
+  else if (rw.kind === 'color'){ const i = document.createElement('i'); i.className = 'rw-chrome'; box.append(i); }
+  else { const img = document.createElement('img'); img.alt = ''; img.src = figPortrait(rw.kind === 'hat' ? { hatStyle: rw.id, hat: rw.id === 'bauhelm' ? '#F2CD37' : rw.id === 'kapitaen' ? '#F4F4F4' : '#C91A09' } : { pattern: rw.id, accent: '#D2A64A' }); box.append(img); }
+  box.style.setProperty('--s', size + 'px');
+  return box;
+}
+const LIC_ICON = {
+  plane: MICON_LATE('plane'), car: MICON_LATE('car'), world: '<path d="M4 20h16"/><path d="M6 20V10l6-5 6 5v10"/><path d="M10 20v-5h4v5"/>'
+};
+function MICON_LATE(k){ return k === 'plane' ? '<path d="M12 2.5c1 0 1.6 1 1.6 2.4V9l7.4 4.3v2l-7.4-2.2v4.6l2.4 1.8v1.6L12 20.2l-4 .9v-1.6l2.4-1.8v-4.6L3 15.3v-2L10.4 9V4.9c0-1.4.6-2.4 1.6-2.4z"/>' : '<path d="M3 16v-3.5L5.3 8h9.5l3.4 4.5H21V16"/><circle cx="7.5" cy="16.5" r="2.2"/><circle cx="16.5" cy="16.5" r="2.2"/><path d="M9.7 16.5h4.6"/>'; }
+function openLicenses(focus){
+  const box = $('#licCards'); box.textContent = '';
+  const portrait = figPortrait();
+  for (const lic of LICENSES){
+    const n = licLevel(lic), card = document.createElement('article'); card.className = 'lic'; card.style.setProperty('--lc', lic.color); card.style.setProperty('--ld', lic.dark);
+    if (focus === lic.id) card.classList.add('focus');
+    card.innerHTML = '<header class="lic-band"><svg viewBox="0 0 24 24" aria-hidden="true">' + LIC_ICON[lic.icon] + '</svg><h3></h3></header>'
+      + '<div class="lic-id"><img class="lic-pic" alt=""><div class="lic-who"><small>Name</small><b class="lic-name"></b><small>Stufe</small><b class="lic-lv"></b></div></div>'
+      + '<div class="lic-stamps"></div><div class="lic-next"></div>';
+    card.querySelector('h3').textContent = lic.name;
+    card.querySelector('.lic-pic').src = portrait;
+    card.querySelector('.lic-name').textContent = settings.playerName || 'Mika';
+    card.querySelector('.lic-lv').textContent = n ? lic.levels[n - 1].name : 'noch keine';
+    const st = card.querySelector('.lic-stamps'), newSet = new Set(settings.licNew || []);
+    lic.levels.forEach((lv, i) => {
+      const done = i < n, el = document.createElement('div');
+      el.className = 'stamp' + (done ? ' on' : i === n ? ' next' : '') + (newSet.has(lic.id + ':' + (i + 1)) ? ' fresh' : '');
+      const last = done ? Math.max(...lv.missions.map(id => mprog.done[id] || 0)) : 0;
+      el.innerHTML = '<span class="ring"><b></b><small></small></span>';
+      el.querySelector('b').textContent = lv.name;
+      el.querySelector('small').textContent = done ? fmtDay(last) : 'Stufe ' + (i + 1);
+      el.style.setProperty('--rot', ((i * 37) % 13 - 6) + 'deg');
+      st.append(el);
+    });
+    const nx = card.querySelector('.lic-next');
+    if (n < lic.levels.length){
+      const lv = lic.levels[n];
+      const h = document.createElement('p'); h.className = 'lic-h'; h.textContent = 'Prüfung zur Stufe „' + lv.name + '“'; nx.append(h);
+      const ul = document.createElement('ul'); ul.className = 'lic-tasks';
+      for (const id of lv.missions){
+        const m = MISSION_BY_ID.get(id), li = document.createElement('li'), ok = !!mprog.done[id];
+        li.className = ok ? 'ok' : '';
+        li.innerHTML = '<span class="ck" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m6 12.5 4 4 8-9"/></svg></span><button type="button"></button>';
+        const b = li.querySelector('button'); b.textContent = m.title; b.addEventListener('click', () => { audio.ui(); closeSheet('#licSheet'); openMissions(); openMissionDetail(m); });
+        ul.append(li);
+      }
+      nx.append(ul);
+    } else { const h = document.createElement('p'); h.className = 'lic-h done'; h.textContent = 'Alle Stufen geschafft!'; nx.append(h); }
+    // Belohnungen aller Stufen
+    const rw = document.createElement('div'); rw.className = 'lic-rw';
+    lic.levels.forEach((lv, i) => {
+      const r = REWARDS[lv.reward], el = document.createElement('div'); el.className = 'rw' + (i < n ? ' open' : '');
+      el.append(rewardVisual(lv.reward, 54));
+      const t = document.createElement('span'); t.className = 'rw-t'; t.innerHTML = '<b></b><small></small>';
+      t.querySelector('b').textContent = r.name; t.querySelector('small').textContent = i < n ? 'freigeschaltet' : 'ab „' + lv.name + '“';
+      el.append(t); rw.append(el);
+    });
+    card.append(rw);
+    box.append(card);
+  }
+  if (settings.licNew && settings.licNew.length){ settings.licNew = []; store.set(SET_KEY, settings); renderHome(); }
+  openSheet('#licSheet');
+}
+let licQueue = [];
+function licCelebrate(){
+  const nw = licNewLevels();
+  if (!nw.length) return false;
+  licMarkSeen(nw);
+  licQueue = nw;
+  showLicUp();
+  return true;
+}
+function showLicUp(){
+  const it = licQueue.shift(); if (!it) return;
+  const { lic, i } = it, lv = lic.levels[i], rw = REWARDS[lv.reward];
+  const card = $('#licUpSheet .licup'); card.style.setProperty('--lc', lic.color); card.style.setProperty('--ld', lic.dark);
+  $('#luLic').textContent = lic.name;
+  $('#luTitle').textContent = lv.name + '!';
+  $('#luText').textContent = 'Prüfung bestanden. Du hast jetzt die Stufe „' + lv.name + '“ im ' + lic.name + '.';
+  const v = $('#luReward'); v.textContent = '';
+  v.append(rewardVisual(lv.reward, 92));
+  const t = document.createElement('span'); t.className = 'rw-t'; t.innerHTML = '<small>Deine Belohnung</small><b></b><span></span>';
+  t.querySelector('b').textContent = rw.name; t.querySelector('span').textContent = rw.text; v.append(t);
+  $('#luShow').onclick = () => { closeSheet('#licUpSheet'); openLicenses(lic.id); };
+  $('#luNext').onclick = () => { closeSheet('#licUpSheet'); if (licQueue.length) setTimeout(showLicUp, 200); };
+  const c = cam.target; for (let k = 0; k < 8; k++) setTimeout(() => emit('gold', c.x, c.y + 3, c.z), k * 140);
+  audio.cheer(); setTimeout(() => audio.cheer(), 450);
+  openSheet('#licUpSheet');
+}
+// Schon erreichte Stufen (beim Start oder aus der Cloud) ohne Feier eintragen, aber als neu markieren
+function licSilent(){ const nw = licNewLevels(); if (nw.length) licMarkSeen(nw); }
+licSilent();
+$('#btnLicMissions')?.addEventListener('click', () => { closeSheet('#licSheet'); openMissions(); });
+
+/* ---------- Bauanleitungen: Schritt für Schritt wie im Heft ----------
+   Ein Modell ist eine Liste von Teilen in Bauweise. Schritte fassen bis zu vier Teile derselben Lage zusammen.
+   Die fehlenden Teile des aktuellen Schritts stehen als leuchtende Geister an ihrem Platz; das passende Teil
+   ist schon gewählt. Erkannt wird ein Teil an Art, Ort und Lage, die Farbe darf Mika frei ändern. */
+function guideParts(fn){
+  const out = [];
+  const add = (key, color, x, y, z, r = 0) => out.push([key, color, x, y, z, r]);
+  // Steinreihe von a bis b (einschließlich) entlang x oder z, versetzt je nach Lage
+  const run = (axis, fix, a, b, y, color, odd) => {
+    let c = a, first = true;
+    while (c <= b){
+      const rem = b - c + 1;
+      let n = rem <= 4 ? rem : rem === 5 ? 3 : 4;
+      if (first && odd && rem > 4) n = 2;
+      first = false;
+      if (axis === 'x') add('b1x' + n, color, c, y, fix, 0); else add('b1x' + n, color, fix, y, c, 1);
+      c += n;
+    }
+  };
+  // Wände rundherum: Ecken greifen Lage für Lage abwechselnd ineinander; Türen bleiben frei, Fenster sind aus Glas
+  const walls = (x0, z0, x1, z1, y, layers, color, o = {}) => {
+    for (let k = 0; k < layers; k++){
+      const yy = y + 3 * k, odd = k % 2 === 1;
+      const sides = [
+        ['x', z0, odd ? x0 + 1 : x0, odd ? x1 - 1 : x1, 'front'], ['x', z1, odd ? x0 + 1 : x0, odd ? x1 - 1 : x1, 'back'],
+        ['z', x0, odd ? z0 : z0 + 1, odd ? z1 : z1 - 1, 'left'], ['z', x1, odd ? z0 : z0 + 1, odd ? z1 : z1 - 1, 'right']];
+      for (const [axis, fix, a, b, name] of sides){
+        const kindAt = c => {
+          for (const d of o.doors || []) if (d[0] === name && k < d[3] && c >= d[1] && c <= d[2]) return 'door';
+          for (const w of o.windows || []) if (w[0] === name && w[3].includes(k) && c >= w[1] && c <= w[2]) return 'win';
+          return 'wall';
+        };
+        let c = a;
+        while (c <= b){
+          const kd = kindAt(c); let e = c;
+          while (e + 1 <= b && kindAt(e + 1) === kd) e++;
+          if (kd !== 'door') run(axis, fix, c, e, yy, kd === 'win' ? (o.glass || 'Glas hellblau') : color, odd && kd === 'wall');
+          c = e + 1;
+        }
+      }
+    }
+  };
+  fn({ add, walls, run });
+  return out;
+}
+const GUIDES = [
+  { id: 'huette', title: 'Gartenhütte', kind: 'world', diff: 1, text: 'Eine kleine Hütte mit Tür, zwei Fenstern und rotem Dach.',
+    tip: 'Stell eine zweite Laterne auf, bau einen Zaun drumherum oder mach das Dach höher.',
+    parts: guideParts(({ add, walls }) => {
+      walls(60, 60, 65, 65, 0, 3, 'Mittelnougat', { doors: [['front', 62, 63, 2]], windows: [['left', 62, 63, [1]], ['right', 62, 63, [1]]] });
+      add('p6x6', 'Dunkelbraun', 60, 9, 60);
+      add('s45_2x4', 'Feuerwehrrot', 60, 10, 60, 2); add('s45_2x2', 'Feuerwehrrot', 64, 10, 60, 2);
+      add('s45_2x4', 'Feuerwehrrot', 60, 10, 64, 0); add('s45_2x2', 'Feuerwehrrot', 64, 10, 64, 0);
+      add('f45_2x2', 'Feuerwehrrot', 60, 10, 62, 0); add('f45_2x2', 'Feuerwehrrot', 62, 10, 62, 0); add('f45_2x2', 'Feuerwehrrot', 64, 10, 62, 0);
+      add('lamp', 'Schwarz', 59, 0, 58);
+    }) },
+  { id: 'leuchtturm', title: 'Leuchtturm', kind: 'world', diff: 2, text: 'Rot-weiß gestreift, mit Rundgang und einem Licht, das nachts leuchtet.',
+    tip: 'Mach ihn noch höher, bau eine Mole aus Steinen ins Wasser oder ein Häuschen für den Wärter daneben.',
+    parts: guideParts(({ add, walls }) => {
+      add('p6x6', 'Dunkelgrau', 59, 0, 59);
+      for (let k = 0; k < 6; k++) walls(60, 60, 63, 63, 1 + 3 * k, 1, k % 2 ? 'Weiß' : 'Feuerwehrrot', { doors: k < 2 ? [['front', 61, 62, 2]] : [], windows: k === 3 ? [['front', 61, 62, [0]]] : k === 4 ? [['back', 61, 62, [0]]] : [] });
+      add('p6x6', 'Weiß', 59, 19, 59);
+      add('gl_rb1', 'Sonnengelb', 61, 20, 61); add('gl_rb1', 'Sonnengelb', 62, 20, 61); add('gl_rb1', 'Sonnengelb', 61, 20, 62); add('gl_rb1', 'Sonnengelb', 62, 20, 62);
+      add('p4x4', 'Feuerwehrrot', 60, 23, 60);
+      add('rb2', 'Feuerwehrrot', 61, 24, 61);
+      add('cone1', 'Feuerwehrrot', 61, 27, 61);
+    }) },
+  { id: 'wohnhaus', title: 'Wohnhaus', kind: 'world', diff: 3, text: 'Ein Haus mit zwei Stockwerken, vielen Fenstern und spitzem Dach.',
+    tip: 'Bau einen Garten mit Bäumen, eine Garage daneben oder einen Balkon oben.',
+    parts: guideParts(({ add, walls }) => {
+      walls(58, 58, 65, 67, 0, 3, 'Feuerwehrrot', { doors: [['front', 61, 62, 2]], windows: [['front', 63, 64, [1]], ['left', 61, 62, [1]], ['left', 64, 65, [1]], ['right', 61, 62, [1]], ['right', 64, 65, [1]], ['back', 60, 61, [1]], ['back', 63, 64, [1]]] });
+      add('p8x8', 'Hellgrau', 58, 9, 58); add('p2x4', 'Hellgrau', 58, 9, 66); add('p2x4', 'Hellgrau', 62, 9, 66);
+      walls(58, 58, 65, 67, 10, 3, 'Weiß', { windows: [['front', 59, 60, [1]], ['front', 63, 64, [1]], ['left', 60, 61, [1]], ['left', 64, 65, [1]], ['right', 60, 61, [1]], ['right', 64, 65, [1]], ['back', 60, 61, [1]], ['back', 63, 64, [1]]] });
+      add('p8x8', 'Hellgrau', 58, 19, 58); add('p2x4', 'Hellgrau', 58, 19, 66); add('p2x4', 'Hellgrau', 62, 19, 66);
+      add('s45_2x4', 'Dunkelgrau', 58, 20, 58, 2); add('s45_2x4', 'Dunkelgrau', 62, 20, 58, 2);
+      add('b2x4', 'Weiß', 58, 20, 60); add('b2x4', 'Weiß', 62, 20, 60); add('b2x4', 'Weiß', 58, 20, 62); add('b2x4', 'Weiß', 62, 20, 62); add('b2x4', 'Weiß', 58, 20, 64); add('b2x4', 'Weiß', 62, 20, 64);
+      add('s45_2x4', 'Dunkelgrau', 58, 20, 66, 0); add('s45_2x4', 'Dunkelgrau', 62, 20, 66, 0);
+      add('s45_2x4', 'Dunkelgrau', 58, 23, 60, 2); add('s45_2x4', 'Dunkelgrau', 62, 23, 60, 2);
+      add('b2x4', 'Weiß', 58, 23, 62); add('b2x4', 'Weiß', 62, 23, 62);
+      add('s45_2x4', 'Dunkelgrau', 58, 23, 64, 0); add('s45_2x4', 'Dunkelgrau', 62, 23, 64, 0);
+      add('f45_2x2', 'Dunkelgrau', 58, 26, 62, 0); add('f45_2x2', 'Dunkelgrau', 60, 26, 62, 0); add('f45_2x2', 'Dunkelgrau', 62, 26, 62, 0); add('f45_2x2', 'Dunkelgrau', 64, 26, 62, 0);
+      add('lamp', 'Schwarz', 59, 0, 56);
+    }) },
+  { id: 'rennauto', title: 'Rennauto', kind: 'garage', diff: 1, text: 'Ein flaches, schnelles Auto mit Windschutzscheibe und Motor vorn.',
+    tip: 'Tippe auf „Losfahren“. Probier danach den großen V8-Motor oder größere Räder.',
+    parts: guideParts(({ add }) => {
+      add('wh_m', 'Hellgrau', 62, 0, 62, 0); add('wh_m', 'Hellgrau', 66, 0, 62, 2); add('wh_m', 'Hellgrau', 62, 0, 67, 0); add('wh_m', 'Hellgrau', 66, 0, 67, 2);
+      add('p4x8', 'Feuerwehrrot', 63, 7, 62, 1);
+      add('seat', 'Schwarz', 64, 8, 63); add('b1x2', 'Feuerwehrrot', 63, 8, 63, 1); add('b1x2', 'Feuerwehrrot', 66, 8, 63, 1);
+      add('tail', 'Schwarz', 63, 8, 62); add('tail', 'Schwarz', 66, 8, 62); add('b1x2', 'Feuerwehrrot', 64, 8, 62);
+      add('wind', 'Glas klar', 63, 8, 65);
+      add('eng_s', 'Dunkelgrau', 64, 8, 67); add('b1x2', 'Feuerwehrrot', 63, 8, 67, 1); add('b1x2', 'Feuerwehrrot', 66, 8, 67, 1);
+      add('bump', 'Silber', 63, 8, 69);
+      add('head', 'Weiß', 63, 9, 69); add('head', 'Weiß', 66, 9, 69);
+    }) },
+  { id: 'polizei', title: 'Polizeiauto', kind: 'garage', diff: 2, text: 'Mit Dach, Seitenfenstern und Lichtbalken mit Sirene.',
+    tip: 'Tippe auf „Losfahren“ und schalte das Blaulicht ein. Danach: die Mission „Polizeiauto“.',
+    parts: guideParts(({ add }) => {
+      add('wh_m', 'Dunkelgrau', 62, 0, 62, 0); add('wh_m', 'Dunkelgrau', 66, 0, 62, 2); add('wh_m', 'Dunkelgrau', 62, 0, 67, 0); add('wh_m', 'Dunkelgrau', 66, 0, 67, 2);
+      add('p4x8', 'Blau', 63, 7, 62, 1);
+      add('tail', 'Weiß', 63, 8, 62); add('tail', 'Weiß', 66, 8, 62); add('b1x2', 'Weiß', 64, 8, 62);
+      add('seat', 'Schwarz', 64, 8, 63); add('b1x2', 'Weiß', 63, 8, 63, 1); add('b1x2', 'Weiß', 66, 8, 63, 1);
+      add('wind', 'Glas hellblau', 63, 8, 65);
+      add('eng_s', 'Dunkelgrau', 64, 8, 67); add('b1x2', 'Weiß', 63, 8, 67, 1); add('b1x2', 'Weiß', 66, 8, 67, 1);
+      add('bump', 'Silber', 63, 8, 69); add('head', 'Weiß', 63, 9, 69); add('head', 'Weiß', 66, 9, 69);
+      add('b1x3', 'Glas hellblau', 63, 11, 62, 1); add('b1x3', 'Glas hellblau', 66, 11, 62, 1); add('b1x2', 'Glas hellblau', 64, 11, 62);
+      add('p2x4', 'Weiß', 63, 11, 67);
+      add('p4x4', 'Weiß', 63, 14, 62);
+      add('lbar', 'Blau', 63, 15, 63);
+    }) },
+  { id: 'feuerwehr', title: 'Feuerwehrauto', kind: 'garage', diff: 2, text: 'Rot, mit zwei Blaulichtern und einer langen Leiter auf dem Dach.',
+    tip: 'Tippe auf „Losfahren“ und schalte das Blaulicht ein. Bau die Leiter länger oder einen Wassertank dazu.',
+    parts: guideParts(({ add }) => {
+      add('wh_m', 'Dunkelgrau', 62, 0, 62, 0); add('wh_m', 'Dunkelgrau', 66, 0, 62, 2); add('wh_m', 'Dunkelgrau', 62, 0, 67, 0); add('wh_m', 'Dunkelgrau', 66, 0, 67, 2);
+      add('p4x8', 'Feuerwehrrot', 63, 7, 62, 1);
+      add('b1x4', 'Feuerwehrrot', 63, 8, 62, 1); add('b1x4', 'Feuerwehrrot', 66, 8, 62, 1); add('eng_s', 'Dunkelgrau', 64, 8, 62); add('b2x2', 'Feuerwehrrot', 64, 8, 64);
+      add('seat', 'Schwarz', 64, 8, 66); add('b1x2', 'Feuerwehrrot', 63, 8, 66, 1); add('b1x2', 'Feuerwehrrot', 66, 8, 66, 1); add('wind', 'Glas hellblau', 63, 8, 68);
+      add('p4x4', 'Hellgrau', 63, 11, 62); add('p2x4', 'Feuerwehrrot', 63, 11, 66);
+      add('beacon', 'Blau', 63, 12, 67); add('beacon', 'Blau', 66, 12, 67);
+      add('p1x6', 'Silber', 64, 12, 61, 1); add('p1x6', 'Silber', 65, 12, 61, 1);
+    }) },
+  { id: 'doppeldecker', title: 'Doppeldecker', kind: 'garage', diff: 2, text: 'Ein Flugzeug mit zwei Flügelpaaren übereinander, wie früher.',
+    tip: 'Tippe auf „Losfahren“ und starte von der Landebahn. Später kannst du die Rauchpatrone anbauen.',
+    parts: guideParts(({ add }) => {
+      add('gear', 'Weiß', 60, 0, 59); add('gear', 'Weiß', 63, 0, 59); add('gear', 'Weiß', 61, 0, 65);
+      add('p4x8', 'Feuerwehrrot', 60, 6, 60, 1); add('p2x6', 'Feuerwehrrot', 61, 6, 54, 1);
+      add('p2x4', 'Feuerwehrrot', 61, 7, 57, 1); add('seat', 'Schwarz', 61, 7, 62); add('prop_m', 'Dunkelgrau', 61, 7, 66);
+      add('wing4', 'Sonnengelb', 63, 7, 62, 0); add('wing4', 'Sonnengelb', 53, 7, 62, 2);
+      add('htail', 'Sonnengelb', 58, 7, 54); add('fin', 'Feuerwehrrot', 61, 8, 54);
+      add('rb1', 'Weiß', 66, 8, 63); add('rb1', 'Weiß', 66, 8, 64); add('rb1', 'Weiß', 56, 8, 63); add('rb1', 'Weiß', 56, 8, 64);
+      add('rb1', 'Weiß', 66, 11, 63); add('rb1', 'Weiß', 66, 11, 64); add('rb1', 'Weiß', 56, 11, 63); add('rb1', 'Weiß', 56, 11, 64);
+      add('wing4', 'Sonnengelb', 63, 14, 62, 0); add('wing4', 'Sonnengelb', 53, 14, 62, 2);
+    }) },
+  { id: 'jumbo', title: 'Verkehrsflugzeug', kind: 'garage', diff: 3, text: 'Ein großes Passagierflugzeug mit zwei Triebwerken, Fenstern und Lichtern.',
+    tip: 'Tippe auf „Losfahren“: Gashebel ganz nach oben und die Landebahn entlang. Ab etwa 55 km/h hebt es ab.',
+    parts: guideParts(({ add }) => {
+      add('gear_m', 'Weiß', 67, 0, 52); add('gear_m', 'Weiß', 59, 0, 52); add('gear_n', 'Weiß', 63, 0, 64);
+      add('wing_l', 'Weiß', 64, 14, 52); add('wing_r', 'Weiß', 50, 14, 52);
+      add('turbofan', 'Weiß', 70, 4, 52); add('turbofan', 'Weiß', 54, 4, 52);
+      add('p6x6', 'Weiß', 61, 14, 60); add('p6x6', 'Weiß', 61, 14, 46);
+      add('fus_win', 'Weiß', 61, 15, 58); add('fus_door', 'Weiß', 61, 15, 54); add('fus_win', 'Weiß', 61, 15, 50);
+      add('fus_nose', 'Weiß', 61, 15, 62); add('fus_tail', 'Weiß', 61, 15, 42);
+      add('htail_l', 'Nachtblau', 58, 27, 42); add('fin_l', 'Nachtblau', 63, 28, 42);
+      add('winglet', 'Limette', 77, 15, 52); add('winglet', 'Limette', 50, 15, 52);
+      add('nav', 'Glas rot', 76, 15, 53); add('nav', 'Glas grün', 51, 15, 53); add('strobe', 'Glas klar', 63, 27, 49);
+    }) }
+];
+const GUIDE_BY_ID = new Map(GUIDES.map(g => [g.id, g]));
+// Reihenfolge so, dass jedes Teil beim Setzen schon Halt hat (auch Teile, die unten angesteckt werden)
+function guideOrder(items){
+  const studsS = new Set(), socks = new Set(), left = items.slice(), out = [], key = (x, y, z) => x + ',' + y + ',' + z;
+  while (left.length){
+    let k = left.findIndex(it => {
+      const p = PARTS[it.t], L = p.rot[it.r];
+      if (it.y === 0 && (p.rests || L.bottoms.length)) return true;
+      return L.bottoms.some(([x, z]) => studsS.has(key(it.x + x, it.y, it.z + z))) || L.tops.some(([x, z]) => socks.has(key(it.x + x, it.y + p.h, it.z + z)));
+    });
+    if (k < 0) k = 0;
+    const it = left.splice(k, 1)[0], p = PARTS[it.t], L = p.rot[it.r];
+    for (const [x, z] of L.tops) studsS.add(key(it.x + x, it.y + p.h, it.z + z));
+    for (const [x, z] of L.bottoms) socks.add(key(it.x + x, it.y, it.z + z));
+    out.push(it);
+  }
+  return out;
+}
+for (const g of GUIDES){
+  g.items = guideOrder(g.parts.map(([key, color, x, y, z, r]) => ({ t: partByKey.get(key), c: colorByName.get(color), x, y, z, r })));
+  // Schritte: bis zu vier Teile derselben Lage
+  g.steps = []; let cur = null;
+  g.items.forEach((it, i) => { if (!cur || cur.length >= 4 || g.items[cur[0]].y !== it.y){ cur = []; g.steps.push(cur); } cur.push(i); });
+}
+const activeGuide = () => { const e = gallery && curEntry(); return e && e.guide ? GUIDE_BY_ID.get(e.guide) || null : null; };
+// Steht das Teil an seinem Platz? Gedrehte gleichförmige Steine zählen auch.
+function guideHas(it){
+  const p = PARTS[it.t], v = p.rot[it.r].vox[0];
+  const rec = parts.get(vox.get(K(it.x + v[0], it.y + v[1], it.z + v[2])));
+  if (!rec || rec.t !== it.t || rec.x !== it.x || rec.y !== it.y || rec.z !== it.z) return false;
+  if (rec.r === it.r) return true;
+  const sym = p.kind === 'box' || p.kind === 'round' || p.kind === 'cone';
+  return sym && (p.w === p.d || (rec.r - it.r) % 2 === 0);
+}
+const gd = { g: null, step: -1, missing: [], group: null, mats: new Map(), arrow: null, done: false, t0: 0 };
+function guideStepOf(g){
+  for (let s = 0; s < g.steps.length; s++){ const miss = g.steps[s].filter(i => !guideHas(g.items[i])); if (miss.length) return { s, miss }; }
+  return { s: g.steps.length, miss: [] };
+}
+let guideTimer = 0;
+function guideSoon(){ if (!window.__booted) return; clearTimeout(guideTimer); guideTimer = setTimeout(guideRefresh, 60); }
+function guideRefresh(){
+  const g = mode === 'build' ? activeGuide() : null;
+  if (!g){ if (gd.g || gd.group) guideClear(); $('#gcard').hidden = true; return; }
+  const { s, miss } = guideStepOf(g), key = s + ':' + miss.join(',');
+  const fresh = gd.g !== g;
+  if (!fresh && gd.key === key){ $('#gcard').hidden = false; return; }
+  const advanced = !fresh && s > gd.step;
+  gd.g = g; gd.step = s; gd.missing = miss; gd.key = key;
+  guideGhosts(g, miss);
+  guidePanel(g, s, miss);
+  if (s >= g.steps.length){
+    if (!fresh && !gd.done) guideFinished(g);
+    gd.done = true;
+  } else {
+    gd.done = false;
+    if (fresh || advanced || !miss.some(i => g.items[i].t === sel.t)) guidePick(g.items[miss[0]]);
+    if (advanced) audio.plopp();
+  }
+}
+// Das nächste Teil schon in die Hand geben: Art, Farbe und Drehung
+function guidePick(it){
+  if (sel.t !== it.t) selectPart(it.t, true);
+  sel.r = it.r;
+  if (sel.c !== it.c && !colorLocked(it.c)){ sel.c = it.c; recent = [it.c, ...recent.filter(x => x !== it.c)].slice(0, 7); renderColors(); drawThumbs(); }
+  refreshHover();
+}
+function guideClear(){
+  if (gd.group){ scene.remove(gd.group); gd.group = null; }
+  gd.g = null; gd.step = -1; gd.key = ''; gd.missing = []; dirty = true;
+}
+function guideMat(col){
+  const k = col.getHexString();
+  let m = gd.mats.get(k);
+  if (!m){ m = new THREE.MeshStandardMaterial({ color: col, transparent: true, opacity: 0.5, roughness: 0.4, emissive: col, emissiveIntensity: 0.35, depthWrite: false }); gd.mats.set(k, m); }
+  return m;
+}
+function guideGhosts(g, miss){
+  if (gd.group){ scene.remove(gd.group); gd.group = null; }
+  if (!miss.length) return;
+  const grp = new THREE.Group(); grp.renderOrder = 6;
+  for (const i of miss){
+    const it = g.items[i], L = PARTS[it.t].rot[it.r];
+    const m = partMesh(it.t, it.c, col => guideMat(col));
+    m.traverse(o => { o.castShadow = false; o.receiveShadow = false; o.renderOrder = 6; });
+    const edges = new THREE.LineSegments(guideEdges(PARTS[it.t]), gd.lineMat || (gd.lineMat = new THREE.LineBasicMaterial({ color: '#ffd23f', transparent: true, opacity: 0.95, depthTest: false })));
+    edges.renderOrder = 7; m.add(edges);
+    m.position.set(it.x + L.W / 2, it.y * P + 0.02, it.z + L.D / 2); m.rotation.y = it.r * Math.PI / 2; m.scale.setScalar(1.002);
+    grp.add(m);
+  }
+  // Pfeil über dem ersten fehlenden Teil
+  const it = g.items[miss[0]], L = PARTS[it.t].rot[it.r];
+  if (!gd.arrow){ gd.arrow = new THREE.Mesh(new THREE.ConeGeometry(0.55, 1.2, 4).rotateX(Math.PI), new THREE.MeshBasicMaterial({ color: '#ffc629' })); }
+  gd.arrow.position.set(it.x + L.W / 2, (it.y + PARTS[it.t].h) * P + 1.6, it.z + L.D / 2); gd.arrow.userData.y0 = gd.arrow.position.y;
+  grp.add(gd.arrow);
+  scene.add(grp); gd.group = grp; dirty = true;
+}
+// Geister pulsieren, der Pfeil hüpft
+const edgeCache = new Map();
+function guideEdges(p){ let g = edgeCache.get(p.idx); if (!g){ g = new THREE.EdgesGeometry(geoFor(p), 35); edgeCache.set(p.idx, g); } return g; }
+function guideFrame(t){
+  if (!gd.group || mode !== 'build') return false;
+  const k = 0.5 + 0.5 * Math.sin(t * 0.005);
+  for (const m of gd.mats.values()){ m.opacity = 0.32 + 0.3 * k; m.emissiveIntensity = 0.2 + 0.35 * k; }
+  if (gd.lineMat) gd.lineMat.opacity = 0.45 + 0.5 * k;
+  if (gd.arrow){ gd.arrow.position.y = gd.arrow.userData.y0 + Math.abs(Math.sin(t * 0.004)) * 0.8; gd.arrow.rotation.y = t * 0.002; }
+  return true;
+}
+function guidePanel(g, s, miss){
+  const card = $('#gcard'); card.hidden = false;
+  card.querySelector('.gc-title').textContent = g.title;
+  const n = g.steps.length, fin = s >= n;
+  $('#gcNum').textContent = fin ? 'Fertig!' : 'Schritt ' + (s + 1);
+  $('#gcOf').textContent = fin ? '' : 'von ' + n;
+  card.querySelector('.gc-bar i').style.width = Math.round(Math.min(s, n) / n * 100) + '%';
+  const box = $('#gcParts'); box.textContent = '';
+  if (!fin){
+    // gleiche Teile zusammenfassen
+    const groups = new Map();
+    for (const i of g.steps[s]){ const it = g.items[i], k = it.t + ':' + it.c; const e = groups.get(k) || { it, n: 0, left: 0 }; e.n++; if (miss.includes(i)) e.left++; groups.set(k, e); }
+    for (const { it, n: cnt, left } of groups.values()){
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'gc-part' + (left ? '' : ' ok');
+      const cv = document.createElement('canvas'); cv.width = cv.height = 160; thumb.draw(it.t, it.c, cv.getContext('2d'));
+      const lab = document.createElement('span'); lab.className = 'gc-n'; lab.textContent = left ? left + '×' : '✓';
+      b.append(cv, lab); b.setAttribute('aria-label', (left || 0) + ' mal ' + PARTS[it.t].name + ', ' + COLORS[it.c].name);
+      b.addEventListener('click', () => { const j = g.steps[s].find(i => miss.includes(i) && g.items[i].t === it.t && g.items[i].c === it.c); if (j !== undefined) guidePick(g.items[j]); audio.ui(); });
+      box.append(b);
+    }
+  }
+  const hint = $('#gcHint');
+  if (fin) hint.textContent = 'Jetzt bau es um: ' + g.tip;
+  else {
+    const it = g.items[miss[0]], p = PARTS[it.t];
+    hint.textContent = 'Setz ' + (miss.length > 1 ? 'die Teile' : 'das Teil') + ' genau auf ' + (miss.length > 1 ? 'die leuchtenden Stellen' : 'die leuchtende Stelle') + '.' + (it.r !== 0 && p.kind !== 'box' && p.kind !== 'round' ? ' Mit „Drehen“ stimmt die Richtung.' : '');
+  }
+  $('#gcLook').hidden = fin;
+  placeVehInfo();
+}
+function guideFinished(g){
+  const key = 'g:' + g.id, first = !mprog.done[key];
+  if (first){ mprog.done[key] = Date.now(); saveProg(); }
+  const c = cam.target; for (let i = 0; i < 6; i++) setTimeout(() => emit('sparkle', c.x + (Math.random() - 0.5) * 10, c.y + 3 + Math.random() * 4, c.z + (Math.random() - 0.5) * 10), i * 120);
+  audio.cheer();
+  $('#mdTitle').textContent = g.title + ' ist fertig!';
+  $('#mdText').textContent = 'Super gebaut. Jetzt bau es um: ' + g.tip;
+  const nb = $('#mdNext'); nb.hidden = false; nb.textContent = 'Nächste Anleitung';
+  nb.onclick = () => { closeSheet('#mdoneSheet'); openGuides(); };
+  setTimeout(() => { if (mode === 'build' && !homeOpen) openSheet('#mdoneSheet'); }, 500);
+  renderHome();
+}
+// Kamera auf den aktuellen Schritt richten
+function guideLook(){
+  const g = gd.g; if (!g || !gd.missing.length) return;
+  const c = new THREE.Vector3();
+  for (const i of gd.missing){ const it = g.items[i], L = PARTS[it.t].rot[it.r]; c.add(_v1.set(it.x + L.W / 2, (it.y + PARTS[it.t].h / 2) * P, it.z + L.D / 2)); }
+  c.multiplyScalar(1 / gd.missing.length);
+  cam.g.target.copy(c); cam.g.dist = clamp(cam.g.dist, 18, 34); cam.g.el = clamp(cam.g.el, 0.45, 0.9);
+  dirty = true; audio.ui();
+}
+// Antippen in der Nähe einer leuchtenden Stelle setzt das passende Teil genau dorthin
+function guideSnap(hit, pl){
+  const g = gd.g; if (!g || !gd.missing.length || !hit) return pl;
+  let best = null, bd = Infinity;
+  for (const i of gd.missing){
+    const it = g.items[i]; if (it.t !== sel.t) continue;
+    const L = PARTS[it.t].rot[it.r], px = hit.point.x, pz = hit.point.z, py = hit.point.y / P;
+    const dx = Math.max(it.x - 1 - px, 0, px - (it.x + L.W + 1)), dz = Math.max(it.z - 1 - pz, 0, pz - (it.z + L.D + 1));
+    const dy = Math.max(it.y - 4 - py, 0, py - (it.y + PARTS[it.t].h + 4));
+    const d = dx + dz + dy * 0.5;
+    if (d < bd){ bd = d; best = it; }
+  }
+  if (!best || bd > 0.01) return pl;
+  if (collides(best.t, best.x, best.y, best.z, best.r) || !inBounds(best.t, best.x, best.y, best.z, best.r) || !isConnected(best.t, best.x, best.y, best.z, best.r)) return pl;
+  sel.r = best.r;
+  return { t: best.t, ax: best.x, ay: best.y, az: best.z, r: best.r, ok: true, rebock: null, guide: true };
+}
+// Übersicht aller Anleitungen
+function openGuides(){
+  const box = $('#guideList'); box.textContent = '';
+  for (const g of GUIDES){
+    const done = !!mprog.done['g:' + g.id], ex = liveBuilds().filter(b => b.guide === g.id).sort(byUpdated)[0];
+    const b = document.createElement('button'); b.type = 'button'; b.className = 'gl-card' + (done ? ' done' : '');
+    b.innerHTML = '<canvas width="320" height="240"></canvas><span class="gl-t"><b></b><small></small></span><span class="gl-meta"><span class="gl-diff"></span><span class="gl-n"></span></span>';
+    thumb.drawModel(g.items, b.querySelector('canvas').getContext('2d'));
+    b.querySelector('b').textContent = g.title;
+    b.querySelector('small').textContent = g.text;
+    b.querySelector('.gl-diff').innerHTML = [1, 2, 3].map(k => '<i class="' + (k <= g.diff ? 'on' : '') + '"></i>').join('');
+    b.querySelector('.gl-diff').setAttribute('aria-label', ['leicht', 'mittel', 'schwer'][g.diff - 1]);
+    b.querySelector('.gl-n').textContent = g.items.length + ' Teile · ' + (g.kind === 'garage' ? 'Werkstatt' : 'Welt') + (done ? ' · ✓ gebaut' : ex ? ' · angefangen' : '');
+    b.addEventListener('click', () => startGuide(g));
+    box.append(b);
+  }
+  openSheet('#guideSheet');
+}
+async function startGuide(g){
+  if (opening) return;
+  closeSheet('#guideSheet'); closeHome();
+  if (mode === 'play'){ if (garageTest) endTestDrive(); else leavePlay(); }
+  const ex = liveBuilds().filter(b => b.guide === g.id).sort(byUpdated)[0];
+  if (ex && ex.id !== gallery.current && guideOpenIn(ex)){ await openBuild(ex.id); }
+  else if (!(ex && ex.id === gallery.current)){
+    save(); makeThumb();
+    startEmptyBuild(g.kind, g.title);
+    const e = curEntry(); e.guide = g.id; e.mt = Date.now(); gallery.indexDirty = true; writeIndex();
+  }
+  gd.g = null; buildRev++; guideRefresh();
+  // Kamera auf das Modell
+  const it = g.items; let x = 0, z = 0; for (const i of it){ x += i.x; z += i.z; } x /= it.length; z /= it.length;
+  cam.g.target.set(x + 1, 2, z + 1); cam.g.dist = g.kind === 'garage' ? 40 : 34; cam.g.el = 0.62; cam.g.az = 0.7; dirty = true;
+  audio.plopp(); toast('Bauanleitung: ' + g.title, 1800);
+}
+// angefangene Anleitung weiterbauen, eine fertige neu beginnen
+const guideOpenIn = e => !mprog.done['g:' + e.guide] || (Date.now() - (e.updated || 0)) < 864e5;
+$('#gcard .gc-close').addEventListener('click', () => { const e = curEntry(); if (e){ delete e.guide; gallery.indexDirty = true; writeIndex(); } guideRefresh(); audio.ui(); toast('Anleitung beendet. Du kannst frei weiterbauen.', 2200); });
+$('#gcLook').addEventListener('click', guideLook);
+$('#gcAll').addEventListener('click', () => openGuides());
+
+/* ---------- Schatzsuche: goldene Steine in Umland und Gebirge ----------
+   Manche liegen am Boden und sind zu Fuß oder mit dem Auto erreichbar, andere schweben über Gipfeln,
+   Schanzen oder in den Wolken und lassen sich nur im Sprung oder im Flug einsammeln.
+   Die Karte zeigt je Gegend, wie viele noch versteckt sind, und die gefundenen Steine. */
+const TREASURE_AREAS = {
+  platz: 'Rund um die Bauplatte', see: 'Am großen See', wald: 'In den Wäldern', strecke: 'Auf der Teststrecke',
+  flug: 'Am Flugplatz', berg: 'An der Bergstraße', mh: 'Am Matterhorn', gebirge: 'Im Gebirge', himmel: 'Hoch am Himmel'
+};
+const TREASURES = (() => {
+  const L = [];
+  const add = (id, area, x, z, up = 2.2, abs) => L.push({ id, area, x, z, y: abs !== undefined ? abs : umY(x, z) + up, air: up > 6 || abs !== undefined });
+  add('s1', 'platz', -18, 160); add('s2', 'platz', 190, 196); add('s3', 'platz', 64, 330); add('s4', 'platz', 176, -60);
+  add('s5', 'see', 40, 610, 0, UM.LAKE + 3.2); add('s6', 'see', -250, 600); add('s7', 'see', 330, 560);
+  add('s8', 'wald', -420, -330); add('s9', 'wald', -620, 470); add('s10', 'wald', 520, -420); add('s11', 'wald', 640, 420);
+  add('s12', 'strecke', -515, 64, 12); add('s13', 'strecke', -800, 64); add('s14', 'strecke', -640, 30);
+  add('s15', 'flug', 1004, 64); add('s16', 'flug', 650, 64, 70); add('s17', 'flug', 860, 150);
+  { const q = ROADS[4].pts; const a = q[Math.floor(q.length * 0.45)], b = q[q.length - 1]; add('s18', 'berg', a[0], a[1]); add('s19', 'berg', b[0], b[1]); }
+  { const pk = mhPeak(); add('s20', 'mh', pk.x + 4, pk.z + 26, 0, pk.y + 26); add('s21', 'mh', MH.x + 210, MH.z + 40); add('s22', 'mh', MH.x - 190, MH.z - 60); }
+  // Gebirge: je Himmelsrichtung ein Gipfel (darüber schwebend) und ein Tal (am Boden)
+  const C = [64, 64];
+  const eOut = (x, z) => Math.max(UM.X0 - x, x - UM.X1, UM.Z0 - z, z - UM.Z1);
+  [[0, 'n'], [Math.PI / 2, 'o'], [Math.PI, 's'], [-Math.PI / 2, 'w']].forEach(([a, k]) => {
+    let top = null, low = null;
+    for (let r = 900; r <= 2400; r += 30) for (let da = -0.3; da <= 0.3; da += 0.05){
+      const x = C[0] + Math.sin(a + da) * r, z = C[1] - Math.cos(a + da) * r, e = eOut(x, z), y = umY(x, z);
+      if (e > 450 && e < 1000 && (!top || y > top.y)) top = { x, z, y };
+    }
+    for (let r = 900; r <= 2000; r += 20) for (let da = -0.4; da <= 0.4; da += 0.08){
+      const x = C[0] + Math.sin(a + 0.55 + da) * r, z = C[1] - Math.cos(a + 0.55 + da) * r, e = eOut(x, z), y = umY(x, z);
+      if (e > 180 && e < 420 && (!low || y < low.y)) low = { x, z, y };
+    }
+    add('g' + k + '1', 'gebirge', top.x, top.z, 0, top.y + 22);
+    add('g' + k + '2', 'gebirge', low.x, low.z);
+  });
+  add('h1', 'himmel', 64, 64, 0, 720); add('h2', 'himmel', -620, -560, 0, 520); add('h3', 'himmel', 420, 900, 0, 440);
+  return L;
+})();
+const TREASURE_BY_ID = new Map(TREASURES.map(t => [t.id, t]));
+const treasureFound = () => new Set(mprog.got.schatz || []);
+const tr = { group: null, items: new Map(), t: 0 };
+function treasureMake(){
+  const grp = new THREE.Group(); grp.visible = false; scene.add(grp);
+  const gold = colorByName.get('Gold');
+  const gc = document.createElement('canvas'); gc.width = gc.height = 64; const gx = gc.getContext('2d');
+  const gr = gx.createRadialGradient(32, 32, 0, 32, 32, 32); gr.addColorStop(0, 'rgba(255,236,150,0.95)'); gr.addColorStop(0.35, 'rgba(255,200,60,0.45)'); gr.addColorStop(1, 'rgba(255,190,40,0)');
+  gx.fillStyle = gr; gx.fillRect(0, 0, 64, 64);
+  const glowTex = new THREE.CanvasTexture(gc);
+  const glowMat = new THREE.SpriteMaterial({ map: glowTex, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending });
+  const beamMat = new THREE.MeshBasicMaterial({ color: '#ffd45a', transparent: true, opacity: 0.22, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide });
+  const beamGeo = new THREE.CylinderGeometry(0.9, 2.2, 90, 12, 1, true).translate(0, 45, 0);
+  const found = treasureFound();
+  for (const t of TREASURES){
+    if (found.has(t.id)) continue;
+    const g = new THREE.Group(); g.position.set(t.x, t.y, t.z);
+    const brick = partMesh(partByKey.get('b2x2'), gold); brick.scale.setScalar(2.6); brick.position.set(0, -1.6, 0);
+    brick.traverse(o => { if (o.isMesh){ o.castShadow = true; o.material = o.material.clone(); o.material.emissive = new THREE.Color('#7a5200'); o.material.emissiveIntensity = 0.5; } });
+    const spin = new THREE.Group(); spin.add(brick); g.add(spin);
+    const glow = new THREE.Sprite(glowMat); glow.scale.setScalar(16); g.add(glow);
+    const beam = new THREE.Mesh(beamGeo, beamMat); beam.position.y = -2; beam.visible = false; g.add(beam);
+    grp.add(g); tr.items.set(t.id, { t, g, spin, beam });
+  }
+  tr.group = grp;
+}
+// Einsammeln: nah genug mit Figur, Auto oder Flugzeug
+function treasureTick(dt, t){
+  if (!tr.group) treasureMake();
+  tr.group.visible = true;
+  const me = driving ? driving.body.position : fig.body ? fig.body.position : null;
+  for (const it of tr.items.values()){
+    it.spin.rotation.y = t * 0.0016 + it.t.x; it.spin.position.y = Math.sin(t * 0.0025 + it.t.z) * 0.6;
+    if (!me) continue;
+    const d = Math.hypot(me.x - it.t.x, me.y - it.t.y, me.z - it.t.z);
+    it.beam.visible = d < 700 && d > 30 && !it.t.air;
+    const R = driving ? (driving.kind === 'car' ? 7 : 12) : 4.2;
+    if (d < R) treasureCollect(it);
+  }
+}
+function treasureCollect(it){
+  tr.items.delete(it.t.id); tr.group.remove(it.g);
+  const list = mprog.got.schatz || (mprog.got.schatz = []);
+  if (!list.includes(it.t.id)) list.push(it.t.id);
+  saveProg();
+  emit('gold', it.t.x, it.t.y, it.t.z); emit('sparkle', it.t.x, it.t.y + 1, it.t.z);
+  audio.cheer();
+  const n = list.length, all = TREASURES.length, inArea = TREASURES.filter(x => x.area === it.t.area), left = inArea.filter(x => !list.includes(x.id)).length;
+  toast(n === all ? 'Alle ' + all + ' goldenen Steine gefunden! Du bist ein echter Schatzsucher.' : 'Goldener Stein! ' + n + ' von ' + all + '. ' + TREASURE_AREAS[it.t.area] + (left ? ' sind noch ' + left + ' versteckt.' : ' hast du alle gefunden.'), 3200);
+}
+function treasureHide(){ if (tr.group) tr.group.visible = false; }
+// Karte: Gelände von oben, Gegenden mit Zählern, gefundene Steine als Sterne
+let mapCache = null;
+const MAP = { x0: -2036, z0: -2036, size: 4200 };
+function treasureMapBase(){
+  if (mapCache) return mapCache;
+  const N = 440, cv = document.createElement('canvas'); cv.width = cv.height = N;
+  const ctx = cv.getContext('2d'), img = ctx.createImageData(N, N), k = MAP.size / N;
+  const col = (r, g, b, i) => { img.data[i] = r; img.data[i + 1] = g; img.data[i + 2] = b; img.data[i + 3] = 255; };
+  for (let j = 0; j < N; j++) for (let i = 0; i < N; i++){
+    const x = MAP.x0 + (i + 0.5) * k, z = MAP.z0 + (j + 0.5) * k, y = umY(x, z), o = (j * N + i) * 4;
+    const sh = clamp(1 + (umY(x - k, z - k) - y) * 0.02, 0.62, 1.3);
+    if (waterY(x, z) > -1e8) col(116, 186, 230, o);
+    else if (x >= 0 && z >= 0 && x < GRID && z < GRID) col(78, 160, 70, o);
+    else if (y > 330) col(236 * sh, 240 * sh, 245 * sh, o);
+    else if (y > 170) col(150 * sh, 143 * sh, 135 * sh, o);
+    else { const g = clamp(1 - y / 400, 0.6, 1); col(118 * g * sh, 178 * g * sh, 92 * g * sh, o); }
+  }
+  ctx.putImageData(img, 0, 0);
+  const W = v => (v - MAP.x0) / MAP.size * N;
+  // Straßen und Landebahn
+  ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.strokeStyle = '#5d636b';
+  for (const r of ROADS){ ctx.lineWidth = Math.max(1.6, r.w / k); ctx.beginPath(); r.pts.forEach(([x, z], n) => n ? ctx.lineTo(W(x), W(z)) : ctx.moveTo(W(x), W(z))); if (r.loop) ctx.closePath(); ctx.stroke(); }
+  ctx.fillStyle = '#4b5158'; ctx.fillRect(W(RUNWAY.x0), W(RUNWAY.z - RUNWAY.w / 2), (RUNWAY.x1 - RUNWAY.x0) / k, RUNWAY.w / k);
+  // Bauplatte
+  ctx.fillStyle = '#ffc629'; ctx.fillRect(W(0), W(0), GRID / k, GRID / k);
+  // Wald
+  ctx.fillStyle = 'rgba(30,90,45,.55)';
+  for (const t of trees){ ctx.beginPath(); ctx.arc(W(t.x), W(t.z), 1.3, 0, 7); ctx.fill(); }
+  return (mapCache = cv);
+}
+function openTreasure(){
+  const cv = $('#trMap'), ctx = cv.getContext('2d'), N = cv.width, base = treasureMapBase();
+  ctx.clearRect(0, 0, N, N); ctx.imageSmoothingEnabled = true; ctx.drawImage(base, 0, 0, N, N);
+  const W = v => (v - MAP.x0) / MAP.size * N, found = treasureFound();
+  // Matterhorn und Papa
+  ctx.textAlign = 'center';
+  // noch versteckte Steine: ungefähre Gegend als gestrichelter Kreis mit Fragezeichen
+  const jit = t => { let h = 0; for (const ch of t.id) h = (h * 31 + ch.charCodeAt(0)) >>> 0; const a = (h % 360) * Math.PI / 180, r = 40 + (h % 90); return [t.x + Math.cos(a) * r, t.z + Math.sin(a) * r]; };
+  ctx.setLineDash([4, 4]); ctx.lineWidth = 2;
+  for (const t of TREASURES) if (!found.has(t.id)){
+    const [jx, jz] = jit(t), x = W(jx), y = W(jz), r = N * 0.022;
+    ctx.fillStyle = 'rgba(255,240,190,.72)'; ctx.strokeStyle = '#a87600';
+    ctx.beginPath(); ctx.arc(x, y, r, 0, 7); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = '#7a5200'; ctx.font = '900 ' + Math.round(N * 0.024) + 'px Nunito, sans-serif'; ctx.textBaseline = 'middle'; ctx.fillText('?', x, y + 1);
+  }
+  ctx.setLineDash([]); ctx.textBaseline = 'alphabetic';
+  // gefundene Steine
+  for (const t of TREASURES) if (found.has(t.id)){
+    const x = W(t.x), y = W(t.z), r = N * 0.016;
+    ctx.beginPath(); for (let i = 0; i < 10; i++){ const a = -Math.PI / 2 + i * Math.PI / 5, rr = i % 2 ? r * 0.45 : r; ctx.lineTo(x + Math.cos(a) * rr, y + Math.sin(a) * rr); } ctx.closePath();
+    ctx.fillStyle = '#ffc629'; ctx.strokeStyle = '#7a5200'; ctx.lineWidth = 1.5; ctx.fill(); ctx.stroke();
+  }
+  // Beschriftung zuletzt, mit weißem Rand gut lesbar
+  const pk = mhPeak(); ctx.font = '800 ' + Math.round(N * 0.026) + 'px Nunito, sans-serif'; ctx.textBaseline = 'alphabetic'; ctx.lineJoin = 'round';
+  const label = (t, x, y) => { ctx.lineWidth = 4; ctx.strokeStyle = 'rgba(255,255,255,.9)'; ctx.strokeText(t, x, y); ctx.fillStyle = '#1c2b3b'; ctx.fillText(t, x, y); };
+  label('Matterhorn', W(pk.x), W(pk.z) - N * 0.03); label('See', W(UM.LX), W(UM.LZ) + N * 0.008);
+  label('Flugplatz', W((RUNWAY.x0 + RUNWAY.x1) / 2), W(RUNWAY.z) - N * 0.02); label('Bauplatte', W(64), W(GRID) + N * 0.04);
+  // Gegenden
+  const list = $('#trAreas'); list.textContent = '';
+  for (const [k, name] of Object.entries(TREASURE_AREAS)){
+    const all = TREASURES.filter(t => t.area === k), got = all.filter(t => found.has(t.id)).length;
+    const li = document.createElement('li'); li.className = got === all.length ? 'ok' : '';
+    li.innerHTML = '<b></b><span class="tr-dots"></span><small></small>';
+    li.querySelector('b').textContent = name;
+    li.querySelector('.tr-dots').innerHTML = all.map((_, i) => '<i class="' + (i < got ? 'on' : '') + '"></i>').join('');
+    li.querySelector('small').textContent = got === all.length ? 'alle gefunden' : (all.length - got) + ' versteckt';
+    list.append(li);
+  }
+  $('#trCount').textContent = found.size + ' von ' + TREASURES.length + ' gefunden';
+  openSheet('#treasureSheet');
+}
+
+/* ---------- Leben in der Welt: Bewohner, Verkehr, Flugplatz ----------
+   Bewohner ziehen in fertige Häuser (Raum, Tür, Dach). Im Spielmodus laufen sie vor der Tür herum, gehen hinein und
+   kommen wieder heraus und winken, wenn die eigene Figur vorbeikommt. Auf der Ringstraße fahren kleine Autos und
+   halten an, wenn jemand im Weg steht. Ab und zu landet am Flugplatz ein Verkehrsflugzeug und startet wieder. */
+const FAMILIES_N = ['Huber', 'Meier', 'Schmidt', 'Wagner', 'Becker', 'Weber', 'Fischer', 'Keller', 'Braun', 'Roth'];
+const RES_LINES = ['Hallo! Danke für das schöne Haus!', 'Schön hier. Baust du uns noch einen Garten?', 'Hallo Nachbar!', 'Unser Dach hält dicht, prima!', 'Kommst du mal zu Besuch?'];
+const hash = s => { let h = 2166136261; for (const ch of String(s)) h = Math.imul(h ^ ch.charCodeAt(0), 16777619) >>> 0; return h; };
+// Haus erkennen: Raum mit Wänden, Tür unten und Dach, für einen zusammenhängenden Teil des Bauwerks
+function houseScan(recs){
+  const cells = [];
+  let x0 = GRID, x1 = -1, z0 = GRID, z1 = -1, y0 = 1e9, y1 = -1e9;
+  for (const r of recs) for (const [x, l, z] of PARTS[r.t].rot[r.r].vox){
+    const X = r.x + x, Y = r.y + l, Z = r.z + z; cells.push(X, Y, Z);
+    if (X < x0) x0 = X; if (X > x1) x1 = X; if (Z < z0) z0 = Z; if (Z > z1) z1 = Z; if (Y < y0) y0 = Y; if (Y > y1) y1 = Y;
+  }
+  if (x1 - x0 < 3 || z1 - z0 < 3) return null;
+  const W = x1 - x0 + 3, D = z1 - z0 + 3, N = W * D, nL = Math.min(y1 - y0 + 1, 400);
+  const solid = new Uint8Array(nL * N), enc = new Uint8Array(nL * N), idx = (x, z) => (x - x0 + 1) + (z - z0 + 1) * W;
+  for (let i = 0; i < cells.length; i += 3){ const l = cells[i + 1] - y0; if (l < nL) solid[l * N + idx(cells[i], cells[i + 2])] = 1; }
+  for (let z = z0; z <= z1; z++) for (let x = x0; x <= x1; x++){ const th = terrH[ti(x, z)] - y0; for (let l = 0; l < Math.min(th, nL); l++) solid[l * N + idx(x, z)] = 1; }
+  const reach = new Uint8Array(N), q = new Int32Array(N), area = new Int32Array(nL);
+  for (let l = 0; l < nL; l++){
+    const o = l * N; reach.fill(0); let qh = 0, qt = 0;
+    const push = i => { if (!reach[i] && !solid[o + i]){ reach[i] = 1; q[qt++] = i; } };
+    for (let x = 0; x < W; x++){ push(x); push(x + (D - 1) * W); }
+    for (let z = 0; z < D; z++){ push(z * W); push(z * W + W - 1); }
+    while (qh < qt){ const i = q[qh++], x = i % W; if (x > 0) push(i - 1); if (x < W - 1) push(i + 1); if (i >= W) push(i - W); if (i < N - W) push(i + W); }
+    let a = 0; for (let i = 0; i < N; i++) if (!reach[i] && !solid[o + i]){ enc[o + i] = 1; a++; }
+    area[l] = a;
+  }
+  let refL = 0; for (let l = 1; l < nL; l++) if (area[l] > area[refL]) refL = l;
+  if (area[refL] < 4) return null;
+  const I = []; for (let i = 0; i < N; i++) if (enc[refL * N + i]) I.push(i);
+  const Iset = new Set(I);
+  let floorL = 0;
+  for (let l = 0; l <= refL; l++){ let free = 0; for (const i of I) if (!solid[l * N + i]) free++; if (free * 2 >= I.length){ floorL = l; break; } }
+  // Tür: eine Lücke in der Wand (oben zu, unten 2 Steine hoch offen) direkt neben dem Raum
+  const cx = i => (i % W) - 1 + x0, cz = i => Math.floor(i / W) - 1 + z0;
+  if (floorL + 5 >= nL) return null;
+  let door = -1, out = null;
+  for (const i of I){
+    for (const [dx, dz, j] of [[1, 0, i + 1], [-1, 0, i - 1], [0, 1, i + W], [0, -1, i - W]]){
+      if (Iset.has(j) || !solid[refL * N + j]) continue;
+      let open = true; for (let l = floorL; l <= floorL + 5; l++) if (solid[l * N + j]){ open = false; break; }
+      if (open){ door = i; out = [dx, dz]; break; }
+    }
+    if (door >= 0) break;
+  }
+  if (door < 0) return null;
+  let cov = 0; for (const i of I){ for (let l = floorL + 6; l < nL; l++) if (solid[l * N + i]){ cov++; break; } }
+  if (cov / I.length < 0.9) return null;
+  return { inX: cx(door) + 0.5, inZ: cz(door) + 0.5, y: (floorL + y0) * P, out, box: [x0, z0, x1, z1] };
+}
+const life = { houses: new Map(), timer: 0, cars: [], plane: null, planeT: 0, said: new Map(), group: new THREE.Group() };
+scene.add(life.group);
+function lifeSoon(){ if (!window.__booted) return; clearTimeout(life.timer); life.timer = setTimeout(lifeHouses, mode === 'play' ? 50 : 1200); }
+function lifeHouses(){
+  const want = new Map();
+  if (curKind === 'world' && parts.size >= 12){
+    for (const comp of components([...parts.values()])){
+      if (comp.length < 12) continue;
+      const h = houseScan(comp); if (!h) continue;
+      const key = Math.round(h.inX) + ',' + Math.round(h.inZ) + ',' + Math.round(h.y / P);
+      want.set(key, h);
+    }
+  }
+  for (const [k, H] of life.houses) if (!want.has(k)){ for (const r of H.res) life.group.remove(r.m.root); life.houses.delete(k); dirty = true; }
+  let fresh = null;
+  for (const [k, h] of want){
+    if (life.houses.has(k)){ Object.assign(life.houses.get(k), h); continue; }
+    if (life.houses.size >= 8) break;
+    const hs = hash(k + (gallery && gallery.current)), fam = FAMILIES_N[hs % FAMILIES_N.length];
+    const H = Object.assign({ key: k, fam, res: [] }, h);
+    const n = 1 + (hs >> 4) % 2;
+    for (let i = 0; i < n; i++) H.res.push(lifeResident(H, hs + i * 7919, i));
+    life.houses.set(k, H); fresh = H;
+  }
+  // beim Öffnen eines Bauwerks wohnen die Familien schon dort, eingezogen wird nur beim Bauen
+  const sameBuild = life.build === (gallery && gallery.current); life.build = gallery && gallery.current;
+  if (fresh && sameBuild && window.__booted && started && !opening){
+    toast('Familie ' + fresh.fam + ' zieht in dein Haus ein!', 2600); audio.cheer();
+    for (const r of fresh.res) r.waveT = now() + 3500;
+  }
+  dirty = true;
+}
+function lifeResident(H, seed, i){
+  const rnd = mulberry32(seed), pick = a => a[Math.floor(rnd() * a.length)];
+  const cfg = Object.assign({}, FIG_DEF, {
+    skin: pick(FIG_OPT.skin.slice(0, 6)), hair: pick(FIG_OPT.hair), shirt: pick(FIG_OPT.cloth), accent: pick(FIG_OPT.cloth), pants: pick(FIG_OPT.cloth.slice(5)), shoes: pick(['#1B1F24', '#582A12', '#6C6E68']),
+    hairStyle: pick(['kurz', 'strubbel', 'zopf', 'lang', 'kurz']), hatStyle: rnd() < 0.25 ? pick(['kappe', 'krone']) : 'keine', hat: pick(FIG_OPT.cloth.slice(0, 8)), pattern: pick(['uni', 'streifen', 'stern', 'blitz', 'uni']), face: pick(['lacht', 'froh', 'brille'])
+  });
+  const m = makeFigure(cfg);
+  const [ox, oz] = H.out, side = i ? -1 : 1;
+  const x = H.inX + ox * 2.5 + oz * side * 1.4, z = H.inZ + oz * 2.5 - ox * side * 1.4;
+  m.root.position.set(x, H.y, z); m.root.rotation.y = Math.atan2(ox, oz);
+  life.group.add(m.root);
+  return { m, H, rnd, state: 'idle', t: 1 + rnd() * 3, tx: x, tz: z, phase: 0, waveT: 0, inside: false, i };
+}
+// freie Stelle vor der Tür
+function lifeSpot(R){
+  const H = R.H, [ox, oz] = H.out;
+  for (let k = 0; k < 12; k++){
+    const a = (R.rnd() - 0.5) * 2.2, d = 2.5 + R.rnd() * 6;
+    const dx = ox * Math.cos(a) - oz * Math.sin(a), dz = oz * Math.cos(a) + ox * Math.sin(a);
+    const x = H.inX + dx * d, z = H.inZ + dz * d;
+    if (x < 0.5 || z < 0.5 || x > GRID - 0.5 || z > GRID - 0.5) continue;
+    const X = Math.floor(x), Z = Math.floor(z), fl = Math.round(H.y / P);
+    if (Math.abs(terrH[ti(X, Z)] - fl) > 1) continue;
+    let free = true; for (let l = fl; l < fl + 12; l++) if (vox.has(K(X, l, Z))){ free = false; break; }
+    if (free) return [x, z];
+  }
+  return [H.inX + ox * 3, H.inZ + oz * 3];
+}
+function lifeResTick(R, dt, t, play){
+  const m = R.m, root = m.root, H = R.H;
+  const me = play && fig.active && fig.body ? fig.body.position : null;
+  const near = me && !R.inside && Math.hypot(me.x - root.position.x, me.z - root.position.z) < 11 && Math.abs(me.y - root.position.y) < 6;
+  let walking = false;
+  if (near){
+    root.rotation.y = Math.atan2(me.x - root.position.x, me.z - root.position.z);
+    R.waveT = Math.max(R.waveT, t + 600);
+    const k = H.key + R.i;
+    if (!life.said.has(k) && Math.hypot(me.x - root.position.x, me.z - root.position.z) < 6){ life.said.set(k, true); toast(RES_LINES[(hash(k) >> 3) % RES_LINES.length], 2400); }
+  } else if (play){
+    R.t -= dt;
+    if (R.state === 'walk' || R.state === 'goIn'){
+      const dx = R.tx - root.position.x, dz = R.tz - root.position.z, d = Math.hypot(dx, dz);
+      if (d < 0.15){
+        if (R.state === 'goIn'){ R.inside = true; root.visible = false; R.state = 'in'; R.t = 5 + R.rnd() * 9; }
+        else { R.state = 'idle'; R.t = 1.5 + R.rnd() * 4; }
+      } else {
+        const sp = Math.min(d, 2.6 * dt); root.position.x += dx / d * sp; root.position.z += dz / d * sp;
+        root.rotation.y = Math.atan2(dx, dz); walking = true;
+      }
+    } else if (R.state === 'in'){
+      if (R.t <= 0){ R.inside = false; root.visible = true; root.position.set(H.inX, H.y, H.inZ); const [x, z] = lifeSpot(R); R.tx = x; R.tz = z; R.state = 'walk'; }
+    } else if (R.t <= 0){
+      if (R.rnd() < 0.3){ R.tx = H.inX; R.tz = H.inZ; R.state = 'goIn'; }
+      else { const [x, z] = lifeSpot(R); R.tx = x; R.tz = z; R.state = 'walk'; }
+    }
+  }
+  // Pose: Gehen, Winken oder Stehen
+  R.phase += walking ? dt * 9 : 0;
+  const a = walking ? Math.sin(R.phase) * 0.7 : 0;
+  m.legs[0].rotation.x = a; m.legs[1].rotation.x = -a; m.arms[0].rotation.x = -a * 0.9;
+  if (t < R.waveT){ m.arms[1].rotation.set(-2.75 + Math.sin(t * 0.012) * 0.35, 0, 0); return true; }
+  m.arms[1].rotation.set(a * 0.9, 0, 0);
+  return walking;
+}
+// Kleine Autos auf der Ringstraße
+const NPC_CAR_COLORS = ['Blau', 'Sonnengelb', 'Hellgrün', 'Orange', 'Weiß'];
+function lifeMakeCars(){
+  const path = ROADS[0].pts, n = path.length, cum = [0];
+  for (let i = 1; i <= n; i++){ const a = path[i - 1], b = path[i % n]; cum.push(cum[i - 1] + Math.hypot(b[0] - a[0], b[1] - a[1])); }
+  const len = cum[n];
+  life.ring = { path, cum, len };
+  const base = GUIDE_BY_ID.get('rennauto').items;
+  const cx = base.reduce((a, it) => a + it.x, 0) / base.length + 0.5, cz = base.reduce((a, it) => a + it.z, 0) / base.length + 0.5;
+  [[0, 1], [0.27, 1], [0.55, -1], [0.8, -1]].forEach(([f, dir], k) => {
+    const g = new THREE.Group(), inner = new THREE.Group(); g.add(inner);
+    const col = colorByName.get(NPC_CAR_COLORS[k % NPC_CAR_COLORS.length]);
+    for (const it of base){
+      const p = PARTS[it.t], L = p.rot[it.r], c = (it.c === colorByName.get('Feuerwehrrot')) ? col : it.c;
+      const m = partMesh(it.t, c); m.position.set(it.x + L.W / 2 - cx, it.y * P, it.z + L.D / 2 - cz); m.rotation.y = it.r * Math.PI / 2; inner.add(m);
+    }
+    // Fahrer
+    const drv = makeFigure(Object.assign({}, FIG_DEF, { shirt: FIG_OPT.cloth[(k * 3) % 13], hairStyle: ['kurz', 'lang', 'strubbel', 'zopf'][k % 4], pattern: 'uni' }));
+    drv.root.position.set(64 + 1 - cx, 8 * P + 0.62 - 1.45 + 0.05, 63 + 1 - 0.12 - cz); for (const l of drv.legs) l.rotation.x = -1.45; drv.arms[0].rotation.x = drv.arms[1].rotation.x = -1.0;
+    inner.add(drv.root);
+    g.visible = false; life.group.add(g);
+    const body = new CANNON.Body({ type: CANNON.Body.KINEMATIC, mass: 0 });
+    body.addShape(new CANNON.Box(new CANNON.Vec3(2.1, 1.6, 4.1)), new CANNON.Vec3(0, 2.1, 0));
+    body.collisionResponse = true;
+    life.cars.push({ g, body, s: f * len, dir, v: 0, on: false });
+  });
+}
+function lifeRingAt(s){
+  const R = life.ring, len = R.len; s = ((s % len) + len) % len;
+  let lo = 0, hi = R.path.length; while (lo < hi){ const m = (lo + hi) >> 1; if (R.cum[m + 1] <= s) lo = m + 1; else hi = m; }
+  const a = R.path[lo], b = R.path[(lo + 1) % R.path.length], seg = R.cum[lo + 1] - R.cum[lo], f = seg ? (s - R.cum[lo]) / seg : 0;
+  const dx = b[0] - a[0], dz = b[1] - a[1], dl = Math.hypot(dx, dz) || 1;
+  return { x: a[0] + dx * f, z: a[1] + dz * f, tx: dx / dl, tz: dz / dl };
+}
+function lifeCarsTick(dt, on){
+  if (!life.cars.length){ if (!on) return; lifeMakeCars(); }
+  for (const c of life.cars){
+    if (on !== c.on){ c.on = on; c.g.visible = on; if (on) world.addBody(c.body); else world.removeBody(c.body); }
+    if (!on) continue;
+    const p = lifeRingAt(c.s), hx = p.tx * c.dir, hz = p.tz * c.dir, rx = -hz, rz = hx;
+    // rechts fahren
+    const x = p.x + rx * 3.2, z = p.z + rz * 3.2;
+    // Hindernis voraus? Figur oder Fahrzeug des Spielers
+    let block = false;
+    for (const o of [fig.active && fig.body ? fig.body.position : null, driving ? driving.body.position : null]){
+      if (!o) continue;
+      const ax = o.x - x, az = o.z - z, ahead = ax * hx + az * hz, lat = Math.abs(ax * rx + az * rz);
+      if (ahead > 0 && ahead < 18 && lat < 4.5 && Math.abs(o.y - umY(x, z)) < 8) block = true;
+    }
+    const vt = block ? 0 : 24;
+    c.v += clamp(vt - c.v, -40 * dt, 14 * dt);
+    c.s += c.v * dt * c.dir;
+    const y = umY(x, z);
+    c.g.position.set(x, y, z); c.g.rotation.y = Math.atan2(hx, hz);
+    c.body.position.set(x, y, z); c.body.quaternion.setFromEuler(0, Math.atan2(hx, hz), 0);
+    c.body.velocity.set(hx * c.v, 0, hz * c.v);
+  }
+}
+// Verkehrsflugzeug: Anflug von Osten, Landung, Halt, Wende, Start nach Osten
+function lifeMakePlane(){
+  const items = GUIDE_BY_ID.get('jumbo').items, g = new THREE.Group(), inner = new THREE.Group(); g.add(inner);
+  let cx = 0, cz = 0; for (const it of items){ cx += it.x; cz += it.z; } cx = cx / items.length + 0.5; cz = cz / items.length + 0.5;
+  for (const it of items){ const L = PARTS[it.t].rot[it.r], m = partMesh(it.t, it.c); m.position.set(it.x + L.W / 2 - cx, it.y * P, it.z + L.D / 2 - cz); m.rotation.y = it.r * Math.PI / 2; inner.add(m); }
+  g.visible = false; life.group.add(g);
+  life.plane = { g, inner, phase: 'wait', t: 40 + Math.random() * 40, x: 0, y: 0, v: 0, yaw: 0 };
+}
+function lifePlaneTick(dt, on){
+  if (!life.plane){ if (!on) return; lifeMakePlane(); }
+  const P0 = life.plane, g = P0.g;
+  if (!on){ g.visible = false; return; }
+  const z = RUNWAY.z, gy = umY(800, z), tdX = RUNWAY.x1 - 90, stopX = RUNWAY.x0 + 330;
+  const runwayBusy = () => { const o = driving ? driving.body.position : fig.active && fig.body ? fig.body.position : null; return o && o.x > RUNWAY.x0 - 40 && o.x < RUNWAY.x1 + 300 && Math.abs(o.z - z) < 70 && o.y - umY(o.x, o.z) < 40; };
+  P0.t -= dt;
+  let pitch = 0;
+  if (P0.phase === 'wait'){
+    g.visible = false;
+    if (P0.t <= 0){ if (runwayBusy()) P0.t = 20; else { P0.phase = 'approach'; P0.x = tdX + 1800; P0.v = 70; P0.yaw = -Math.PI / 2; P0.goAround = false; } }
+  } else if (P0.phase === 'approach' || P0.phase === 'flare' || P0.phase === 'roll'){
+    g.visible = true;
+    if (P0.phase === 'approach' && P0.x < tdX + 500 && runwayBusy()) P0.goAround = true;
+    P0.x -= P0.v * dt;
+    const d = P0.x - tdX;
+    if (P0.goAround){ P0.y += 9 * dt; pitch = 0.14; if (P0.x < RUNWAY.x0 - 700){ P0.phase = 'wait'; P0.t = 90 + Math.random() * 60; } }
+    else if (d > 60){ P0.y = gy + d * 0.06; pitch = 0.05; P0.phase = 'approach'; }
+    else if (d > 0){ P0.y = gy + d * d / 60 * 0.06; pitch = 0.1; P0.phase = 'flare'; }
+    else { P0.phase = 'roll'; P0.y = gy; P0.v = Math.max(0, P0.v - 13 * dt); pitch = 0; if (P0.v <= 0.5 || P0.x < stopX){ P0.phase = 'hold'; P0.t = 9; P0.v = 0; } }
+  } else if (P0.phase === 'hold'){
+    if (P0.t < 4) P0.yaw += Math.PI / 4 * dt;   // auf der Stelle wenden
+    if (P0.t <= 0){ P0.yaw = Math.PI / 2; P0.phase = 'takeoff'; P0.v = 0; }
+  } else if (P0.phase === 'takeoff'){
+    P0.v = Math.min(95, P0.v + 16 * dt); P0.x += P0.v * dt;
+    if (P0.v > 60){ P0.y += (P0.v - 60) * 0.72 * dt; pitch = 0.16; } else P0.y = gy;
+    if (P0.x > RUNWAY.x1 + 2200){ P0.phase = 'wait'; P0.t = 120 + Math.random() * 90; }
+  }
+  g.position.set(P0.x, P0.y, z); g.rotation.set(0, P0.yaw, 0); P0.inner.rotation.x = -pitch;
+}
+function lifeTick(dt, t){
+  const play = mode === 'play';
+  let active = false;
+  for (const H of life.houses.values()) for (const R of H.res) if (lifeResTick(R, dt, t, play)) active = true;
+  lifeCarsTick(dt, play);
+  lifePlaneTick(dt, play);
+  return active;
 }
 
 /* ---------- Menü ---------- */
@@ -6965,6 +8210,13 @@ function renderHome(){
   $('#hmNext').textContent = nx ? 'Als Nächstes: ' + nx.title : done === MISSIONS.length ? 'Alle Missionen geschafft!' : '';
   const n = liveBuilds().length;
   $('#hgCount').textContent = n ? String(n) : '';
+  // Abenteuer: Anleitungen, Ausweise, Schätze
+  const gdone = GUIDES.filter(g => mprog.done['g:' + g.id]).length;
+  $('#hgdCount').textContent = gdone + ' von ' + GUIDES.length + ' gebaut';
+  const stamps = LICENSES.reduce((a, l) => a + licLevel(l), 0), all = LICENSES.reduce((a, l) => a + l.levels.length, 0);
+  $('#hlicLv').textContent = stamps + ' von ' + all + ' Stempeln';
+  $('#hlicNew').hidden = !(settings.licNew && settings.licNew.length);
+  $('#htrCount').textContent = treasureFound().size + ' von ' + TREASURES.length + ' gefunden';
   $('#homeBubble').textContent = HOME_LINES[homeLine % HOME_LINES.length];
   $('#home').classList.toggle('night', env.tod < 6.5 || env.tod >= 19.5);   // nachts ein Sternenhimmel wie in der Welt
 }
@@ -7005,6 +8257,9 @@ function menuAction(id){
   else if (id === 'tour') openTourMenu();
   else if (id === 'figure') openFigureEditor();
   else if (id === 'settings') openSheet('#settingsSheet');
+  else if (id === 'guides') openGuides();
+  else if (id === 'licenses') openLicenses();
+  else if (id === 'treasure') openTreasure();
 }
 $('#home').addEventListener('click', e => { const b = e.target.closest('[data-act]'); if (b && !b.disabled) menuAction(b.dataset.act); });
 $('#btnMenu').addEventListener('click', openHome);
@@ -7540,7 +8795,7 @@ const cloud = (() => {
     return busy;
   }
   const pub = b => b.purged ? { id: b.id, purged: 1, mt: b.mt || 0, rev: b.synced || 0 }
-    : { id: b.id, name: b.name, kind: b.kind || 'world', rev: b.synced || 0, mt: b.mt || 0, updated: b.updated || 0, deleted: b.deleted || 0, n: b.chunks || 1, mission: b.mission || undefined };
+    : { id: b.id, name: b.name, kind: b.kind || 'world', rev: b.synced || 0, mt: b.mt || 0, updated: b.updated || 0, deleted: b.deleted || 0, n: b.chunks || 1, mission: b.mission || undefined, guide: b.guide || undefined };
   async function pullIndex(){
     const d = await req('GET', idxDoc());
     if (!d) return { list: [], ut: null, prog: null };
@@ -7574,6 +8829,7 @@ const cloud = (() => {
         if (c.purged){ gallery.builds.push({ id: c.id, purged: true, purgedCloud: true, mt: c.mt || 0, rev: c.rev || 0, synced: c.rev || 0 }); continue; }
         l = { id: c.id, name: String(c.name || 'Bauwerk').slice(0, 40), kind: c.kind === 'garage' ? 'garage' : 'world', rev: c.rev || 0, synced: c.rev || 0, mt: c.mt || 0, updated: c.updated || c.rev || 0, chunks: c.n || 1, stale: true, thumbStale: true };
         if (typeof c.mission === 'string' && MISSION_BY_ID.has(c.mission)) l.mission = c.mission;
+        if (typeof c.guide === 'string' && GUIDE_BY_ID.has(c.guide)) l.guide = c.guide;
         if (c.deleted) l.deleted = c.deleted;
         gallery.builds.push(l); byId.set(c.id, l); continue;
       }
@@ -7582,6 +8838,7 @@ const cloud = (() => {
         if (c.purged){ if (!l.purged){ if (gallery.current === l.id) l.deleted = l.deleted || Date.now(); else purgeEntry(l); l.mt = c.mt; } l.purgedCloud = true; }
         else { if (c.name) l.name = String(c.name).slice(0, 40); if (c.deleted) l.deleted = c.deleted; else delete l.deleted; }
         if (typeof c.mission === 'string' && MISSION_BY_ID.has(c.mission) && !l.mission) l.mission = c.mission;
+        if (typeof c.guide === 'string' && GUIDE_BY_ID.has(c.guide) && !l.guide) l.guide = c.guide;
       } else if ((l.mt || 0) > (c.mt || 0)) gallery.indexDirty = true;
       if (l.purged) continue;
       if ((c.rev || 0) > (l.synced || 0)){
@@ -7801,6 +9058,8 @@ function loop(t){
   if (updateEnv(dt, t)) active = true;
   updateLights(t);
   if (updatePapa(t)) active = true;
+  if (guideFrame(t)) active = true;
+  if (lifeTick(dt, t)) active = true;
   frame++;
   if (active || dirty || frame % 8 === 0){
     render(); dirty = false;
