@@ -1684,7 +1684,7 @@ const skyRTMat = new THREE.ShaderMaterial({
       vec3 col = mix(uHorizon, uZenith, pow(clamp(h, 0.0, 1.0), 0.5));
       float s = max(dot(rd, uSun), 0.0);
       col += uGlowCol * (pow(s, 5.0) * 0.45 + pow(s, 48.0) * 0.7) * (1.0 - 0.6 * smoothstep(0.0, 0.7, h));
-      if (h < 0.0) col = mix(col, uHorizon * 0.9, clamp(-h * 5.0, 0.0, 1.0));
+      if (h < 0.0) col = mix(col, uHorizon, clamp(-h * 5.0, 0.0, 1.0));
       return col;
     }
     float hg(float c, float g){ float g2 = g * g; return (1.0 - g2) / pow(1.0 + g2 - 2.0 * g * c, 1.5); }
@@ -1827,8 +1827,7 @@ function mountainRing(R, hMax, top, seed, snowLine, haze){
   m.frustumCulled = false; m.renderOrder = -5; m.userData.noAO = true;
   return m;
 }
-const mountains = [mountainRing(2700, 440, '#7b97b3', 7, 300, 0.3), mountainRing(1750, 190, '#4b7758', 3, 1e9, 0.3)];
-scene.add(...mountains);
+const mountains = [];   // früher Kulissen am Horizont, jetzt echtes Gebirge rund um das Umland (siehe „Fernes Gebirge“)
 
 // Noppenmuster als Textur: trägt die Optik in der Ferne, wo keine echten Noppen mehr gezeichnet werden
 function studTexture(){
@@ -2238,6 +2237,9 @@ function updateEnv(dt, t){
   const fog = scene.fog;
   fog.color.copy(skyU.uHorizon.value);
   fog.near = lerp(360, 8, w.fog) * (1 - 0.5 * w.rain); fog.far = lerp(1900, 160, w.fog) * (1 - 0.4 * w.rain);
+  // weiter oben ist die Luft klarer: aus der Höhe sieht man bis zu den Bergen
+  const fh = 1 + 2.4 * smoothstep(40, 700, camera.position.y) * (1 - w.fog) * (1 - 0.6 * w.rain);
+  fog.near *= fh; fog.far *= fh;
   for (const m of mountains){ m.material.color.setScalar(0.07 + 0.93 * env.day * (1 - 0.45 * w.dark) + env.flash * 0.3); m.material.opacity = 1 - 0.97 * w.fog; }
   // Sonne, Mond, Sterne
   celestial.position.copy(camera.position); celestial.updateMatrixWorld();
@@ -2848,9 +2850,10 @@ function umHeight(x, z, out){
   }
 }
 // Höhe auf dem Dreiecksnetz (gleiche Teilung wie das Physik-Höhenfeld)
+let farReady = false;
 function umY(x, z){
   const u = (x - UM.X0) / UM.CS, v = (z - UM.Z0) / UM.CS;
-  if (u < 0 || v < 0 || u >= UM.N || v >= UM.N) return UM.BASE;
+  if (u < 0 || v < 0 || u >= UM.N || v >= UM.N) return farReady ? farY(x, z) : UM.BASE;
   const i = Math.floor(u), j = Math.floor(v), fu = u - i, fv = v - j, V = UM.V;
   const h00 = umH[j * V + i], h10 = umH[j * V + i + 1], h01 = umH[(j + 1) * V + i], h11 = umH[(j + 1) * V + i + 1];
   return fu >= fv ? h00 + fu * (h10 - h00) + fv * (h11 - h10) : h00 + fv * (h01 - h00) + fu * (h11 - h01);
@@ -2894,13 +2897,6 @@ const umland = (() => {
   g.setIndex(idx); g.computeVertexNormals(); g.computeBoundingSphere();
   const m = new THREE.Mesh(g, umMat); m.receiveShadow = true;
   scene.add(m);
-  // weite Wiese außen herum
-  const F = 4300, pieces = [[UM.X0 - F, UM.Z0 - F, UM.X1 + F, UM.Z0], [UM.X0 - F, UM.Z1, UM.X1 + F, UM.Z1 + F], [UM.X0 - F, UM.Z0, UM.X0, UM.Z1], [UM.X1, UM.Z0, UM.X1 + F, UM.Z1]];
-  const fp = [], fu = [];
-  for (const [x0, z0, x1, z1] of pieces) for (const [x, z] of [[x0, z0], [x0, z1], [x1, z1], [x0, z0], [x1, z1], [x1, z0]]){ fp.push(x, UM.BASE, z); fu.push(x / 10, z / 10); }
-  const fg = new THREE.BufferGeometry(); fg.setAttribute('position', new THREE.Float32BufferAttribute(fp, 3)); fg.setAttribute('uv', new THREE.Float32BufferAttribute(fu, 2)); fg.computeVertexNormals();
-  const far = new THREE.Mesh(fg, patchMat(new THREE.MeshStandardMaterial({ color: '#5a983b', roughness: 0.95, map: umMat.map })));
-  far.receiveShadow = true; scene.add(far);
   // See
   const lg = new THREE.CircleGeometry(1, 80).rotateX(-Math.PI / 2), lp = lg.attributes.position, luv = lg.attributes.uv;
   for (let k = 0; k < lp.count; k++){ luv.setXY(k, (lp.getX(k) * (UM.LRX + 30) + UM.LX) * 0.09, (lp.getZ(k) * (UM.LRZ + 25) + UM.LZ) * 0.09); }
@@ -2908,7 +2904,72 @@ const umland = (() => {
   scene.add(lake);
   return m;
 })();
-// Physik: Höhenfelder um die Platte, flache Wiese außen
+
+/* ---------- Fernes Gebirge: echtes Gelände rund um das Umland ----------
+   Raster mit 64 Einheiten Weite bis gut 7 km vom Mittelpunkt. Erst Wiese, dann Vorberge, außen hohe Gipfel mit Schnee.
+   Der Dunst wird für hohe Stellen abgeschwächt, damit Gipfel aus der Ferne sichtbar bleiben. Dasselbe Raster dient der Physik. */
+const FAR = { S: 64, K: 96 };
+FAR.N = 32 + 2 * FAR.K; FAR.V = FAR.N + 1; FAR.X0 = UM.X0 - FAR.K * FAR.S; FAR.Z0 = UM.Z0 - FAR.K * FAR.S;
+function farRidge(x, z){ let h = 0, amp = 1, f = 1, tot = 0; for (let o = 0; o < 5; o++){ const n = 1 - Math.abs(2 * vnoise(x * f, z * f) - 1); h += amp * n * n; tot += amp; amp *= 0.5; f *= 2.03; } return h / tot; }
+function farRaw(x, z){
+  const e = Math.max(UM.X0 - x, x - UM.X1, UM.Z0 - z, z - UM.Z1);   // Abstand außerhalb des Umlands
+  if (e < 0) return UM.BASE - 8;
+  const m = smoothstep(250, 1500, e);
+  if (m <= 0) return UM.BASE;
+  const north = smoothstep(0, -1, (z - 64) / Math.hypot(x - 64, z - 64));   // im Norden die höchsten Gipfel, passend zum Matterhorn
+  const amp = (150 + 560 * smoothstep(500, 3300, e) * (0.7 + 0.6 * vnoise(x * 0.00045 + 3, z * 0.00045 - 7))) * (1 + 0.35 * north);
+  return UM.BASE + m * (amp * Math.pow(farRidge(x * 0.0011 + 11.3, z * 0.0011 - 4.7), 1.6) + fbm2(x * 0.003, z * 0.003) * 45);
+}
+const farHgt = new Float32Array(FAR.V * FAR.V);
+for (let j = 0; j < FAR.V; j++) for (let i = 0; i < FAR.V; i++) farHgt[j * FAR.V + i] = farRaw(FAR.X0 + i * FAR.S, FAR.Z0 + j * FAR.S);
+farReady = true;
+// Höhe auf dem Dreiecksnetz des fernen Geländes (gleiche Teilung wie das Physik-Höhenfeld)
+function farY(x, z){
+  const u = (x - FAR.X0) / FAR.S, v = (z - FAR.Z0) / FAR.S;
+  if (u < 0 || v < 0 || u >= FAR.N || v >= FAR.N) return UM.BASE;
+  const i = Math.floor(u), j = Math.floor(v), fu = u - i, fv = v - j, V = FAR.V;
+  const h00 = farHgt[j * V + i], h10 = farHgt[j * V + i + 1], h01 = farHgt[(j + 1) * V + i], h11 = farHgt[(j + 1) * V + i + 1];
+  return fu >= fv ? h00 + fu * (h10 - h00) + fv * (h11 - h10) : h00 + fv * (h01 - h00) + fu * (h11 - h01);
+}
+const farMesh = (() => {
+  const V = FAR.V, pos = new Float32Array(V * V * 3), col = new Float32Array(V * V * 3), idx = [];
+  const C = s => new THREE.Color(s), G1 = C('#5f9e3f'), G2 = C('#4b8a33'), FOREST = C('#2f6b35'), ROCK = C('#857f78'), DARK = C('#6a655f'), SNOW = C('#eef2f6'), c = new THREE.Color();
+  for (let j = 0; j < V; j++) for (let i = 0; i < V; i++){
+    const k = j * V + i, x = FAR.X0 + i * FAR.S, z = FAR.Z0 + j * FAR.S, y = farHgt[k];
+    pos[k * 3] = x; pos[k * 3 + 1] = y; pos[k * 3 + 2] = z;
+    const hx = farHgt[j * V + Math.min(V - 1, i + 1)] - farHgt[j * V + Math.max(0, i - 1)], hz = farHgt[Math.min(V - 1, j + 1) * V + i] - farHgt[Math.max(0, j - 1) * V + i];
+    const slope = Math.hypot(hx, hz) / (2 * FAR.S), n = fbm2(x * 0.004, z * 0.004);
+    c.copy(G1).lerp(G2, smoothstep(0.35, 0.65, n));
+    c.lerp(FOREST, smoothstep(25, 70, y) * (1 - smoothstep(170, 240, y)) * smoothstep(0.35, 0.55, fbm2(x * 0.006 + 4, z * 0.006)) * 0.85);
+    c.lerp(ROCK, Math.max(smoothstep(180, 280, y + n * 60), smoothstep(0.55, 0.9, slope)));
+    c.lerp(DARK, smoothstep(0.85, 1.3, slope) * 0.7);
+    c.lerp(SNOW, smoothstep(360, 430, y + n * 80) * (1 - 0.75 * smoothstep(0.8, 1.3, slope)));
+    col[k * 3] = c.r; col[k * 3 + 1] = c.g; col[k * 3 + 2] = c.b;
+  }
+  for (let j = 0; j < FAR.N; j++) for (let i = 0; i < FAR.N; i++){
+    if (i >= FAR.K && i < FAR.K + 32 && j >= FAR.K && j < FAR.K + 32) continue;   // dort liegt das Umland
+    const a = j * V + i, b = a + 1, c2 = a + V, d = c2 + 1;
+    idx.push(a, c2, d, a, d, b);
+  }
+  const g = new THREE.BufferGeometry();
+  g.setAttribute('position', new THREE.BufferAttribute(pos, 3)); g.setAttribute('color', new THREE.BufferAttribute(col, 3));
+  g.setIndex(idx); g.computeVertexNormals(); g.computeBoundingSphere();
+  const mat = patchMat(new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.97 }));
+  const base = mat.onBeforeCompile;
+  // Dunst: Gipfel und das weite Gebirge bleiben länger sichtbar; am äußersten Rand verschwindet alles im Dunst, damit nichts abgeschnitten wirkt
+  const f1 = v => v.toFixed(1), EO = FAR.K * FAR.S;
+  mat.onBeforeCompile = sh => { base(sh); sh.vertexShader = sh.vertexShader.replace('#include <fog_vertex>', `#include <fog_vertex>
+#ifdef USE_FOG
+  { float e = max(max(${f1(UM.X0)} - vWPos.x, vWPos.x - ${f1(UM.X1)}), max(${f1(UM.Z0)} - vWPos.z, vWPos.z - ${f1(UM.Z1)}));
+    vFogDepth *= mix(1.0, 0.55, smoothstep(0.0, 1800.0, e)) * mix(1.0, 0.6, smoothstep(30.0, 700.0, vWPos.y));
+    vFogDepth = max(vFogDepth, smoothstep(${f1(EO - 2600)}, ${f1(EO - 300)}, e) * 30000.0); }
+#endif`); };
+  mat.customProgramCacheKey = () => 'wx-far';
+  const m = new THREE.Mesh(g, mat); m.frustumCulled = false; m.receiveShadow = false;
+  scene.add(m);
+  return m;
+})();
+// Physik: Höhenfelder um die Platte, außen das ferne Gelände
 {
   const hf = (i0, i1, j0, j1) => {
     const data = [];
@@ -2920,11 +2981,12 @@ const umland = (() => {
   };
   const p0 = (0 - UM.X0) / UM.CS, p1 = (GRID - UM.X0) / UM.CS;
   hf(0, p0, 0, UM.N); hf(p1, UM.N, 0, UM.N); hf(p0, p1, 0, p0); hf(p0, p1, p1, UM.N);
-  const out = new CANNON.Body({ type: CANNON.Body.STATIC }), F = 3000, T = 5, W = (UM.X1 - UM.X0) / 2, cz = (UM.Z0 + UM.Z1) / 2, cx = (UM.X0 + UM.X1) / 2;
-  out.addShape(new CANNON.Box(new CANNON.Vec3(F / 2, T, W + F)), new CANNON.Vec3(UM.X0 - F / 2, UM.BASE - T, cz));
-  out.addShape(new CANNON.Box(new CANNON.Vec3(F / 2, T, W + F)), new CANNON.Vec3(UM.X1 + F / 2, UM.BASE - T, cz));
-  out.addShape(new CANNON.Box(new CANNON.Vec3(W, T, F / 2)), new CANNON.Vec3(cx, UM.BASE - T, UM.Z0 - F / 2));
-  out.addShape(new CANNON.Box(new CANNON.Vec3(W, T, F / 2)), new CANNON.Vec3(cx, UM.BASE - T, UM.Z1 + F / 2));
+  // fernes Gelände als ein großes Höhenfeld (im Umland liegt es tiefer und bleibt unwirksam)
+  const data = [];
+  for (let i = 0; i <= FAR.N; i++){ const row = []; for (let j = FAR.N; j >= 0; j--) row.push(farHgt[j * FAR.V + i]); data.push(row); }
+  const out = new CANNON.Body({ type: CANNON.Body.STATIC });
+  out.addShape(new CANNON.Heightfield(data, { elementSize: FAR.S }));
+  out.position.set(FAR.X0, 0, FAR.Z0 + FAR.N * FAR.S); out.quaternion.setFromEuler(-Math.PI / 2, 0, 0);
   out.terrain = true; world.addBody(out);
 }
 // Straßen und Landebahn als Bänder auf dem Gelände
@@ -3286,7 +3348,7 @@ function stepPhysics(dt){
    Jede Flügelfläche erzeugt Auftrieb und Widerstand an ihrem Ort, abhängig vom Anstellwinkel, mit Strömungsabriss.
    Schaden: Kontaktkräfte verteilen sich auf die Teile in der Nähe; übersteigt die Belastung die Haltekraft
    der Noppen, löst sich das Teil. Was danach nicht mehr mit dem Sitz verbunden ist, fällt als Ganzes ab. */
-const RHO = 0.08;          // Luftdichte im Spielmaßstab
+const RHO = 0.056;         // Luftdichte im Spielmaßstab (kleiner = Flugzeuge brauchen mehr Fahrt)
 const KMH = 1.2;           // 1 Einheit pro Sekunde ≈ 1,2 km/h im Maßstab der Figur
 const vehicles = [];
 let nextVehId = 1, driving = null;
@@ -3431,7 +3493,7 @@ class Vehicle {
     this.ctl = { steer: 0, gas: 0, brake: 0, pitch: 0, roll: 0, yaw: 0, power: 0, hand: 0 };
     this.lightsOn = false; this.siren = false;
     this.dmg = new Map(); this.health = new Map();
-    this.crash = 0; this.lastCrash = 0; this.stall = false; this.lost = 0; this.pendingBreak = new Set();
+    this.crash = 0; this.lastCrash = 0; this.stall = false; this.stallEp = -1; this.lost = 0; this.pendingBreak = new Set();
     this.body = new CANNON.Body({ mass: 1 });
     Object.assign(this.body, { allowSleep: true, sleepSpeedLimit: 0.25, sleepTimeLimit: 2, angularDamping: 0.05, linearDamping: 0.004 });
     this.body.veh = this;
@@ -3580,6 +3642,11 @@ class Vehicle {
     const pitchRate = -w.x, rollRate = w.z, yawRate = -w.y;
     const v = this.speed || 0, qn = clamp(v * v / 1600, 0.25, 6);
     let de = c.pitch, da = c.roll, dr = c.yaw;
+    // Strömungsabriss als Ablauf: erst sackt sie durch und ein Flügel kippt weg, dann fängt die Flughilfe ab
+    if (this.onGround) this.stallEp = -1;
+    else if (this.stall && !(this.stallEp >= 0)){ this.stallEp = 0; this.dropSide = Math.random() < 0.5 ? -1 : 1; if (this === driving) audio.stallHorn(); }
+    else if (this.stallEp >= 0){ this.stallEp += dt; if (!this.stall && this.stallEp > 1.6 && v > (this.vSafe || 0) * 0.95) this.stallEp = -1; }
+    const stallFree = this.stallEp >= 0 && this.stallEp < 0.9, stallRec = this.stallEp >= 0.9;
     if (settings.assist !== false){
       const rightW = _v1.set(-1, 0, 0).applyQuaternion(q), fwd = _v2.set(0, 0, 1).applyQuaternion(q);
       const bank = Math.asin(clamp(-rightW.y, -1, 1));   // Schräglage, rechts positiv
@@ -3594,23 +3661,25 @@ class Vehicle {
         if (this.hdgHold === undefined){ bankT = 0; if (Math.abs(bank) < 0.08) this.hdgHold = hdg; }
         else { const e = Math.atan2(Math.sin(hdg - this.hdgHold), Math.cos(hdg - this.hdgHold)); bankT = clamp(e * 1.5, -0.3, 0.3); }
       }
-      const wantRoll = clamp((bankT - bank) * 2.2, -1.6, 1.6);
+      const wantRoll = clamp((bankT - bank) * 2.0, -1.2, 1.2);
       // Knüppel zu sich/nach vorn = Nase hoch/runter (bis 30°); neutral hält er die Höhe, in Kurven wird etwas gezogen
       // Gas weg = sanfter Sinkflug; kurz über dem Boden fängt sie ab, damit die Landung weich wird
       const alt = b.position.y + this.lowest - groundY(b.position.x, b.position.z);
-      let vyT = c.power < 0.45 ? -7 * (0.45 - c.power) / 0.45 : 0;
+      let vyT = c.power < 0.45 ? -9 * (0.45 - c.power) / 0.45 : 0;
       if (alt < 7) vyT = Math.max(vyT, -1.1 - alt * 0.3);
       // Steig- und Sinkrate halten (mit Nachstellung, damit sie die Rate auch wirklich erreicht)
       if (this.onGround || Math.abs(c.pitch) > 0.15) this.vyI = 0;
       else this.vyI = clamp((this.vyI || 0) + (vyT - vy) * dt * 0.012, -0.3, 0.3);
       let wantAng = this.onGround ? c.pitch * 0.35 : c.pitch * 0.52 + clamp((vyT - vy) * 0.022, -0.18, 0.18) + this.vyI;
-      // Fahrt halten: unter der sicheren Geschwindigkeit senkt sie die Nase (nicht beim Abfangen kurz über dem Boden)
+      // Fahrt halten: unter der sicheren Geschwindigkeit senkt sie die Nase (nicht beim Abfangen kurz über dem Boden).
+      // Wer kräftig zieht, setzt sich darüber hinweg und kann die Strömung abreißen lassen.
       if (this.vSafe === undefined){ let S = 0; for (const s of this.surfaces) S += s.type === 'wing' ? s.S : s.type === 'tail' ? s.S * 0.3 : 0; this.vSafe = S ? Math.sqrt(2 * W / (RHO * S)) * 1.25 : 0; }
-      if (!this.onGround && alt > 4 && v < this.vSafe) wantAng = Math.min(wantAng, 0.12 - (this.vSafe - v) * 0.045);
-      if (this.stall && !this.onGround) wantAng = Math.min(wantAng, -0.15);
+      if (!this.onGround && alt > 4 && v < this.vSafe && c.pitch < 0.45) wantAng = Math.min(wantAng, 0.12 - (this.vSafe - v) * 0.045);
+      if (stallRec) wantAng = Math.min(wantAng, alt > 8 ? -0.25 : -0.1);
       const wantPitch = clamp((wantAng - pitchAng) * 1.6, -0.9, 0.9) + 0.6 * (1 - Math.cos(bank));
       da = clamp((wantRoll - rollRate) * 0.9 / qn, -1, 1);
       de = clamp((wantPitch - pitchRate) * 2.2 / qn, -1, 1);
+      if (stallFree){ de = Math.min(de, 0); da *= 0.35; }
       // Lastvielfaches begrenzen, damit die Flügel nicht abreißen
       const load = (this.lift || 0) / Math.max(1, W);
       if (load > 3.5) de = Math.min(de, -0.4 * (load - 3.5));
@@ -3666,7 +3735,9 @@ class Vehicle {
       if (V2 < 1) continue;
       const V = Math.sqrt(V2), alpha = Math.atan2(-w, u) + s.inc + s.defl;
       const st = smoothstep(0.26, 0.38, Math.abs(alpha));
-      const CL = lerp(s.cla * alpha, 0.95 * Math.sin(2 * alpha), st);
+      let CL = lerp(s.cla * alpha, 0.95 * Math.sin(2 * alpha), st);
+      // beim Abriss trägt ein Flügel weniger: sie kippt zur Seite
+      if (s.type === 'wing' && this.stallEp >= 0 && this.stallEp < 1.2 && Math.sign(s.pos.x) === this.dropSide) CL *= 1 - 0.35 * st;
       const CD = 0.025 + (CL * CL) / (Math.PI * 0.8 * s.ar) * (1 - st) + 1.15 * Math.sin(alpha) ** 2 * st;
       const qS = 0.5 * RHO * V2 * s.S;
       const lx = (s.n.x * u - s.c.x * w) / V, ly = (s.n.y * u - s.c.y * w) / V, lz = (s.n.z * u - s.c.z * w) / V;
@@ -4045,6 +4116,7 @@ const audio = {
     s.buffer = this.noise; f.type = 'bandpass'; f.Q.value = 0.9; f.frequency.setValueAtTime(650, t); f.frequency.exponentialRampToValueAtTime(3300, t + 0.16);
     this.env(g, t, 0.03, 0.16, 0.14); s.connect(f).connect(g).connect(this.sfx); s.start(t, Math.random() * 0.5, 0.25);
   },
+  stallHorn(){ if (!this.ok()) return; const t = this.ctx.currentTime; for (let i = 0; i < 3; i++) this.tone(t + i * 0.17, 'square', 560, 560, 0.045, 0.11); },
   tock(){ if (!this.ok()) return; const t = this.ctx.currentTime; this.tone(t, 'triangle', 200, 150, 0.28, 0.12); },
   ui(){ if (!this.ok()) return; this.tone(this.ctx.currentTime, 'sine', 1250, 1250, 0.06, 0.04); },
   undo(){ if (!this.ok()) return; const t = this.ctx.currentTime; this.tone(t, 'sine', 880, 880, 0.09, 0.05); this.tone(t + 0.06, 'sine', 640, 640, 0.09, 0.06); },
@@ -5735,7 +5807,8 @@ function updateHud(t){
   let warn = '';
   const engs = [...v.engines, ...v.props.map(p => p.it), ...v.jets.map(j => j.it)];
   if (v.destroyed) warn = 'Kaputt. Tippe auf Reparieren.';
-  else if (v.stall && !v.onGround) warn = 'Zu langsam: Strömungsabriss!';
+  else if ((v.stall || v.stallEp >= 0 && v.stallEp < 1.4) && !v.onGround) warn = 'Strömungsabriss! Nachdrücken, Gas geben';
+  else if (v.kind !== 'car' && !v.onGround && v.vSafe && v.speed < v.vSafe * 0.8 && b.position.y + v.lowest - groundY(b.position.x, b.position.z) > 4) warn = 'Zu langsam!';
   else if (engs.length && engs.every(it => (v.health.get(it.i) ?? 1) <= 0.05)) warn = 'Motor kaputt';
   else if (engs.some(it => (v.health.get(it.i) ?? 1) < 0.6)) warn = 'Motor beschädigt';
   else if (v.lost) warn = v.lost === 1 ? '1 Teil verloren' : v.lost + ' Teile verloren';
