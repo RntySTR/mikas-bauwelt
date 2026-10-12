@@ -888,6 +888,21 @@ def({ key:'jet', cat:'air', name:'Düsentriebwerk', label:'Düse', kind:'jet', w
 def({ key:'canopy', cat:'air', name:'Cockpitkuppel', label:'Kuppel', kind:'canopy', w:2, d:4, h:4, mainCls:'trans', layout: p => GK.full(p, false, true), build: p => GK.canopy(p) });
 def({ key:'gear', cat:'air', name:'Fahrwerk', label:'Fahrwerk', kind:'gear', w:1, d:2, h:6, rests:true, massMul:1.3, layout: p => { const vox = [], soft = []; for (let l = 0; l < p.h; l++){ vox.push([0, l, 0], [0, l, 1]); soft.push(l < p.h - 1, l < p.h - 1); } return { vox, tops: [[0, 0], [0, 1]], bottoms: [], soft }; }, build: p => GK.gearLeg(p), extras: p => GK.wheelSet(p, 0.45, 0, 0.2, 0.32, '#E8ECEF'), wheel:{ r: 0.45, cx: 0, cy: 0.45, cz: 0.2, width: 0.32 } });
 def({ key:'nose', cat:'air', name:'Rumpfspitze', label:'Spitze', kind:'nose', w:2, d:2, h:3, layout: p => GK.full(p, [[0, 0], [1, 0]], true), build: p => GK.nose(p), stream:true });
+// Verkehrsflugzeug (nach dem Passagierflugzeug-Set): Rumpf 6 breit und 4 Steine hoch, gepfeilte Flächen, Mantelstromtriebwerk
+def({ key:'fus_nose', cat:'air', name:'Cockpit-Bug mit Pilotensitz', label:'Cockpit', kind:'nose', w:6, d:6, h:12, massMul:0.3, layout: p => AK.noseLayout(p), build: p => AK.noseGeo(p), extras: p => AK.cockpit(p), stream:true, seat:{ pos:[0, 1.0, -0.9] } });
+def({ key:'fus_win', cat:'air', name:'Rumpfstück mit Fenstern', label:'Rumpf', kind:'fus', w:6, d:4, h:12, massMul:0.3, layout: p => AK.segLayout(p), build: p => AK.segGeo(p), extras: p => AK.windows(p, [[-1, -1.5], [-1, -0.5], [-1, 0.5], [-1, 1.5], [1, -1.5], [1, -0.5], [1, 0.5], [1, 1.5]]) });
+def({ key:'fus_door', cat:'air', name:'Rumpfstück mit Tür', label:'Rumpf Tür', kind:'fus', w:6, d:4, h:12, massMul:0.3, layout: p => AK.segLayout(p), build: p => AK.segGeo(p), extras: p => [...AK.windows(p, [[-1, -1.5], [-1, -0.5], [-1, 0.5], [-1, 1.5], [1, 0.7], [1, 1.55]]), ...AK.door(p)] });
+def({ key:'fus_tail', cat:'air', name:'Rumpfheck', label:'Heck', kind:'fus', w:6, d:8, h:12, massMul:0.3, layout: p => AK.tailLayout(p), build: p => AK.tailGeo(p), extras: p => AK.windows(p, [[-1, 3.4], [-1, 2.5], [1, 3.4], [1, 2.5]]) });
+def({ key:'wing_l', cat:'air', name:'Tragfläche links, gepfeilt', label:'Fläche L', kind:'wing', w:14, d:8, h:1, sweep:5, tipChord:2.5, layout: p => AK.sweptLayout(p), build: p => AK.sweptGeo(p), aero:{ type:'wing' } });
+def({ key:'wing_r', cat:'air', name:'Tragfläche rechts, gepfeilt', label:'Fläche R', kind:'wing', w:14, d:8, h:1, sweep:5, tipChord:2.5, mirror:true, layout: p => AK.sweptLayout(p), build: p => AK.sweptGeo(p), aero:{ type:'wing' } });
+def({ key:'htail_l', cat:'air', name:'Höhenleitwerk groß', label:'Höhe groß', kind:'wing', w:12, d:5, h:1, sweep:2.4, tipChord:2, sym:true, layout: p => AK.sweptLayout(p), build: p => AK.sweptGeo(p), aero:{ type:'tail' } });
+def({ key:'fin_l', cat:'air', name:'Seitenleitwerk groß', label:'Seite groß', kind:'fin', w:2, d:7, h:16, teSweep:0.9, topChord:2.2, massMul:0.6, layout: p => AK.finLayout(p), build: p => AK.finGeo(p), aero:{ type:'fin' } });
+def({ key:'winglet', cat:'air', name:'Winglet', label:'Winglet', kind:'fin', w:1, d:3, h:7, teSweep:0.3, topChord:0.9, layout: p => AK.finLayout(p), build: p => AK.finGeo(p), aero:{ type:'fin' } });
+def({ key:'turbofan', cat:'air', name:'Mantelstromtriebwerk', label:'Triebwerk', kind:'jet', w:4, d:6, h:10, massMul:0.35, layout: p => AK.fanLayout(p), build: p => AK.fanBody(p), extras: p => AK.fanParts(p), jet:{ thrust: 1700, pos:[0, 1.75, 0] } });
+def({ key:'gear_n', cat:'air', name:'Bugfahrwerk', label:'Bugrad', kind:'gear', w:2, d:2, h:14, rests:true, massMul:0.6, wr:0.55, layout: p => AK.gearLayout(p), build: p => AK.gearLeg(p), extras: p => AK.gearWheels(p), wheel:{ r: 0.55, cx: 0, cy: 0.55, cz: 0, width: 1.2 } });
+def({ key:'gear_m', cat:'air', name:'Hauptfahrwerk', label:'Hauptrad', kind:'gear', w:2, d:2, h:14, rests:true, massMul:0.6, wr:0.7, layout: p => AK.gearLayout(p), build: p => AK.gearLeg(p), extras: p => AK.gearWheels(p), wheel:{ r: 0.7, cx: 0, cy: 0.7, cz: 0, width: 1.3 } });
+def({ key:'nav', cat:'air', name:'Positionslicht', label:'Pos.-Licht', kind:'round', w:1, d:1, h:2, mainCls:'glow', layout: () => ({ vox: [[0, 0, 0], [0, 1, 0]], tops: [], bottoms: [[0, 0]] }), build: p => AK.navLight(p), light:{ y:0.6, r:1.6 } });
+def({ key:'strobe', cat:'air', name:'Blitzlicht', label:'Blitzlicht', kind:'round', w:1, d:1, h:2, mainCls:'strobe', layout: () => ({ vox: [[0, 0, 0], [0, 1, 0]], tops: [], bottoms: [[0, 0]] }), build: p => AK.navLight(p) });
 
 function rotXZ(x, z, r){ switch (r & 3){ case 0: return [x, z]; case 1: return [z, -x]; case 2: return [-x, -z]; default: return [-z, x]; } }
 function rotIdx(i, j, w, d, r){
@@ -1127,6 +1142,213 @@ const GK = {
     return mergeGeometries([GK.box(-1 + GAP, 0, -1 + GAP, 1 - GAP, 1.2, 0.02, 0.05), n, ...GK.studs(p, p.rot[0].tops, 1.2)]);
   }
 };
+
+/* Bausatz Verkehrsflugzeug: Rumpf aus Querschnitten, gepfeilte Flächen, Leitwerke, Triebwerk, Fahrwerk */
+const FUS = { a: 3 - GAP, H: 4.8, rb: 0.9, rt: 2.0, yc: 2.2 };
+const AK = {
+  // Rumpfquerschnitt: unten flach, oben rund; gegen den Uhrzeigersinn ab unten Mitte
+  profile(){
+    const { a, H, rb, rt } = FUS, pts = [[0, 0]];
+    const arc = (cx, cy, r, a0, a1, k) => { for (let i = 0; i <= k; i++){ const t = a0 + (a1 - a0) * i / k; pts.push([cx + r * Math.cos(t), cy + r * Math.sin(t)]); } };
+    arc(a - rb, rb, rb, -Math.PI / 2, 0, 6);
+    arc(a - rt, H - rt, rt, 0, Math.PI / 2, 12);
+    arc(-(a - rt), H - rt, rt, Math.PI / 2, Math.PI, 12);
+    arc(-(a - rb), rb, rb, Math.PI, Math.PI * 1.5, 6);
+    return pts;
+  },
+  // Hülle aus Ringen gleicher Punktzahl, Ringe nach steigendem z; closed = Ring geschlossen
+  loft(rings, caps, closed = true){
+    const n = rings[0].length, pos = [], idx = [], m = closed ? n : n - 1;
+    for (const r of rings) for (const q of r) pos.push(q[0], q[1], q[2]);
+    for (let k = 0; k < rings.length - 1; k++) for (let i = 0; i < m; i++){
+      const a = k * n + i, b = k * n + (i + 1) % n, c = (k + 1) * n + i, d = (k + 1) * n + (i + 1) % n;
+      idx.push(a, b, c, b, d, c);
+    }
+    const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); g.setIndex(idx); g.computeVertexNormals();
+    const out = [cleanGeo(g)];
+    for (const [ring, dir] of caps || []) out.push(AK.cap(ring, dir));
+    return mergeGeometries(out);
+  },
+  cap(ring, dir){
+    const tri = THREE.ShapeUtils.triangulateShape(ring.map(q => V2(q[0], q[1])), []), pos = [], nor = [];
+    for (let [a, b, c] of tri){
+      const cz = (ring[b][0] - ring[a][0]) * (ring[c][1] - ring[a][1]) - (ring[b][1] - ring[a][1]) * (ring[c][0] - ring[a][0]);
+      if (Math.sign(cz) !== Math.sign(dir)) [b, c] = [c, b];
+      for (const k of [a, b, c]){ pos.push(ring[k][0], ring[k][1], ring[k][2]); nor.push(0, 0, dir); }
+    }
+    const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); g.setAttribute('normal', new THREE.Float32BufferAttribute(nor, 3));
+    return g;
+  },
+  // Querschnitt an einer Stelle des Rumpfs: Breitenfaktor und Bodenhöhe (Heck steigt an)
+  shapeAt(p, z){
+    if (p.key === 'fus_tail'){ const t = clamp((p.d / 2 - z) / p.d, 0, 1); return { side: 1 - 0.58 * Math.pow(t, 1.25), yb: 3.1 * Math.pow(t, 1.45) }; }
+    return { side: 1, yb: 0 };
+  },
+  segLayout(p){
+    const vox = [], tops = [], bottoms = [];
+    for (let i = 0; i < p.w; i++) for (let j = 0; j < p.d; j++){ for (let l = 0; l < p.h; l++) vox.push([i, l, j]); bottoms.push([i, j]); if (i === 2 || i === 3) tops.push([i, j]); }
+    return { vox, tops, bottoms };
+  },
+  segGeo(p){
+    const prof = AK.profile(), z0 = -p.d / 2 + GAP, z1 = p.d / 2 - GAP;
+    const r0 = prof.map(([x, y]) => [x, y, z0]), r1 = prof.map(([x, y]) => [x, y, z1]);
+    return mergeGeometries([AK.loft([r0, r1], [[r0, -1], [r1, 1]]), ...GK.studs(p, p.rot[0].tops, FUS.H)]);
+  },
+  tailLayout(p){
+    const vox = [], tops = [], bottoms = [];
+    for (let j = 0; j < p.d; j++){
+      const zc = j + 0.5 - p.d / 2, { side, yb } = AK.shapeAt(p, zc), hw = FUS.a * side;
+      for (let i = 0; i < p.w; i++){
+        const xc = i + 0.5 - p.w / 2; if (Math.abs(xc) > hw - 0.1) continue;
+        let any = false;
+        for (let l = 0; l < p.h; l++){ if ((l + 0.5) * P < yb - 0.1) continue; vox.push([i, l, j]); any = true; if (l === 0) bottoms.push([i, j]); }
+        if (any && (i === 2 || i === 3)) tops.push([i, j]);
+      }
+    }
+    return { vox, tops, bottoms };
+  },
+  tailGeo(p){
+    const prof = AK.profile(), K = 16, z0 = -p.d / 2 + GAP, z1 = p.d / 2 - GAP, rings = [];
+    for (let k = 0; k <= K; k++){
+      const z = z0 + (z1 - z0) * k / K, { side, yb } = AK.shapeAt(p, z);
+      rings.push(prof.map(([x, y]) => [x * side, yb + y * (FUS.H - yb) / FUS.H, z]));
+    }
+    return mergeGeometries([AK.loft(rings, [[rings[0], -1], [rings[K], 1]]), ...GK.studs(p, p.rot[0].tops, FUS.H)]);
+  },
+  // Fenster: [Seite, z]; leuchten nachts wie eine beleuchtete Kabine
+  windows(p, list){
+    const pcs = [];
+    for (const [s, z] of list){
+      const { side, yb } = AK.shapeAt(p, z), x = FUS.a * side, y = (v) => yb + v * (FUS.H - yb) / FUS.H;
+      pcs.push(GK.box(s > 0 ? x - 0.05 : -x - 0.05, y(1.95), z - 0.24, s > 0 ? x + 0.05 : -x + 0.05, y(2.7), z + 0.24, 0.1));
+    }
+    return pcs.length ? [{ geo: mergeGeometries(pcs), hex: '#8FD3F0', cls: 'glow' }] : [];
+  },
+  door(p){
+    const x = FUS.a, z0 = -1.7, z1 = -0.25, y0 = 0.45, y1 = 2.85, t = 0.08;
+    const frame = [GK.box(x - 0.02, y0, z0, x + 0.05, y0 + t, z1, 0.02), GK.box(x - 0.02, y1 - t, z0, x + 0.05, y1, z1, 0.02), GK.box(x - 0.02, y0, z0, x + 0.05, y1, z0 + t, 0.02), GK.box(x - 0.02, y0, z1 - t, x + 0.05, y1, z1, 0.02)];
+    return [{ geo: mergeGeometries(frame), hex: '#A0A5A9', cls: 'solid' }, { geo: GK.box(x - 0.03, 2.05, -1.2, x + 0.06, 2.6, -0.75, 0.1), hex: '#8FD3F0', cls: 'glow' }, { geo: GK.box(x, 1.4, -0.62, x + 0.1, 1.5, -0.42, 0.03), hex: '#A3A6AB', cls: 'metal' }];
+  },
+  // Cockpit-Bug: Querschnitt läuft zur Spitze zusammen, die Nase liegt etwas tiefer
+  noseShape(t){ return { up: Math.pow(1 - Math.pow(t, 1.7), 0.55), low: Math.pow(1 - Math.pow(t, 2.6), 0.42), side: Math.pow(1 - Math.pow(t, 2.0), 0.5), yc: FUS.yc + (1.85 - FUS.yc) * t }; },
+  nosePt(x, y, t){ const s = AK.noseShape(t); return [x * s.side, y >= FUS.yc ? s.yc + (y - FUS.yc) * s.up : s.yc + (y - FUS.yc) * s.low]; },
+  noseGeo(p){
+    const prof = AK.profile(), K = 24, z0 = -p.d / 2 + GAP, L = p.d - 2 * GAP, rings = [];
+    for (let k = 0; k <= K; k++){ const t = Math.sin(k / K * Math.PI / 2); rings.push(prof.map(([x, y]) => { const [X, Y] = AK.nosePt(x, y, t); return [X, Y, z0 + L * t]; })); }
+    return AK.loft(rings, [[rings[0], -1]]);
+  },
+  noseLayout(p){
+    const vox = [], bottoms = [], z0 = -p.d / 2 + GAP, L = p.d - 2 * GAP;
+    for (let j = 0; j < p.d; j++){
+      const zc = j + 0.5 - p.d / 2, t = clamp((zc - z0) / L, 0, 1), s = AK.noseShape(t);
+      const hw = FUS.a * s.side, yb = s.yc - FUS.yc * s.low, yt = s.yc + (FUS.H - FUS.yc) * s.up;
+      for (let i = 0; i < p.w; i++){
+        const xc = i + 0.5 - p.w / 2; if (Math.abs(xc) > hw - 0.15) continue;
+        for (let l = 0; l < p.h; l++){ const y = (l + 0.5) * P; if (y < yb - 0.1 || y > yt + 0.1) continue; vox.push([i, l, j]); if (l === 0) bottoms.push([i, j]); }
+      }
+    }
+    return { vox, tops: [], bottoms };
+  },
+  // Cockpitscheiben: zwei je Seite im oberen Band, etwas über der Hülle
+  cockpit(p){
+    const prof = AK.profile(), z0 = -p.d / 2 + GAP, L = p.d - 2 * GAP, pcs = [];
+    const band = prof.map(([x, y], i) => ({ i, x, y })).filter(q => q.y > 3.0 && q.y < 4.5);
+    const runs = []; let cur = [];
+    for (const q of band){ if (cur.length && q.i !== cur[cur.length - 1].i + 1){ runs.push(cur); cur = []; } cur.push(q); }
+    if (cur.length) runs.push(cur);
+    const S = (x, y, t) => { const [X, Y] = AK.nosePt(x, y, t); return new THREE.Vector3(X, Y, z0 + L * t); };
+    for (const [ta, tb] of [[0.42, 0.53], [0.56, 0.7]]) for (const run of runs){
+      const rings = [];
+      for (let k = 0; k <= 5; k++){
+        const t = ta + (tb - ta) * k / 5;
+        rings.push(run.map((q, n) => {
+          const a = run[Math.max(0, n - 1)], b = run[Math.min(run.length - 1, n + 1)];
+          const du = S(b.x, b.y, t).sub(S(a.x, a.y, t)), dt = S(q.x, q.y, t + 0.01).sub(S(q.x, q.y, t - 0.01));
+          const nrm = new THREE.Vector3().crossVectors(du, dt).normalize();
+          return S(q.x, q.y, t).addScaledVector(nrm, 0.035).toArray();
+        }));
+      }
+      pcs.push(AK.loft(rings, null, false));
+    }
+    return [{ geo: mergeGeometries(pcs), hex: '#7FCBEB', cls: 'glow' }];
+  },
+  // Gepfeilte Fläche: Wurzel bei -x (gespiegelt bei +x, symmetrisch in der Mitte), Vorderkante wandert nach hinten
+  sweptU(p, x){ return clamp(p.sym ? Math.abs(x) / (p.w / 2) : ((p.mirror ? -x : x) + p.w / 2) / p.w, 0, 1); },
+  sweptLE(p, x){ return p.d / 2 - p.sweep * AK.sweptU(p, x); },
+  sweptTE(p, x){ return AK.sweptLE(p, x) - (p.d - (p.d - p.tipChord) * AK.sweptU(p, x)); },
+  sweptLayout(p){
+    const vox = [], tops = [], bottoms = [];
+    for (let i = 0; i < p.w; i++) for (let j = 0; j < p.d; j++){
+      const xc = i + 0.5 - p.w / 2, zc = j + 0.5 - p.d / 2;
+      if (zc > AK.sweptLE(p, xc) - 0.1 || zc < AK.sweptTE(p, xc) + 0.1) continue;
+      vox.push([i, 0, j]); bottoms.push([i, j]);
+      const lo = Math.min(AK.sweptLE(p, xc - 0.5), AK.sweptLE(p, xc + 0.5)), hi = Math.max(AK.sweptTE(p, xc - 0.5), AK.sweptTE(p, xc + 0.5));
+      if (zc + 0.5 <= lo + 0.01 && zc - 0.5 >= hi - 0.01) tops.push([i, j]);
+    }
+    let S = 0, sx = 0, sz = 0; const n = 200;
+    for (let k = 0; k < n; k++){ const x = -p.w / 2 + (k + 0.5) * p.w / n, le = AK.sweptLE(p, x), te = AK.sweptTE(p, x), c = le - te; S += c * p.w / n; sx += x * c * p.w / n; sz += (le + te) / 2 * c * p.w / n; }
+    Object.assign(p.aero, { S, cx: sx / S, cy: 0.2, cz: sz / S, chord: S / p.w, span: p.w });
+    return { vox, tops, bottoms };
+  },
+  sweptGeo(p){
+    const n = 28, pts = [], bt = 0.03;
+    for (let k = 0; k <= n; k++){ const x = -p.w / 2 + GAP + (p.w - 2 * GAP) * k / n; pts.push([x, AK.sweptLE(p, x) - GAP]); }
+    for (let k = n; k >= 0; k--){ const x = -p.w / 2 + GAP + (p.w - 2 * GAP) * k / n; pts.push([x, AK.sweptTE(p, x) + GAP]); }
+    const g = new THREE.ExtrudeGeometry(new THREE.Shape(pts.map(([x, z]) => V2(x, -z))), { depth: 0.4 - 2 * bt, bevelEnabled: true, bevelThickness: bt, bevelSize: bt, bevelOffset: -bt, bevelSegments: 2 });
+    g.rotateX(-Math.PI / 2); g.translate(0, bt, 0);
+    return mergeGeometries([cleanGeo(g), ...GK.studs(p, p.rot[0].tops, 0.4)]);
+  },
+  // Senkrechte gepfeilte Flosse (Seitenleitwerk, Winglet) auf einer Grundplatte
+  finEdges(p){ const H = p.h * P, zf = p.d / 2 - GAP, zb = -p.d / 2 + GAP, tb = zb + p.teSweep, tf = tb + p.topChord; return { H, le: y => zf + (tf - zf) * (y - 0.4) / (H - 0.4), te: y => zb + (tb - zb) * (y - 0.4) / (H - 0.4), pts: [[zf, 0.4], [zb, 0.4], [tb, H], [tf, H]] }; },
+  finLayout(p){
+    const E = AK.finEdges(p), vox = [], bottoms = [];
+    for (let i = 0; i < p.w; i++) for (let j = 0; j < p.d; j++){ vox.push([i, 0, j]); bottoms.push([i, j]); }
+    for (let l = 1; l < p.h; l++){ const y = (l + 0.5) * P; for (let j = 0; j < p.d; j++){ const zc = j + 0.5 - p.d / 2; if (zc < E.le(y) + 0.1 && zc > E.te(y) - 0.1) for (let i = 0; i < p.w; i++) vox.push([i, l, j]); } }
+    const h = E.H - 0.4, c0 = p.d, c1 = p.topChord, S = (c0 + c1) / 2 * h, cy = 0.4 + h * (c0 + 2 * c1) / (3 * (c0 + c1));
+    const cz = (E.le(cy) + E.te(cy)) / 2;
+    Object.assign(p.aero, { S, cx: 0, cy, cz, chord: S / h });
+    return { vox, tops: [], bottoms };
+  },
+  finGeo(p){
+    const E = AK.finEdges(p), bt = 0.03, th = 0.3;
+    const g = new THREE.ExtrudeGeometry(new THREE.Shape(E.pts.map(([z, y]) => V2(-z, y))), { depth: th - 2 * bt, bevelEnabled: true, bevelThickness: bt, bevelSize: bt, bevelOffset: -bt, bevelSegments: 2 });
+    g.translate(0, 0, -(th - 2 * bt) / 2); g.rotateY(Math.PI / 2);
+    return mergeGeometries([cleanGeo(g), GK.box(-p.w / 2 + GAP, 0, -p.d / 2 + GAP, p.w / 2 - GAP, 0.42, p.d / 2 - GAP, 0.04)]);
+  },
+  // Mantelstromtriebwerk: Gondel mit großem Fan vorn, Pylon oben mit Noppen zum Anstecken unter die Fläche
+  fanLayout(p){
+    const vox = [], tops = [];
+    for (let i = 0; i < p.w; i++) for (let j = 0; j < p.d; j++){ for (let l = 0; l < p.h; l++) vox.push([i, l, j]); if ((i === 1 || i === 2) && j >= 1 && j <= 4) tops.push([i, j]); }
+    return { vox, tops, bottoms: [] };
+  },
+  fanBody(p){
+    const cy = p.jet.pos[1], H = p.h * P;
+    const nacelle = GK.lathe([[1.24, 2.62], [1.4, 2.86], [1.56, 2.78], [1.66, 2.1], [1.66, 0.9], [1.56, -0.8], [1.36, -2.3], [1.22, -2.35], [1.16, -0.6], [1.18, 2.1], [1.24, 2.62]].map(([r, z]) => [r, z]), 'z', 0, cy, 0, 40);
+    const pylon = GK.box(-0.42, cy + 1.2, -2.3, 0.42, H - 0.36, 1.7, 0.12);
+    const plate = GK.box(-1 + GAP, H - 0.4, -2 + GAP, 1 - GAP, H, 2 - GAP, 0.04);
+    return mergeGeometries([nacelle, pylon, plate, ...GK.studs(p, p.rot[0].tops, H)]);
+  },
+  fanParts(p){
+    const cy = p.jet.pos[1], blades = [];
+    for (let k = 0; k < 18; k++){ const b = new THREE.BoxGeometry(0.16, 0.92, 0.05); b.translate(0, 0.66, 0); b.rotateY(0.55); b.rotateZ(k * Math.PI * 2 / 18); blades.push(cleanGeo(b)); }
+    blades.push(GK.lathe([[0.001, 0.42], [0.2, 0.3], [0.3, 0.05], [0.31, -0.1]], 'z', 0, 0, 0, 20));
+    const fan = mergeGeometries(blades).translate(0, cy, 2.2);
+    const back = GK.cyl(1.17, 1.17, 0.06, 'z', 0, cy, 1.9, 32);
+    const lip = GK.lathe([[1.27, 2.62], [1.42, 2.88], [1.57, 2.8], [1.52, 2.68], [1.3, 2.6]], 'z', 0, cy, 0, 40);
+    const core = GK.lathe([[0.78, -2.1], [0.74, -2.6], [0.45, -2.95], [0.001, -3.0]], 'z', 0, cy, 0, 24);
+    return [{ geo: fan, hex: '#8B8E92', cls: 'metal', role: 'prop' }, { geo: back, hex: '#2A2D31', cls: 'solid' }, { geo: lip, hex: '#C9CCD0', cls: 'metal' }, { geo: core, hex: '#6C6E73', cls: 'metal' }];
+  },
+  // Hohes Fahrwerk mit Doppelrad
+  gearLayout(p){ const vox = [], soft = [], tops = []; for (let i = 0; i < p.w; i++) for (let j = 0; j < p.d; j++){ for (let l = 0; l < p.h; l++){ vox.push([i, l, j]); soft.push(l < p.h - 1); } tops.push([i, j]); } return { vox, tops, bottoms: [], soft }; },
+  gearLeg(p){
+    const H = p.h * P, ay = p.wr, top = H - 0.4;
+    return mergeGeometries([GK.box(-1 + GAP, top, -1 + GAP, 1 - GAP, H, 1 - GAP, 0.04), ...GK.studs(p, p.rot[0].tops, H),
+      GK.cyl(0.15, 0.15, top - ay - 0.6, 'y', 0, ay + 0.6 + (top - ay - 0.6) / 2, 0, 14), GK.cyl(0.1, 0.1, 0.8, 'y', 0, ay + 0.4, 0, 12),
+      GK.cyl(0.07, 0.07, 0.62, 'x', 0, ay, 0, 10), GK.box(-0.05, ay + 0.6, -0.42, 0.05, top - 0.6, -0.32, 0.02)]);
+  },
+  gearWheels(p){ return [...GK.wheelSet(p, p.wr, -0.33, 0, 0.42, '#E8ECEF'), ...GK.wheelSet(p, p.wr, 0.33, 0, 0.42, '#E8ECEF')]; },
+  navLight(p){ return mergeGeometries([GK.lathe([[0.001, 0], [0.46, 0], [0.48, 0.03], [0.48, 0.37], [0.45, 0.4], [0.001, 0.4]], 'y', 0, 0, 0, 24), GK.lathe([[0.001, 0.4], [0.3, 0.4], [0.3, 0.5], [0.22, 0.68], [0.001, 0.74]], 'y', 0, 0, 0, 20)]); }
+};
 PARTS.forEach(buildLayout);
 
 /* ---------- Gelände: Höhe in Plattenlagen, Bodenart, Wasserspiegel je Feld ---------- */
@@ -1356,6 +1578,7 @@ function patchMat(m, kind = 'std'){
     const glow = kind === 'glow' ? 'totalEmissiveRadiance += diffuseColor.rgb * uGlow;'
       : kind === 'beacon' ? '{ float a = atan(vLPos.z, vLPos.x); totalEmissiveRadiance += diffuseColor.rgb * (uGlow * 0.5 + uOn * 6.0 * pow(max(0.0, cos(a - uTime * 7.5)), 4.0)); }'
       : kind === 'flash' ? '{ float c = fract(uTime * 1.5 + (vLPos.x > 0.0 ? 0.5 : 0.0)); float k = step(c, 0.09) + step(0.17, c) * step(c, 0.26); totalEmissiveRadiance += diffuseColor.rgb * (uGlow * 0.5 + uOn * 6.0 * k); }'
+      : kind === 'strobe' ? '{ float c = fract(uTime * 0.9); float k = step(c, 0.05) + step(0.13, c) * step(c, 0.18); totalEmissiveRadiance += diffuseColor.rgb * (uGlow * 0.4 + 5.0 * k); }'
       : '';
     sh.fragmentShader = 'uniform float uSnow;\nuniform float uWet;\nuniform float uGlow;\nuniform float uTime;\nuniform float uOn;\nvarying vec3 vWPos;\nvarying vec3 vLPos;\n'
       + 'float wxHash(vec2 p){ return fract(sin(dot(p, vec2(41.3, 289.1))) * 45758.5453); }\n'
@@ -2040,9 +2263,9 @@ const BASE = {
   rubber: () => new THREE.MeshPhysicalMaterial({ color: 0xffffff, roughness: 0.86, metalness: 0 })
 };
 // Materialklasse → Grundmaterial und Leuchtart
-const CLS_BASE = { solid: 'solid', trans: 'trans', metal: 'metal', glow: 'glow', rubber: 'rubber', beacon: 'glow', flash: 'glow' };
-const CLS_KIND = { glow: 'glow', beacon: 'beacon', flash: 'flash' };
-const SHADOWLESS = new Set(['trans', 'glow', 'beacon', 'flash']);
+const CLS_BASE = { solid: 'solid', trans: 'trans', metal: 'metal', glow: 'glow', rubber: 'rubber', beacon: 'glow', flash: 'glow', strobe: 'glow' };
+const CLS_KIND = { glow: 'glow', beacon: 'beacon', flash: 'flash', strobe: 'strobe' };
+const SHADOWLESS = new Set(['trans', 'glow', 'beacon', 'flash', 'strobe']);
 function newMat(cls, uOn){ const m = BASE[CLS_BASE[cls]](); if (uOn) m.userData.uOn = uOn; return patchMat(m, CLS_KIND[cls] || 'std'); }
 const MAT = {};
 for (const cls of Object.keys(CLS_BASE)) MAT[cls] = newMat(cls);
@@ -3182,7 +3405,8 @@ function vehicleData(bp, alive, seatR, seatI){
     it.str = s;
   }
   const props = items.filter(it => it.p.prop).map(it => ({ it, pos: P3(it, ...it.p.prop.pos), axis: D3(it, 0, 0, 1), D: it.p.prop.D, power: it.p.prop.power, spin: 0 }));
-  const jets = items.filter(it => it.p.jet).map(it => ({ it, pos: P3(it, ...it.p.jet.pos), axis: D3(it, 0, 0, 1), thrust: it.p.jet.thrust }));
+  // Düsen unter den Flächen liegen weit unter dem Schwerpunkt; der Schub greift vereinfacht nahe der Schwerpunkthöhe an, sonst kippt das Flugzeug beim Gasgeben nach hinten
+  const jets = items.filter(it => it.p.jet).map(it => { const pos = P3(it, ...it.p.jet.pos); return { it, pos, posT: new THREE.Vector3(pos.x, pos.y * 0.2, pos.z), axis: D3(it, 0, 0, 1), thrust: it.p.jet.thrust }; });
   return {
     items, cells, mass: M, com, I: [Ix, Iy, Iz], bounds, radius: Math.max(Math.hypot(x0, y0, z0), Math.hypot(x1, y1, z1), 2), boxes,
     area: [sx.size * P, sy.size, sz.size * P], cdFront: 0.36 - 0.18 * stream / Math.max(1, sz.size),
@@ -3429,7 +3653,7 @@ class Vehicle {
       for (const j of this.jets){
         const h = this.health.get(j.it.i); if (h <= 0) continue;
         const T = j.thrust * h * power * (1 + Math.max(0, vL.dot(j.axis)) / 500);
-        apply(j.axis.x * T, j.axis.y * T, j.axis.z * T, j.pos); thrust += T;
+        apply(j.axis.x * T, j.axis.y * T, j.axis.z * T, j.posT || j.pos); thrust += T;
       }
     }
     this.thrust = thrust;
@@ -4911,7 +5135,7 @@ function endPrimary(s, cancelled){
       } else { addPart({ ...s.moving }, true); audio.tock(); }
     } else if (pl){
       if (pl.ok) doPlace(pl);
-      else { audio.tock(); tut.toastOnce('nohold', 'Hier hält der Stein nicht. Er braucht Noppen darunter oder darüber.'); }
+      else { audio.tock(); if (PARTS[pl.t].kind === 'fus' || PARTS[pl.t].key === 'fus_nose') tut.toastOnce('nofus', 'Rumpfstücke halten nicht seitlich aneinander. Leg Platten oder die Tragfläche darunter und steck die Rumpfstücke darauf. Ein Stück, das über zwei Platten reicht, verbindet sie.'); else tut.toastOnce('nohold', 'Hier hält der Stein nicht. Er braucht Noppen darunter oder darüber.'); }
     }
     if (COARSE) setGhost(null); else setGhost(placementAt(s.x, s.y));
   } else if (tool === 'paint'){
@@ -5846,6 +6070,8 @@ function analyzeVehicle(bp){
     const lowWheel = okW.length ? Math.min(...okW.map(w => w.center.y - w.r)) : D.bounds.y0;
     if (D.props.some(p => p.pos.y - p.D / 2 * Math.hypot(p.axis.x, p.axis.z) < lowWheel + 0.05)) out.warn.push('Der Propeller schlägt auf den Boden. Bau ein höheres Fahrwerk.');
     if (okW.length < 3) out.warn.push('Ein Fahrwerk mit drei Rädern hilft beim Starten und Landen.');
+    // Bugradfahrwerk: Die hinteren Räder müssen hinter dem Schwerpunkt stehen, sonst setzt das Heck auf
+    if (okW.length >= 3){ const zMax = Math.max(...okW.map(w => w.center.z)), back = okW.filter(w => w.center.z < zMax - 1.2); if (back.length && back.every(w => w.center.z > -0.2)) out.warn.unshift('Das Hauptfahrwerk steht vor dem Schwerpunkt: Das Flugzeug kippt nach hinten. Setz es weiter nach hinten.'); }
   }
   if (out.loose) out.warn.push(out.loose === 1 ? '1 Teil ist nicht mit dem Fahrzeug verbunden.' : out.loose + ' Teile sind nicht mit dem Fahrzeug verbunden.');
   return out;
@@ -6220,7 +6446,7 @@ function vehStats(){
     if (p.key === 'beacon' || p.key === 'lbar') c.blue++;
     if (p.key === 'head') c.head++;
     if (p.key === 'tail') c.tail++;
-    if (p.key.startsWith('prop_') || p.key === 'jet') c.motors++;
+    if (p.prop || p.jet) c.motors++;
   }
   if (seats.length){ const a = analyzeVehicle(blueprintOf(list)); if (a) c.mass = a.mass; }
   return c;
@@ -6770,7 +6996,8 @@ const TOUR = [
   { id: 'werkstatt', title: 'Werkstatt', sub: 'Autos und Flugzeuge bauen', steps: [
     { sel: '#btnMenu', mode: 'build', t: 'In die Werkstatt', x: 'Im Menü startet „Auto bauen“ oder „Flugzeug bauen“ eine Werkstatt mit einem fertigen Modell. „Leere Werkstatt“ fängt bei null an.' },
     { sel: '#cats [data-cat="veh"]', t: 'Fahrzeugteile', x: 'Räder in drei Größen, Fahrersitz, Motoren, Lichter, Stoßstange und Blaulicht.' },
-    { sel: '#cats [data-cat="air"]', t: 'Flugzeugteile', x: 'Flügel, Leitwerke, Propeller in drei Größen, Düse, Kuppel und Fahrwerk.' },
+    { sel: '#cats [data-cat="air"]', t: 'Flugzeugteile', x: 'Flügel, Leitwerke, Propeller in drei Größen, Düse, Kuppel und Fahrwerk. Dazu Teile für ein Verkehrsflugzeug: Cockpit mit Pilotensitz, Rumpf mit Fenstern und Tür, Heck, gepfeilte Flächen, Triebwerke, hohes Fahrwerk und Lichter.' },
+    { t: 'Verkehrsflugzeug bauen', x: 'Rumpfstücke halten nicht seitlich aneinander. Leg Platten und die Tragflächen darunter und setz die Rumpfstücke so, dass jedes über zwei Teile reicht. Die Triebwerke steckst du unter die Flächen, das Hauptfahrwerk gehört knapp hinter die Flügelmitte.' },
     { t: 'Was schnell macht', x: 'Große Räder machen ein Auto schnell, kleine geben mehr Kraft. Ein größerer Propeller oder mehr Motoren machen ein Flugzeug schneller. Jedes Teil wiegt etwas.' },
     { t: 'Die Fahrzeugdaten', x: 'In der Werkstatt steht oben, wie schwer dein Fahrzeug ist, wie schnell es wird und was ihm noch fehlt.' },
     { sel: '#btnBock', t: 'Aufbocken', x: 'Hebt das Fahrzeug auf gelbe Böcke. Dann schaust du von unten und baust Fahrwerk, Räder oder Kufen an die Unterseite. „Absenken“ stellt es wieder auf den Boden.' },
