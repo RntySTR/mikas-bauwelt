@@ -3617,11 +3617,15 @@ function bpComponents(alive, adj){
   return comps;
 }
 // Fahrzeugdaten aus einem Bauplan (ohne Physik): Masse, Schwerpunkt, Formen, Antrieb, Flächen, Haltekraft
+// Flugzeuge wiegen im Spiel mehr als Autos aus denselben Teilen: schwere Flugzeuge brauchen mehr Motoren
+let AIR_MASS = 1.8;
 function vehicleData(bp, alive, seatR, seatI){
   const inv = (4 - seatR) & 3, items = [], cells = new Map();
   let M = 0, mx = 0, my = 0, mz = 0;
+  let air = false; for (const i of alive){ const p = PARTS[bp[i].t]; if (p.prop || p.jet){ air = true; break; } }
+  const mk = air ? AIR_MASS : 1;
   for (const i of alive){
-    const b = bp[i], p = PARTS[b.t], L = p.rot[b.r], mv = p.mass / L.vox.length;
+    const b = bp[i], p = PARTS[b.t], L = p.rot[b.r], mv = p.mass * mk / L.vox.length;
     const it = { i, t: b.t, c: b.c, p, lr: (b.r + inv) & 3, gr: b.r, gx: b.gx, gy: b.gy, gz: b.gz, cells: [] };
     L.vox.forEach(([x, l, z], vi) => {
       const [cx, cz] = rotXZ(b.gx + x + 0.5, b.gz + z + 0.5, inv);
@@ -3752,6 +3756,7 @@ class Vehicle {
     while (body.shapes.length) body.removeShape(body.shapes[0]);
     for (const [x, y, z, hx, hy, hz] of D.boxes) body.addShape(new CANNON.Box(new CANNON.Vec3(hx - 0.02, hy - 0.01, hz - 0.02)), new CANNON.Vec3(x, y, z));
     body.mass = D.mass; body.updateMassProperties();
+    body.angularDamping = D.kind === 'air' ? 0.35 : 0.05;   // Luft dämpft Drehungen von Flugzeugen spürbar
     body.inertia.set(...D.I); body.invInertia.set(1 / D.I[0], 1 / D.I[1], 1 / D.I[2]); body.updateInertiaWorld(true);
     // Räder: gefederte Strahlen
     if (this.rv){ world.removeEventListener('preStep', this.rv.preStepCallback); this.rv = null; }
@@ -3869,7 +3874,7 @@ class Vehicle {
     const w = _v3.set(b.angularVelocity.x, b.angularVelocity.y, b.angularVelocity.z).applyQuaternion(qi);
     const pitchRate = -w.x, rollRate = w.z, yawRate = -w.y;
     const v = this.speed || 0, qn = clamp(v * v / 1600, 0.25, 6);
-    let de = c.pitch, da = c.roll, dr = c.yaw;
+    let de = c.pitch * 0.65, da = c.roll * 0.75, dr = c.yaw;   // ohne Flughilfe: Ruder direkt, etwas gedämpft
     // Strömungsabriss als Ablauf: erst sackt sie durch und ein Flügel kippt weg, dann fängt die Flughilfe ab
     if (this.onGround) this.stallEp = -1;
     else if (this.stall && !(this.stallEp >= 0)){ this.stallEp = 0; this.dropSide = Math.random() < 0.5 ? -1 : 1; if (this === driving) audio.stallHorn(); }
@@ -3905,8 +3910,10 @@ class Vehicle {
       if (!this.onGround && alt > 4 && v < this.vSafe && c.pitch < 0.45) wantAng = Math.min(wantAng, 0.12 - (this.vSafe - v) * 0.045);
       if (stallRec) wantAng = Math.min(wantAng, alt > 8 ? -0.25 : -0.1);
       const wantPitch = clamp((wantAng - pitchAng) * 1.6, -0.9, 0.9) + 0.6 * (1 - Math.cos(bank));
-      da = clamp((wantRoll - rollRate) * 0.9 / qn, -1, 1);
-      de = clamp((wantPitch - pitchRate) * 2.2 / qn, -1, 1);
+      // Die Flughilfe hat nur begrenzte Ruderkraft: Ein schlecht ausbalanciertes Flugzeug zieht trotzdem weg
+      const AUTH = 0.5;
+      da = clamp(clamp((wantRoll - rollRate) * 0.9 / qn, -AUTH, AUTH) + c.roll * 0.4, -1, 1);
+      de = clamp(clamp((wantPitch - pitchRate) * 2.2 / qn, -AUTH, AUTH) + c.pitch * 0.4, -1, 1);
       if (stallFree){ de = Math.min(de, 0); da *= 0.35; }
       // Lastvielfaches begrenzen, damit die Flügel nicht abreißen
       const load = (this.lift || 0) / Math.max(1, W);
@@ -5967,7 +5974,8 @@ const ICON = {
   blue: '<path d="M7 18h10M8 18v-5a4 4 0 0 1 8 0v5"/><path d="M12 3v2M5 7l1.5 1.5M19 7l-1.5 1.5"/>',
   fix: '<path d="M14.5 5.5a4 4 0 0 0-5 5L4 16l4 4 5.5-5.5a4 4 0 0 0 5-5L16 12l-4-4z"/>',
   garage: '<path d="M3 11 12 4l9 7v9H3z"/><path d="M7 20v-6h10v6"/>',
-  shop: '<rect x="3" y="11" width="18" height="7" rx="2"/><path d="M6 11l2-4h8l2 4"/><path d="M12 2v3"/>'
+  shop: '<rect x="3" y="11" width="18" height="7" rx="2"/><path d="M6 11l2-4h8l2 4"/><path d="M12 2v3"/>',
+  assist: '<circle cx="12" cy="12" r="8.5"/><path d="M3.8 13.5 20.2 10.5"/><path d="M9 15.5h6M12 12v-3"/>'
 };
 let padState = '';
 function pbtn(cls, icon, label, down, up){
@@ -6020,6 +6028,7 @@ function renderPad(){
   if (v.kind === 'car') side.push(pbtn('mini', 'horn', 'Hupe', () => { v.horn = true; }, () => { v.horn = false; }));
   if (v.lamps.some(l => l.kind === 'head')) side.push(togBtn('light', 'Licht', () => v.lightsOn, x => { v.lightsOn = x; }));
   if (v.hasBlue) side.push(togBtn('blue', 'Blaulicht', () => v.siren, x => { v.siren = x; }));
+  if (v.kind !== 'car') side.push(togBtn('assist', 'Flughilfe', () => settings.assist !== false, x => { settings.assist = x; applySettings(); toast(x ? 'Flughilfe an: Sie hält die Lage, aber nicht jeden Fehler.' : 'Flughilfe aus: Du steuerst die Ruder selbst.', 2400); }));
   if (v.kind === 'car'){
     pad.append(col(...side.slice(0, 3)), col(...side.slice(3)),
       pbtn('pedal brake', '', 'Bremse', () => { ctl.brake = true; }, () => { ctl.brake = false; }),
@@ -6400,7 +6409,8 @@ function analyzeVehicle(bp){
     let top = 0; for (let v = 4; v < 320; v += 1) if (thrust(v) >= drag(v)) top = v;
     out.top = top;
     if (!D.wingArea) out.warn.push('Ohne Flügel hebt es nicht ab.');
-    else if (top < out.vto) out.warn.push('Zu schwer oder zu schwach: Es erreicht die Abhebegeschwindigkeit nicht.');
+    else if (top < out.vto) out.warn.push('Zu schwer für die Motoren: Es wird nicht schnell genug zum Abheben. Bau einen weiteren Motor an oder lass Steine weg.');
+    else if (top < out.vto * 1.2) out.warn.push('Knapp: Das Flugzeug braucht fast die ganze Bahn. Ein zweiter Motor hilft.');
     const tails = D.surfaces.filter(s => s.type === 'tail');
     if (D.wingArea && !tails.length) out.warn.push('Ohne Höhenleitwerk hinten lässt es sich kaum steuern.');
     if (D.wingArea && !D.surfaces.some(s => s.type === 'fin')) out.warn.push('Ohne Seitenleitwerk dreht es sich leicht weg.');
@@ -6408,8 +6418,8 @@ function analyzeVehicle(bp){
     if (D.wingArea){
       let num = 0, den = 0;
       for (const s of D.surfaces) if (s.type !== 'fin'){ const k = s.type === 'tail' ? 0.6 : 1; num += s.S * s.cla * k * s.pos.z; den += s.S * s.cla * k; }
-      const np = num / den, chord = D.wingArea / Math.max(4, D.AR ** 0.5 * 4);
-      if (np > 0.05 * chord) out.warn.push(settings.assist !== false ? 'Schwerpunkt weit hinten: Die Flughilfe hält es gerade, ohne sie bäumt es sich auf.' : 'Schwerpunkt zu weit hinten: Es bäumt sich auf. Mach die Nase schwerer oder setz die Flügel weiter nach hinten.');
+      const np = num / den, chord = D.wingArea / Math.max(4, D.AR ** 0.5 * 4); out.np = np; out.chord = chord;
+      if (np > 0.05 * chord) out.warn.push(settings.assist !== false ? 'Schwerpunkt weit hinten: Es will sich aufbäumen. Die Flughilfe schafft das nur zum Teil, drück dagegen oder mach die Nase schwerer.' : 'Schwerpunkt zu weit hinten: Es bäumt sich auf. Mach die Nase schwerer oder setz die Flügel weiter nach hinten.');
     }
     const lowWheel = okW.length ? Math.min(...okW.map(w => w.center.y - w.r)) : D.bounds.y0;
     if (D.props.some(p => p.pos.y - p.D / 2 * Math.hypot(p.axis.x, p.axis.z) < lowWheel + 0.05)) out.warn.push('Der Propeller schlägt auf den Boden. Bau ein höheres Fahrwerk.');
@@ -7517,11 +7527,11 @@ const GUIDES = [
       add('gear', 'Weiß', 60, 0, 59); add('gear', 'Weiß', 63, 0, 59); add('gear', 'Weiß', 61, 0, 65);
       add('p4x8', 'Feuerwehrrot', 60, 6, 60, 1); add('p2x6', 'Feuerwehrrot', 61, 6, 54, 1);
       add('p2x4', 'Feuerwehrrot', 61, 7, 57, 1); add('seat', 'Schwarz', 61, 7, 62); add('prop_m', 'Dunkelgrau', 61, 7, 66);
-      add('wing4', 'Sonnengelb', 63, 7, 62, 0); add('wing4', 'Sonnengelb', 53, 7, 62, 2);
+      add('wing4', 'Sonnengelb', 63, 7, 59, 0); add('wing4', 'Sonnengelb', 53, 7, 59, 2);
       add('htail', 'Sonnengelb', 58, 7, 54); add('fin', 'Feuerwehrrot', 61, 8, 54);
-      add('rb1', 'Weiß', 66, 8, 63); add('rb1', 'Weiß', 66, 8, 64); add('rb1', 'Weiß', 56, 8, 63); add('rb1', 'Weiß', 56, 8, 64);
-      add('rb1', 'Weiß', 66, 11, 63); add('rb1', 'Weiß', 66, 11, 64); add('rb1', 'Weiß', 56, 11, 63); add('rb1', 'Weiß', 56, 11, 64);
-      add('wing4', 'Sonnengelb', 63, 14, 62, 0); add('wing4', 'Sonnengelb', 53, 14, 62, 2);
+      add('rb1', 'Weiß', 66, 8, 60); add('rb1', 'Weiß', 66, 8, 61); add('rb1', 'Weiß', 56, 8, 60); add('rb1', 'Weiß', 56, 8, 61);
+      add('rb1', 'Weiß', 66, 11, 60); add('rb1', 'Weiß', 66, 11, 61); add('rb1', 'Weiß', 56, 11, 60); add('rb1', 'Weiß', 56, 11, 61);
+      add('wing4', 'Sonnengelb', 63, 14, 59, 0); add('wing4', 'Sonnengelb', 53, 14, 59, 2);
     }) },
   { id: 'jumbo', title: 'Verkehrsflugzeug', kind: 'garage', diff: 3, text: 'Ein großes Passagierflugzeug mit zwei Triebwerken, Fenstern und Lichtern.',
     tip: 'Tippe auf „Losfahren“: Gashebel ganz nach oben und die Landebahn entlang. Ab etwa 55 km/h hebt es ab.',
@@ -8277,9 +8287,9 @@ function createVehicleBuild(kind){
     add('b1x4', 'Feuerwehrrot', 63, 8, 62, 1); add('b1x4', 'Feuerwehrrot', 66, 8, 62, 1);
     add('bump', 'Silber', 63, 8, 69, 0); add('head', 'Weiß', 63, 9, 69, 0); add('head', 'Weiß', 66, 9, 69, 0);
   } else {
-    add('gear', 'Weiß', 60, 0, 61); add('gear', 'Weiß', 63, 0, 61); add('gear', 'Weiß', 61, 0, 65);
+    add('gear', 'Weiß', 60, 0, 59); add('gear', 'Weiß', 63, 0, 59); add('gear', 'Weiß', 61, 0, 65);
     add('p4x8', 'Weiß', 60, 6, 60, 1); add('p2x4', 'Weiß', 61, 7, 57, 1); add('p2x6', 'Weiß', 61, 6, 54, 1);
-    add('wing4', 'Blau', 63, 7, 62, 0); add('wing4', 'Blau', 53, 7, 62, 2);
+    add('wing4', 'Blau', 63, 7, 59, 0); add('wing4', 'Blau', 53, 7, 59, 2);
     add('prop_m', 'Feuerwehrrot', 61, 7, 66); add('seat', 'Schwarz', 61, 7, 62);
     add('htail', 'Blau', 58, 7, 54); add('fin', 'Feuerwehrrot', 61, 8, 54);
   }
