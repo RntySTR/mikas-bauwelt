@@ -721,6 +721,7 @@ body[data-kind="garage"] .world-only{display:none!important}
     <button id="btnRedo" class="icon-btn build-only" type="button" aria-label="Wiederholen" title="Wiederholen" disabled><svg viewBox="0 0 24 24"><path d="m15 14 5-5-5-5"/><path d="M20 9H9.5a5.5 5.5 0 0 0 0 11H13"/></svg></button>
     <button id="btnClean" class="icon-btn build-only" type="button" aria-label="Trümmer aufräumen" title="Trümmer aufräumen" hidden><svg viewBox="0 0 24 24"><path d="m15 3-4 9"/><path d="M6.5 12.5h9l2.5 8.5H4z"/><path d="m8.5 21 1-3.5M12 21v-3.5M15.5 21l-1-3.5"/></svg></button>
     <button id="btnGallery" class="icon-btn build-only" type="button" aria-label="Meine Bauwerke" title="Meine Bauwerke"><svg viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="7" height="7" rx="1.6"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.6"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.6"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.6"/></svg><span id="cloudBadge" class="cloud-badge" aria-hidden="true"><svg viewBox="0 0 20 14"><path d="M5.6 13h8.9a3.9 3.9 0 0 0 .5-7.8A5.4 5.4 0 0 0 4.7 6.3 3.4 3.4 0 0 0 5.6 13z"/></svg></span></button>
+    <button id="btnTop" class="icon-btn build-only" type="button" aria-label="Von oben auf den Baupunkt schauen" title="Von oben schauen" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M12 2.5v5M9.5 5 12 7.5 14.5 5"/><rect x="5" y="11" width="14" height="10" rx="2"/><circle cx="9.5" cy="16" r="1.4"/><circle cx="14.5" cy="16" r="1.4"/></svg></button>
     <button id="btnCenter" class="icon-btn build-only" type="button" aria-label="Bauwerk zeigen" title="Bauwerk zeigen"><svg viewBox="0 0 24 24"><path d="M4 9V4h5M15 4h5v5M20 15v5h-5M9 20H4v-5"/><circle cx="12" cy="12" r="2.6"/></svg></button>
     <button id="btnWeather" class="icon-btn" type="button" aria-label="Wetter und Tageszeit" title="Wetter und Tageszeit" aria-expanded="false"><svg viewBox="0 0 24 24"><circle cx="8.5" cy="8.5" r="3.3"/><path d="M8.5 1.8v1.4M1.8 8.5h1.4M3.8 3.8l1 1M13.2 3.8l-1 1"/><path d="M8.6 20.5h9a3.6 3.6 0 0 0 .5-7.2 5 5 0 0 0-9.6 1.4 2.9 2.9 0 0 0 .1 5.8z"/></svg></button>
     <button id="btnSettings" class="icon-btn" type="button" aria-label="Einstellungen" title="Einstellungen"><svg viewBox="0 0 24 24"><path d="M4 7h9M19 7h1M4 17h3M13 17h7"/><circle cx="16" cy="7" r="2.6"/><circle cx="10" cy="17" r="2.6"/></svg></button>
@@ -831,6 +832,7 @@ body[data-kind="garage"] .world-only{display:none!important}
     <div class="row"><span class="row-label">Grafik</span><div id="segQuality" class="seg"><button type="button" data-q="auto">Automatisch</button><button type="button" data-q="2">Hoch</button><button type="button" data-q="1">Mittel</button><button type="button" data-q="0">Niedrig</button></div></div>
     <div class="row"><span class="row-label">Große Bedienung</span><div id="segPhone" class="seg"><button type="button" data-v="auto">Automatisch</button><button type="button" data-v="on">An</button><button type="button" data-v="off">Aus</button></div></div>
     <div class="row"><span class="row-label">Steine erst bestätigen</span><div id="segPlace2" class="seg"><button type="button" data-v="auto">Automatisch</button><button type="button" data-v="on">An</button><button type="button" data-v="off">Aus</button></div></div>
+    <div class="row"><span class="row-label">Bauhilfe</span><div id="segSmart" class="seg"><button type="button" data-v="on">An</button><button type="button" data-v="off">Aus</button></div></div>
     <div class="row"><span class="row-label">Flughilfe</span><button id="tglAssist" class="toggle" type="button" aria-pressed="true" aria-label="Flughilfe"></button></div>
     <div class="row"><span class="row-label">Physik</span><div id="segPhys" class="seg"><button type="button" data-p="real">Echt</button><button type="button" data-p="glue">Superkleber</button></div></div>
     <div class="row col"><span class="row-label">Eine Noppe hält <b id="gripVal">40</b> Steine 2×4</span><input id="grip" type="range" min="5" max="120" step="5" value="40" aria-label="Klemmkraft einer Noppe"></div>
@@ -3657,7 +3659,7 @@ function stepPhysics(dt){
 const RHO = 0.056;         // Luftdichte im Spielmaßstab (kleiner = Flugzeuge brauchen mehr Fahrt)
 const KMH = 1.2;           // 1 Einheit pro Sekunde ≈ 1,2 km/h im Maßstab der Figur
 const vehicles = [];
-let nextVehId = 1, driving = null;
+let nextVehId = 1, driving = null, lastRide = null;
 const _q1 = new THREE.Quaternion(), _q2 = new THREE.Quaternion(), _v1 = new THREE.Vector3(), _v2 = new THREE.Vector3(), _v3 = new THREE.Vector3();
 const _cv1 = new CANNON.Vec3(), _cv2 = new CANNON.Vec3();
 function propThrust(power, D, v){
@@ -4690,7 +4692,55 @@ function hitsVehicle(t, ax, ay, az, r){
 function placementAt(sx, sy){
   const ray = rayFrom(sx, sy), hit = castVoxel(ray.origin, ray.direction);
   if (!hit || (hit.kind === 'ground' && !hit.inside)) return null;
-  return guideSnap(hit, computePlacement(hit, sel.t, sel.r));
+  return guideSnap(hit, smartPlace(computePlacement(hit, sel.t, sel.r)));
+}
+/* Bauhilfe: rückt einen Stein um bis zu zwei Noppen oder dreht ihn, wenn er so deutlich besser sitzt
+   (ganz auf einer Mauer statt halb daneben, in Linie mit dem Nachbarstein). Bewusste Überhänge und Brücken bleiben. */
+const SMART_CATS = new Set(['bricks', 'plates', 'tiles', 'slopes', 'arches']);
+function smartScore(t, ax, ay, az, r){
+  const p = PARTS[t], L = p.rot[r], cells = L.base;
+  let sup = 0, lo = 0, hi = 0;
+  const long = L.W >= L.D ? 'x' : 'z', len = Math.max(L.W, L.D);
+  for (const [x, z] of cells){
+    const X = ax + x, Z = az + z;
+    if (ay === terrH[ti(X, Z)] || vox.has(K(X, ay - 1, Z))){ sup++; const a = long === 'x' ? x : z; if (a === 0) lo++; if (a === len - 1) hi++; }
+  }
+  let score = sup / cells.length;
+  // in Linie mit einem Nachbarstein auf gleicher Höhe (Mauer verlängern)
+  if (len > Math.min(L.W, L.D) || len === 1){
+    for (const dir of [-1, 1]){
+      let hits = 0, n = 0;
+      if (long === 'x'){ const X = dir < 0 ? ax - 1 : ax + L.W; for (let z = az; z < az + L.D; z++){ n++; if (vox.has(K(X, ay, z))) hits++; } if (vox.has(K(X, ay, az - 1)) || vox.has(K(X, ay, az + L.D))) hits = 0; }
+      else { const Z = dir < 0 ? az - 1 : az + L.D; for (let x = ax; x < ax + L.W; x++){ n++; if (vox.has(K(x, ay, Z))) hits++; } if (vox.has(K(ax - 1, ay, Z)) || vox.has(K(ax + L.W, ay, Z))) hits = 0; }
+      if (hits === n) score += 0.5;
+    }
+  }
+  return { score, bridge: lo > 0 && hi > 0 && sup < cells.length };
+}
+function smartOn(){ return (settings.smart || 'on') !== 'off'; }
+function smartPlace(pl){
+  if (!pl || !smartOn() || pl.rebock || !SMART_CATS.has(PARTS[pl.t].cat) || pl.ay < MIN_L) return pl;
+  const t = pl.t, p = PARTS[t], ay = pl.ay;
+  const valid = (x, z, r) => inBounds(t, x, ay, z, r) && !collides(t, x, ay, z, r) && isConnected(t, x, ay, z, r) && !hitsVehicle(t, x, ay, z, r);
+  const base = pl.ok ? smartScore(t, pl.ax, ay, pl.az, pl.r) : null;
+  if (base && base.bridge) return pl;
+  const L0 = p.rot[pl.r], cx = pl.ax + L0.W / 2, cz = pl.az + L0.D / 2;
+  const rots = [pl.r]; if (L0.W !== L0.D) rots.push((pl.r + 1) % 4);
+  let best = null, bs = base ? base.score : -Infinity;
+  for (const r of rots){
+    const L = p.rot[r], bx = Math.round(cx - L.W / 2), bz = Math.round(cz - L.D / 2);
+    for (let dx = -2; dx <= 2; dx++) for (let dz = -2; dz <= 2; dz++){
+      const x = bx + dx, z = bz + dz;
+      if (r === pl.r && x === pl.ax && z === pl.az) continue;
+      if (!valid(x, z, r)) continue;
+      const sc = smartScore(t, x, ay, z, r);
+      const cost = 0.12 * (Math.abs(x + L.W / 2 - cx) + Math.abs(z + L.D / 2 - cz)) + (r !== pl.r ? 0.25 : 0);
+      const v = sc.score - cost;
+      if (v > bs + (base ? 0.2 : 0)){ bs = v - (base ? 0.2 : 0); best = { x, z, r }; }
+    }
+  }
+  if (!best) return pl;
+  return { t, ax: best.x, ay, az: best.z, r: best.r, ok: true, rebock: null, smart: true };
 }
 function pickTarget(sx, sy){
   const ray = rayFrom(sx, sy), vh = castVoxel(ray.origin, ray.direction);
@@ -4717,6 +4767,9 @@ function pushUndo(a){ undoStack.push(a); if (undoStack.length > 300) undoStack.s
 function doPlace(pl){
   const moved = pl.rebock ? moveBocks(pl.rebock) : null;
   const rec = addPart({ id: nextId++, t: pl.t, c: sel.c, x: pl.ax, y: pl.ay, z: pl.az, r: pl.r }, true);
+  camTop.last = rec;
+  if (pl.smart) tut.toastOnce('smart', 'Die Bauhilfe hat den Stein passend hingerückt. Abschalten geht in den Einstellungen.');
+  if (pl.smart && pl.t === sel.t && pl.r !== sel.r){ sel.r = pl.r; rotTurns++; $('#btnRotate svg').style.transform = `rotate(${rotTurns * 90}deg)`; }
   const s = snap(rec), L = PARTS[rec.t].rot[rec.r];
   emit('sparkle', rec.x + L.W / 2, (rec.y + PARTS[rec.t].h) * P + 0.2, rec.z + L.D / 2);
   audio.snap(PARTS[rec.t].size);
@@ -5041,7 +5094,7 @@ function setBock(on){
     pushUndo({ type: 'bock', on: true, dy, before, after });
     audio.swish(); bockView();
     toast('Aufgebockt!', 1600);
-    tut.toastOnce('bock', 'Jetzt siehst du die Unterseite. Tipp sie an, dann setzt du dort Fahrwerk, Räder oder Kufen an. Mit zwei Fingern drehst du die Ansicht.');
+    tut.toastOnce('bock', 'Jetzt siehst du die Unterseite. Tipp sie an, dann setzt du dort Fahrwerk, Räder oder Kufen an. Zwei Finger verdrehen dreht die Ansicht.');
   } else {
     const cells = bockCells(), before = cells.map(i => [i, terrH[i], terrG[i], terrW[i]]), after = cells.map(i => [i, 0, 4, WNONE]);
     setTerrainCells(after);
@@ -5406,7 +5459,8 @@ document.addEventListener('pointerdown', e => { if (!qPop.hidden && !qPop.contai
 $('#btnUndo').addEventListener('click', undo);
 $('#btnRedo').addEventListener('click', redo);
 $('#btnClean').addEventListener('click', doClean);
-$('#btnCenter').addEventListener('click', () => { frameBuild(); audio.ui(); });
+$('#btnCenter').addEventListener('click', () => { frameBuild(); camTop.on = false; $('#btnTop').setAttribute('aria-pressed', 'false'); audio.ui(); });
+$('#btnTop').addEventListener('click', toggleTopView);
 $('#btnSettings').addEventListener('click', () => openSheet('#settingsSheet'));
 $('#btnPalette').addEventListener('click', () => { $('#palName').textContent = COLORS[sel.c].name; openSheet('#paletteSheet'); });
 $('#curColor').addEventListener('click', () => { $('#palName').textContent = COLORS[sel.c].name; openSheet('#paletteSheet'); });
@@ -5480,7 +5534,7 @@ for (const b of document.querySelectorAll('#segQuality button')) b.addEventListe
 const tut = {
   steps: [
     { id: 'place', text: COARSE ? 'Tippe auf die grüne Platte. Dort landet dein Stein.' : 'Klicke auf die grüne Platte. Dort landet dein Stein.' },
-    { id: 'orbit', text: COARSE ? 'Lege zwei Finger auf und ziehe. So drehst du die Welt.' : 'Halte die rechte Maustaste und ziehe. So drehst du die Welt.' },
+    { id: 'orbit', text: COARSE ? 'Lege zwei Finger auf und ziehe: Die Welt verschiebt sich. Finger verdrehen dreht sie, auseinanderziehen holt sie näher.' : 'Halte die rechte Maustaste und ziehe. So drehst du die Welt.' },
     { id: 'color', text: 'Tippe rechts auf eine neue Farbe.' }
   ],
   i: 0, done: !!store.get(TUT_KEY), shown: new Set(), timer: null,
@@ -5516,7 +5570,7 @@ function applyPhone(){
   document.body.classList.toggle('phone', on);
   document.body.classList.toggle('land', on && innerWidth > innerHeight);
   if (!on) document.body.classList.remove('tray-open');
-  for (const [id, k] of [['#segPhone', 'phoneUI'], ['#segPlace2', 'place2']]) for (const b of document.querySelectorAll(id + ' button')) b.setAttribute('aria-pressed', String(b.dataset.v === (settings[k] || 'auto')));
+  for (const [id, k] of [['#segPhone', 'phoneUI'], ['#segPlace2', 'place2'], ['#segSmart', 'smart']]) for (const b of document.querySelectorAll(id + ' button')) b.setAttribute('aria-pressed', String(b.dataset.v === (settings[k] || (k === 'smart' ? 'on' : 'auto'))));
   if (!place2()) pendClear();
   mbarRender();
   if (window.__booted){ layoutTop(); placeToast(); }
@@ -5547,7 +5601,7 @@ for (const b of document.querySelectorAll('#moreSheet [data-more]')) b.addEventL
   else { setTool(k); if (k === 'terrain') trayOpen(true); }
 });
 for (const b of document.querySelectorAll('#moreSheet [data-quake]')) b.addEventListener('click', () => { closeSheet('#moreSheet'); startQuake(+b.dataset.quake); });
-for (const [id, k] of [['#segPhone', 'phoneUI'], ['#segPlace2', 'place2']]) for (const b of document.querySelectorAll(id + ' button')) b.addEventListener('click', () => { settings[k] = b.dataset.v; store.set(SET_KEY, settings); applyPhone(); audio.ui(); });
+for (const [id, k] of [['#segPhone', 'phoneUI'], ['#segPlace2', 'place2'], ['#segSmart', 'smart']]) for (const b of document.querySelectorAll(id + ' button')) b.addEventListener('click', () => { settings[k] = b.dataset.v; store.set(SET_KEY, settings); applyPhone(); audio.ui(); });
 // Vorschau-Stein: Richtung der Pfeile passt sich der Blickrichtung an
 function viewAxes(){
   const fx = cam.g.target.x - camera.position.x, fz = cam.g.target.z - camera.position.z;
@@ -5710,19 +5764,55 @@ function longPress(s){
   audio.plopp();
   setGhost(placementAt(s.x, s.y));
 }
+// Zwei Finger: gemeinsam ziehen verschiebt, auseinander/zusammen zoomt, verdrehen dreht die Ansicht
 function beginCamera(){
   const [a, b] = [...ptrs.values()];
   const mid = { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 };
-  gesture = { kind: 'camera', mid, dist: Math.hypot(a.x - b.x, a.y - b.y), pivot: groundPointAt(mid.x, mid.y) };
+  const d0 = Math.hypot(a.x - b.x, a.y - b.y);
+  gesture = { kind: 'camera', mid, dist: d0, dist0: d0, mode: null, ang: Math.atan2(b.y - a.y, b.x - a.x), pivot: groundPointAt(mid.x, mid.y) };
+  camTop.on = false;
 }
 function moveCamera(g){
   const [a, b] = [...ptrs.values()];
-  const mid = { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 }, dist = Math.hypot(a.x - b.x, a.y - b.y);
+  const mid = { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 }, dist = Math.hypot(a.x - b.x, a.y - b.y), ang = Math.atan2(b.y - a.y, b.x - a.x);
   const dx = mid.x - g.mid.x, dy = mid.y - g.mid.y;
-  orbit(dx, dy); orbitTravel += Math.abs(dx) + Math.abs(dy);
+  // Wie bei Karten: Finger nebeneinander und senkrecht wischen kippt die Ansicht
+  if (!g.mode){
+    g.acc = g.acc || { x: 0, y: 0 }; g.acc.x += dx; g.acc.y += dy;
+    if (Math.hypot(g.acc.x, g.acc.y) > 14 || Math.abs(dist - g.dist0) > 18){
+      const side = Math.abs(a.x - b.x) > 1.5 * Math.abs(a.y - b.y);
+      g.mode = side && Math.abs(g.acc.y) > 2.5 * Math.abs(g.acc.x) && Math.abs(dist - g.dist0) < 18 ? 'tilt' : 'free';
+    }
+  }
+  if (g.mode === 'tilt'){ cam.g.el = clamp(cam.g.el + dy * 0.006, minEl(), 1.5); g.mid = mid; g.dist = dist; g.ang = ang; return; }
+  // Verschieben wie mit der Hand: der Boden folgt den Fingern
+  const k = 2 * cam.g.dist * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) / Math.max(200, innerHeight);
+  pan(dx * k / (cam.g.dist * 0.0017), dy * k / (cam.g.dist * 0.0017) / Math.max(0.35, Math.sin(cam.g.el)));
+  let da = ang - g.ang; while (da > Math.PI) da -= Math.PI * 2; while (da < -Math.PI) da += Math.PI * 2;
+  if (dist > 40) cam.g.az -= da;
   if (g.dist > 10 && dist > 10) zoomAt(g.dist / dist, g.pivot);
-  g.mid = mid; g.dist = dist;
+  orbitTravel += Math.abs(dx) + Math.abs(dy) + Math.abs(da) * 100;
+  g.mid = mid; g.dist = dist; g.ang = ang;
   if (orbitTravel > 90) tut.mark('orbit');
+}
+// Von oben auf den aktuellen Baupunkt schauen; nochmal drücken kehrt zur vorherigen Ansicht zurück
+const camTop = { on: false, prev: null, last: null };
+function buildPoint(){
+  if (typeof pend !== 'undefined' && pend){ const L = PARTS[pend.t].rot[pend.r]; return new THREE.Vector3(pend.ax + L.W / 2, pend.ay * P, pend.az + L.D / 2); }
+  if (gd && gd.g && gd.missing.length){ const it = gd.g.items[gd.missing[0]], L = PARTS[it.t].rot[it.r]; return new THREE.Vector3(it.x + L.W / 2, it.y * P, it.z + L.D / 2); }
+  if (camTop.last && parts.has(camTop.last.id)){ const r = camTop.last, L = PARTS[r.t].rot[r.r]; return new THREE.Vector3(r.x + L.W / 2, (r.y + PARTS[r.t].h) * P, r.z + L.D / 2); }
+  return cam.g.target.clone();
+}
+function toggleTopView(){
+  if (camTop.on && camTop.prev){ Object.assign(cam.g, { az: camTop.prev.az, el: camTop.prev.el, dist: camTop.prev.dist }); cam.g.target.copy(camTop.prev.target); camTop.on = false; }
+  else {
+    camTop.prev = { az: cam.g.az, el: cam.g.el, dist: cam.g.dist, target: cam.g.target.clone() };
+    const p = buildPoint(); cam.g.target.copy(p); clampTarget(cam.g.target);
+    cam.g.el = 1.5; cam.g.dist = clamp(cam.g.dist, 14, 40);
+    camTop.on = true;
+  }
+  $('#btnTop').setAttribute('aria-pressed', String(camTop.on));
+  dirty = true; audio.ui();
 }
 const pgest = { ptrs: new Map(), dist: 0 };
 function playPointer(e, kind){
@@ -5806,6 +5896,7 @@ addEventListener('keydown', e => {
   else if ((e.ctrlKey || e.metaKey) && k === 'y'){ e.preventDefault(); redo(); }
   else if (e.ctrlKey || e.metaKey || e.altKey) return;
   else if (k === 'r') rotateSel();
+  else if (k === 't') toggleTopView();
   else if (k === '1') setTool('build'); else if (k === '2') setTool('paint'); else if (k === '3') setTool('remove'); else if (k === '4') setTool('pick'); else if (k === '5') setTool('terrain');
   else if (k === 'escape'){ for (const s of document.querySelectorAll('.sheet')) s.hidden = true; }
 });
@@ -6186,7 +6277,7 @@ function thrSlider(){
 }
 let thrEl = null;
 function renderPad(){
-  const v = driving, st = !v ? 'walk' + (fig.near ? '+' : '') + (fig.sky ? (fig.chute ? 'C' : 'S') : '') : (v.kind + (v.hasBlue ? 'b' : '') + (garageTest ? 'g' : ''));
+  const v = driving, rr = !v && !fig.sky ? rideRepairable() : null, st = !v ? 'walk' + (fig.near ? '+' : '') + (fig.sky ? (fig.chute ? 'C' : 'S') : '') + (rr ? 'R' : '') : (v.kind + (v.hasBlue ? 'b' : '') + (garageTest ? 'g' : ''));
   if (st === padState) return;
   padState = st;
   const pad = $('#pad'); pad.textContent = ''; thrEl = null;
@@ -6200,6 +6291,7 @@ function renderPad(){
       return;
     }
     const tools = col(pbtn('mini', 'shop', 'Holen', () => openGarageList()));
+    if (rr) tools.prepend(pbtn('mini hot', 'fix', 'Reparieren', () => rideBack(rr)));
     if (fig.near) tools.prepend(pbtn('big hot', 'enter', 'Einsteigen', () => enterNear()));
     pad.append(tools, pbtn('big', 'jump', 'Springen', () => { fig.jump = true; }));
     $('#hud').hidden = true; $('#hudWarn').hidden = true;
@@ -6365,6 +6457,7 @@ function onVehicleChanged(v){
 }
 function exitVehicle(){
   const v = driving; if (!v) return;
+  lastRide = v;
   const b = v.body, q = qOf(b);
   if (v.kind !== 'car' && skyHigh(v)){
     // Absprung mit Fallschirm: seitlich hinaus, mit dem Schwung des Flugzeugs
@@ -6388,6 +6481,25 @@ function exitVehicle(){
   figPlace(side.x, side.z, yaw);
   padState = ''; renderPad();
   changed();
+}
+// Nach einem Absprung oder Unfall: das zuletzt gefahrene Fahrzeug reparieren und wieder einsteigen
+function rideRepairable(){
+  const v = lastRide;
+  if (!v || !vehicles.includes(v) || driving) return null;
+  const me = fig.body ? fig.body.position : null, far = me ? Math.hypot(me.x - v.body.position.x, me.z - v.body.position.z) > 30 : false;
+  return v.destroyed || v.lost || far ? v : null;
+}
+function rideBack(v){
+  if (!vehicles.includes(v)) return;
+  const me = fig.body ? fig.body.position.clone() : null, yaw = fig.yaw || 0;
+  driving = v; repairVehicle(); driving = null;
+  if (!(garageTest && testSpawn) && me){
+    const b = v.body, x = me.x + Math.sin(yaw) * 7, z = me.z + Math.cos(yaw) * 7;
+    b.position.set(x, umY(x, z) - v.lowest + 0.4, z); b.quaternion.setFromEuler(0, yaw, 0);
+    b.velocity.setZero(); b.angularVelocity.setZero(); v.sync(0);
+  }
+  startDriving(v);
+  toast(v.kind === 'car' ? 'Repariert. Weiter geht die Fahrt!' : 'Repariert. Bereit zum Start!', 2000);
 }
 // Hoch genug für einen Fallschirmsprung (mehr als 6 m über Grund)?
 function skyHigh(v){
@@ -6696,7 +6808,7 @@ const vAudio = {
 function updatePlay(dt, t){
   if (mode !== 'play') return false;
   if (driving){ driveInput(dt); vAudio.update(driving, t); updateHud(t); }
-  else { updateFigure(dt); findNear(t); }
+  else { updateFigure(dt); findNear(t); renderPad(); }
   missionTick(dt);
   treasureTick(dt, t);
   return true;
@@ -8496,7 +8608,8 @@ const TOUR = [
     { sel: '#btnRotate', t: 'Drehen', x: 'Dreht das Teil, bevor du es setzt. Am Computer geht das auch mit der Taste R.' },
     { sel: '#btnQuake', t: 'Beben', x: 'Rüttelt die Welt durch. Was schlecht verbunden ist, fällt um. So prüfst du, ob dein Haus hält.' },
     { sel: '#btnUndo', t: 'Rückgängig', x: 'Ein Schritt zurück. Der Pfeil daneben holt ihn wieder. Auch ein Einsturz lässt sich zurücknehmen.' },
-    { sel: '#world', hole: false, t: 'Die Ansicht', x: 'Zwei Finger auf den Bildschirm: drehen, schieben und näher heranholen. Am Computer: rechte Maustaste ziehen und Mausrad.' },
+    { sel: '#world', hole: false, t: 'Die Ansicht', x: 'Zwei Finger gemeinsam ziehen schiebt die Ansicht, verdrehen dreht sie, auseinanderziehen holt sie näher. Zwei Finger nebeneinander hoch oder runter wischen kippt sie. Am Computer: rechte Maustaste ziehen und Mausrad.' },
+    { sel: '#btnTop', t: 'Von oben', x: 'Schaut senkrecht von oben auf die Stelle, an der du gerade baust. Nochmal drücken bringt die alte Ansicht zurück.' },
     { sel: '#btnCenter', t: 'Bauwerk zeigen', x: 'Holt die Kamera zurück zu deinem Bauwerk.' }
   ] },
   { id: 'landschaft', title: 'Landschaft und Wetter', sub: 'Hügel, Wasser, Sonne und Nacht', steps: [
