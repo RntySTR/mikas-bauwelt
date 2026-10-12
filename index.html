@@ -4689,8 +4689,10 @@ function hitsVehicle(t, ax, ay, az, r){
   }
   return false;
 }
+let lastHit = null;
 function placementAt(sx, sy){
   const ray = rayFrom(sx, sy), hit = castVoxel(ray.origin, ray.direction);
+  lastHit = hit;
   if (!hit || (hit.kind === 'ground' && !hit.inside)) return null;
   return guideSnap(hit, smartPlace(computePlacement(hit, sel.t, sel.r)));
 }
@@ -5669,12 +5671,12 @@ function hoverUpdate(x, y){
   }
 }
 function beginPrimary(e){
-  const s = { kind: 'primary', id: e.pointerId, sx: e.clientX, sy: e.clientY, x: e.clientX, y: e.clientY, moved: false, painted: new Set(), items: [], lp: null, pt: null, moving: null };
+  const s = { kind: 'primary', id: e.pointerId, sx: e.clientX, sy: e.clientY, x: e.clientX, y: e.clientY, far: 0, moved: false, painted: new Set(), items: [], lp: null, pt: null, moving: null, pl: null };
   gesture = s;
   if (tool === 'terrain'){ beginStroke(s.x, s.y); return; }
   if (tool === 'build'){
-    setGhost(placementAt(s.x, s.y));
-    s.lp = setTimeout(() => longPress(s), 520);
+    setGhost(stickyPl(s, s.x, s.y));
+    s.lp = setTimeout(() => longPress(s), 600);
   } else if (tool === 'paint'){
     s.pt = setTimeout(() => paintAt(s.x, s.y, s), e.pointerType === 'mouse' ? 0 : 80);
   } else {
@@ -5682,12 +5684,23 @@ function beginPrimary(e){
     showHighlight(tg && tg.vehicle ? null : tg, tool === 'remove' ? '#ff4b3a' : '#ffffff');
   }
 }
-function aimY(s){ return s.y - ((s.moved && COARSE && tool === 'build') ? 64 : 0); }
+// Beim Ziehen wandert der Zielpunkt allmählich über den Finger, damit er den Stein nicht verdeckt; kleines Verrutschen beim Tippen verschiebt nichts
+function aimY(s){ return s.y - (COARSE && tool === 'build' ? 64 * clamp((s.far - 24) / 70, 0, 1) : 0); }
+// Vorschaustein mit Haltezone: er wechselt erst, wenn der Zielpunkt das Feld deutlich verlassen hat
+function stickyPl(s, x, y){
+  const pl = placementAt(x, y), prev = s.pl, h = lastHit;
+  if (prev && pl && h && !samePl(prev, pl) && prev.t === pl.t && prev.r === pl.r && !pl.guide){
+    const L = PARTS[prev.t].rot[prev.r], p = h.point, m = 0.4, yl = p.y / P;
+    if (p.x > prev.ax - m && p.x < prev.ax + L.W + m && p.z > prev.az - m && p.z < prev.az + L.D + m && yl > prev.ay - 1.5 && yl < prev.ay + PARTS[prev.t].h + 1.5) return prev;
+  }
+  s.pl = pl; return pl;
+}
 function movePrimary(e, s){
   s.x = e.clientX; s.y = e.clientY;
-  if (!s.moved && Math.hypot(s.x - s.sx, s.y - s.sy) > 9){ s.moved = true; clearTimeout(s.lp); }
+  s.far = Math.max(s.far, Math.hypot(s.x - s.sx, s.y - s.sy));
+  if (!s.moved && s.far > (e.pointerType === 'mouse' ? 6 : 12)){ s.moved = true; clearTimeout(s.lp); }
   if (tool === 'terrain'){ strokeAt(s.x, s.y); return; }
-  if (tool === 'build') setGhost(placementAt(s.x, aimY(s)));
+  if (tool === 'build') setGhost(stickyPl(s, s.x, aimY(s)));
   else if (tool === 'paint'){ if (s.moved){ clearTimeout(s.pt); paintAt(s.x, s.y, s); } }
   else { const tg = pickTarget(s.x, s.y); showHighlight(tg && tg.vehicle ? null : tg, tool === 'remove' ? '#ff4b3a' : '#ffffff'); }
 }
@@ -5701,7 +5714,8 @@ function endPrimary(s, cancelled){
     return;
   }
   if (tool === 'build'){
-    const pl = placementAt(s.x, aimY(s));
+    // gesetzt wird, was der Vorschaustein zeigt
+    const pl = stickyPl(s, s.x, aimY(s));
     if (s.moving){
       if (pl && pl.ok){
         const rec = addPart({ id: s.moving.id, t: s.moving.t, c: s.moving.c, x: pl.ax, y: pl.ay, z: pl.az, r: pl.r }, true);
@@ -5789,8 +5803,12 @@ function moveCamera(g){
   const k = 2 * cam.g.dist * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) / Math.max(200, innerHeight);
   pan(dx * k / (cam.g.dist * 0.0017), dy * k / (cam.g.dist * 0.0017) / Math.max(0.35, Math.sin(cam.g.el)));
   let da = ang - g.ang; while (da > Math.PI) da -= Math.PI * 2; while (da < -Math.PI) da += Math.PI * 2;
-  if (dist > 40) cam.g.az -= da;
-  if (g.dist > 10 && dist > 10) zoomAt(g.dist / dist, g.pivot);
+  // Drehen und Zoomen setzen erst nach einer deutlichen Bewegung ein; reines Verschieben bleibt ruhig
+  g.twist = (g.twist || 0) + da;
+  if (!g.rot && dist > 60 && Math.abs(g.twist) > 0.22) g.rot = true;
+  if (g.rot) cam.g.az -= da;
+  if (!g.zoom && Math.abs(Math.log(dist / g.dist0)) > 0.12) g.zoom = true;
+  if (g.zoom && g.dist > 10 && dist > 10) zoomAt(g.dist / dist, g.pivot);
   orbitTravel += Math.abs(dx) + Math.abs(dy) + Math.abs(da) * 100;
   g.mid = mid; g.dist = dist; g.ang = ang;
   if (orbitTravel > 90) tut.mark('orbit');
