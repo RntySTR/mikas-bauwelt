@@ -660,6 +660,50 @@ body:not([data-kind="garage"]) .garage-only{display:none!important}
   .gcard .mc-btns{margin-top:8px}
   #gcLook{min-height:38px;padding:0 12px;font-size:13.5px}
 }
+
+/* iPhone: große Bedienung */
+.mbar,.nudge{display:none}
+body.phone:not([data-mode="play"]) .tools,body.phone:not([data-mode="play"]) .colors{display:none!important}
+body.phone .mbar{position:fixed;z-index:6;left:calc(env(safe-area-inset-left,0px) + 8px);right:calc(env(safe-area-inset-right,0px) + 8px);bottom:calc(env(safe-area-inset-bottom,0px) + 8px);display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;padding:6px;border-radius:24px}
+body.phone[data-mode="play"] .mbar{display:none}
+.mbtn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-height:64px;border:0;border-radius:18px;background:transparent;color:var(--ink);font:inherit;font-weight:900;font-size:12.5px;padding:4px 2px}
+.mbtn svg{width:28px;height:28px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.mbtn canvas{width:36px;height:36px}
+.mbtn .mswatch{width:30px;height:30px;border-radius:50%;background:var(--c,#c91a09);box-shadow:inset 0 -3px 0 rgba(0,0,0,.18),0 0 0 2px #fff,0 0 0 3.5px rgba(28,43,59,.18)}
+.mbtn[aria-pressed="true"],.mbtn[aria-expanded="true"]{background:var(--sun);box-shadow:inset 0 -3px 0 var(--sun-deep)}
+.mbtn:active{transform:translateY(1px)}
+body.phone .tray{bottom:calc(env(safe-area-inset-bottom,0px) + 94px);left:calc(env(safe-area-inset-left,0px) + 8px);right:calc(env(safe-area-inset-right,0px) + 8px)}
+body.phone:not(.tray-open) .tray{display:none}
+body.phone .part{min-width:84px;width:84px;height:84px}
+body.phone .cat{min-height:44px;padding:0 14px;font-size:15px}
+body.phone .nudge:not([hidden]){position:fixed;z-index:7;left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom,0px) + 98px);display:grid;grid-template-columns:repeat(3,64px);gap:8px;padding:10px;border-radius:24px}
+body:not(.phone) .nudge:not([hidden]){position:fixed;z-index:7;right:calc(env(safe-area-inset-right,0px) + var(--gap) + 84px);bottom:calc(env(safe-area-inset-bottom,0px) + 170px);display:grid;grid-template-columns:repeat(3,64px);gap:8px;padding:10px;border-radius:24px}
+.nudge button{width:64px;height:64px;border:0;border-radius:18px;background:var(--well-top);box-shadow:inset 0 -4px 0 rgba(28,43,59,.1),inset 0 0 0 1px var(--line);color:var(--ink);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;font:inherit;font-weight:900;font-size:11px;padding:0}
+.nudge button svg{width:28px;height:28px;fill:none;stroke:currentColor;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
+.nudge button span{line-height:1}
+.nudge button.ok{background:var(--leaf);color:#fff;box-shadow:inset 0 -5px 0 #1d7a3b}
+.nudge button.ok:disabled{background:#c9d3dd;box-shadow:inset 0 -5px 0 #aab6c2;color:#fff}
+.nudge button.no{color:var(--tomato)}
+.nudge button:active{transform:translateY(2px)}
+body.phone.land .nudge:not([hidden]){left:auto;right:calc(env(safe-area-inset-right,0px) + 10px);transform:none;bottom:calc(env(safe-area-inset-bottom,0px) + 88px);grid-template-columns:repeat(3,54px);gap:6px;padding:8px}
+body.phone.land .nudge button{width:54px;height:54px}
+body.phone.land .mbtn{min-height:52px;flex-direction:row;gap:6px}
+body.phone.land .tray{bottom:calc(env(safe-area-inset-bottom,0px) + 80px)}
+body.phone .gcard{left:calc(env(safe-area-inset-left,0px) + 10px);right:calc(env(safe-area-inset-right,0px) + 10px)}
+body.phone .mcard{left:10px;right:10px}
+body.phone .toast{bottom:calc(env(safe-area-inset-bottom,0px) + 100px)}
+body.phone.tray-open .toast{bottom:calc(env(safe-area-inset-bottom,0px) + 250px)}
+body.phone .nudge:not([hidden]) ~ .toast{bottom:calc(env(safe-area-inset-bottom,0px) + 330px)}
+body.phone:not([data-mode="play"]) .hint{top:auto;bottom:calc(env(safe-area-inset-bottom,0px) + 104px)}
+body.phone.tray-open:not([data-mode="play"]) .hint{bottom:auto;top:calc(env(safe-area-inset-top,0px) + 70px)}
+.more-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:8px 0 14px}
+.mtool{display:grid;grid-template-columns:auto minmax(0,1fr);grid-template-rows:auto auto;column-gap:10px;align-items:center;text-align:left;border:0;border-radius:18px;padding:12px;background:var(--well-top);box-shadow:inset 0 0 0 1px var(--line);color:var(--ink);min-height:72px}
+.mtool svg{grid-row:1/3;width:30px;height:30px;fill:none;stroke:currentColor;stroke-width:2.1;stroke-linecap:round;stroke-linejoin:round}
+.mtool b{font-size:16px;font-weight:900}
+.mtool small{font-size:12.5px;font-weight:700;color:var(--ink-soft)}
+.mtool[aria-pressed="true"]{background:#fff6d6;box-shadow:inset 0 0 0 2px var(--sun-deep)}
+body[data-kind="garage"] .world-only{display:none!important}
+.more-quake{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
 </style>
 </head>
 <body>
@@ -714,6 +758,39 @@ body:not([data-kind="garage"]) .garage-only{display:none!important}
   <button id="btnPalette" class="icon-btn" type="button" aria-label="Alle Farben" title="Alle Farben"><svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 0 18c1.2 0 2-.8 2-2 0-.6-.3-1-.6-1.4-.3-.4-.5-.8-.5-1.3 0-1.1.9-2 2-2H17a4 4 0 0 0 4-4c0-4-4-7.3-9-7.3z"/><circle cx="7.5" cy="11" r="1.1"/><circle cx="10" cy="7" r="1.1"/><circle cx="14.5" cy="7" r="1.1"/></svg></button>
 </aside>
 
+<nav id="mbar" class="mbar panel build-only" aria-label="Bauen">
+  <button id="mbParts" class="mbtn" type="button" aria-expanded="false"><canvas width="120" height="120" aria-hidden="true"></canvas><span>Teile</span></button>
+  <button id="mbColor" class="mbtn" type="button"><i class="mswatch" aria-hidden="true"></i><span>Farbe</span></button>
+  <button id="mbRotate" class="mbtn" type="button"><svg viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.4-5.7"/><path d="M20 4v5h-5"/></svg><span>Drehen</span></button>
+  <button id="mbRemove" class="mbtn" type="button" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="m10 6.5 4.5-4.5 5 5L15 11.5z"/><path d="M12.2 8.8 3.8 17.2a1.9 1.9 0 0 0 2.7 2.7l8.4-8.4"/></svg><span>Abreißen</span></button>
+  <button id="mbMore" class="mbtn" type="button"><svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg><span>Mehr</span></button>
+</nav>
+<div id="nudge" class="nudge panel" hidden aria-label="Stein verschieben">
+  <button type="button" data-n="up" aria-label="Höher"><svg viewBox="0 0 24 24"><path d="M12 19V6M7 11l5-5 5 5"/></svg><span>Höher</span></button>
+  <button type="button" data-n="fwd" aria-label="Nach hinten"><svg viewBox="0 0 24 24"><path d="M12 19V5M6 11l6-6 6 6"/></svg></button>
+  <button type="button" data-n="rot" aria-label="Drehen"><svg viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.4-5.7"/><path d="M20 4v5h-5"/></svg><span>Drehen</span></button>
+  <button type="button" data-n="left" aria-label="Nach links"><svg viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></button>
+  <button type="button" data-n="ok" class="ok" aria-label="Setzen"><svg viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg><span>Setzen</span></button>
+  <button type="button" data-n="right" aria-label="Nach rechts"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+  <button type="button" data-n="down" aria-label="Tiefer"><svg viewBox="0 0 24 24"><path d="M12 5v13M7 13l5 5 5-5"/></svg><span>Tiefer</span></button>
+  <button type="button" data-n="back" aria-label="Nach vorn"><svg viewBox="0 0 24 24"><path d="M12 5v14M6 13l6 6 6-6"/></svg></button>
+  <button type="button" data-n="cancel" class="no" aria-label="Verwerfen"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+</div>
+<div id="moreSheet" class="sheet more-sheet" hidden>
+  <div class="sheet-card" role="dialog" aria-modal="true" aria-labelledby="moreTitle">
+    <div class="sheet-head"><h2 id="moreTitle">Werkzeuge</h2><span class="grow"></span><button class="icon-btn" type="button" data-close aria-label="Schließen"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+    <div class="more-grid">
+      <button type="button" class="mtool" data-more="paint"><svg viewBox="0 0 24 24"><rect x="3.5" y="3" width="13" height="6" rx="2"/><path d="M16.5 6h3v5.5l-7.5 2v2.5"/><rect x="10.5" y="16" width="3" height="5.5" rx="1"/></svg><b>Malen</b><small>Steine anmalen</small></button>
+      <button type="button" class="mtool" data-more="pick"><svg viewBox="0 0 24 24"><path d="M17.5 3.5a2.1 2.1 0 0 1 3 3L18 9l-3-3z"/><path d="m15 6 3 3-8.5 8.5H6.5v-3z"/><path d="M4 21h4"/></svg><b>Kopieren</b><small>Teil und Farbe übernehmen</small></button>
+      <button type="button" class="mtool world-only" data-more="terrain"><svg viewBox="0 0 24 24"><path d="M2.5 19.5 9 9l4 6 2.5-3.5 6 8z"/><circle cx="17" cy="5.5" r="2"/></svg><b>Landschaft</b><small>Hügel, Wasser, Straße</small></button>
+      <button type="button" class="mtool garage-only" data-more="bock"><svg viewBox="0 0 24 24"><path d="M4 21h16"/><path d="m8 21 2.5-8h3L16 21"/><path d="M7 13h10"/><path d="M12 10V3M9.5 5.5 12 3l2.5 2.5"/></svg><b>Aufbocken</b><small>für Teile unten</small></button>
+      <button type="button" class="mtool" data-more="palette"><svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 0 18c1.2 0 2-.8 2-2 0-.6-.3-1-.6-1.4-.3-.4-.5-.8-.5-1.3 0-1.1.9-2 2-2H17a4 4 0 0 0 4-4c0-4-4-7.3-9-7.3z"/></svg><b>Alle Farben</b><small>Farbkasten</small></button>
+      <button type="button" class="mtool" data-more="build"><svg viewBox="0 0 24 24"><path d="M3 12h12v8H3z"/><path d="M5.5 12v-2h3v2M10 12v-2h3v2"/><path d="M19 4v6M16 7h6"/></svg><b>Bauen</b><small>zurück zum Bauen</small></button>
+    </div>
+    <div class="group-label">Wackeltest</div>
+    <div class="btn-row more-quake"><button type="button" class="btn" data-quake="0">Leicht</button><button type="button" class="btn" data-quake="1">Mittel</button><button type="button" class="btn" data-quake="2">Stark</button></div>
+  </div>
+</div>
 <section class="tray panel" aria-label="Teile">
   <div id="cats" class="cats"></div>
   <div id="parts" class="parts"></div>
@@ -752,6 +829,8 @@ body:not([data-kind="garage"]) .garage-only{display:none!important}
     <div class="row"><span class="row-label">Geräusche</span><button id="tglSound" class="toggle" type="button" aria-pressed="true" aria-label="Geräusche"></button></div>
     <div class="row"><span class="row-label">Natur und Wetter</span><button id="tglAmb" class="toggle" type="button" aria-pressed="true" aria-label="Natur- und Wettergeräusche"></button></div>
     <div class="row"><span class="row-label">Grafik</span><div id="segQuality" class="seg"><button type="button" data-q="auto">Automatisch</button><button type="button" data-q="2">Hoch</button><button type="button" data-q="1">Mittel</button><button type="button" data-q="0">Niedrig</button></div></div>
+    <div class="row"><span class="row-label">Große Bedienung</span><div id="segPhone" class="seg"><button type="button" data-v="auto">Automatisch</button><button type="button" data-v="on">An</button><button type="button" data-v="off">Aus</button></div></div>
+    <div class="row"><span class="row-label">Steine erst bestätigen</span><div id="segPlace2" class="seg"><button type="button" data-v="auto">Automatisch</button><button type="button" data-v="on">An</button><button type="button" data-v="off">Aus</button></div></div>
     <div class="row"><span class="row-label">Flughilfe</span><button id="tglAssist" class="toggle" type="button" aria-pressed="true" aria-label="Flughilfe"></button></div>
     <div class="row"><span class="row-label">Physik</span><div id="segPhys" class="seg"><button type="button" data-p="real">Echt</button><button type="button" data-p="glue">Superkleber</button></div></div>
     <div class="row col"><span class="row-label">Eine Noppe hält <b id="gripVal">40</b> Steine 2×4</span><input id="grip" type="range" min="5" max="120" step="5" value="40" aria-label="Klemmkraft einer Noppe"></div>
@@ -5231,6 +5310,9 @@ function selectPart(t, quiet){
   const cur = document.querySelector('.part[aria-pressed="true"]'); cur?.scrollIntoView?.({ block: 'nearest', inline: 'nearest', behavior: 'smooth' });
   if (tool !== 'build') setTool('build', true);
   if (!quiet) audio.ui();
+  if (pend){ pend.t = t; pendSet(pendSettle(pend) || pend); }
+  if (!quiet && document.body.classList.contains('phone')) trayOpen(false);
+  mbarRender();
   refreshHover(); saveSoon();
 }
 function swatch(el, c){
@@ -5253,7 +5335,7 @@ function selectColor(c){
   if (colorLocked(c)){ toast(COLORS[c].name + ': ' + rewardHint(COLOR_REWARD[COLORS[c].name]), 2600); return; }
   sel.c = c;
   recent = [c, ...recent.filter(x => x !== c)].slice(0, 7);
-  renderColors(); drawThumbs();
+  renderColors(); drawThumbs(); mbarRender();
   if (gs.pl) setGhost(gs.pl);
   if (tool === 'remove' || tool === 'pick') setTool('build', true);
   toast(COLORS[c].name, 1100); audio.ui(); tut.mark('color'); saveSoon();
@@ -5274,13 +5356,15 @@ function buildPalette(){
     body.append(h, grid);
   }
 }
-function openSheet(id){ const el = $(id); el.hidden = false; setGhost(null); showHighlight(null); audio.ui(); }
+function openSheet(id){ const el = $(id); el.hidden = false; pendClear(); setGhost(null); showHighlight(null); audio.ui(); }
 function closeSheet(id){ $(id).hidden = true; }
 for (const el of document.querySelectorAll('.sheet')){
   el.addEventListener('click', e => { if (e.target === el || e.target.closest('[data-close]')) el.hidden = true; });
 }
 function setTool(t, quiet){
   tool = t;
+  if (t !== 'build') pendClear();
+  if (document.body.classList.contains('phone')){ if (t === 'terrain') trayOpen(true); else if (t !== 'build') trayOpen(false); }
   for (const b of document.querySelectorAll('.tool[data-tool]')) b.setAttribute('aria-pressed', String(b.dataset.tool === t));
   setGhost(null); showHighlight(null);
   const terr = t === 'terrain';
@@ -5301,6 +5385,7 @@ for (const b of document.querySelectorAll('.tool[data-tool]')) b.addEventListene
 $('#btnBock').addEventListener('click', () => { setBock(!bocked()); audio.ui(); });
 let rotTurns = 0;
 function rotateSel(){
+  if (pend){ pendNudge('rot'); return; }
   sel.r = (sel.r + 1) % 4; rotTurns++;
   $('#btnRotate svg').style.transform = `rotate(${rotTurns * 90}deg)`;
   audio.swish(); refreshHover();
@@ -5417,6 +5502,102 @@ const tut = {
   toastOnce(key, text){ if (this.shown.has(key)) return; this.shown.add(key); this.show(text, 3600); }
 };
 
+
+/* ---------- iPhone: große Bedienung und Setzen in zwei Schritten ----------
+   Auf kleinen Touch-Bildschirmen ersetzt eine Leiste unten die Werkzeug- und Farbspalte; der Teilekasten klappt nur
+   bei Bedarf auf. Ein Stein wird erst als Vorschau hingestellt, mit großen Pfeilen in ganzen Noppen verschoben
+   und mit „Setzen“ eingebaut. Nochmal auf dieselbe Stelle tippen setzt ihn auch. */
+const TOUCHDEV = COARSE || 'ontouchstart' in window;
+function phoneUI(){ const m = settings.phoneUI || 'auto'; return m === 'on' || (m === 'auto' && TOUCHDEV && Math.min(innerWidth, innerHeight) <= 520); }
+function place2(){ const m = settings.place2 || 'auto'; return m === 'on' || (m === 'auto' && phoneUI()); }
+let pend = null;
+function applyPhone(){
+  const on = phoneUI();
+  document.body.classList.toggle('phone', on);
+  document.body.classList.toggle('land', on && innerWidth > innerHeight);
+  if (!on) document.body.classList.remove('tray-open');
+  for (const [id, k] of [['#segPhone', 'phoneUI'], ['#segPlace2', 'place2']]) for (const b of document.querySelectorAll(id + ' button')) b.setAttribute('aria-pressed', String(b.dataset.v === (settings[k] || 'auto')));
+  if (!place2()) pendClear();
+  mbarRender();
+  if (window.__booted){ layoutTop(); placeToast(); }
+}
+addEventListener('resize', applyPhone);
+function trayOpen(on){
+  document.body.classList.toggle('tray-open', on);
+  $('#mbParts').setAttribute('aria-expanded', String(on && tool !== 'terrain'));
+  if (on){ const cur = document.querySelector('.part[aria-pressed="true"]'); cur?.scrollIntoView?.({ block: 'nearest', inline: 'center' }); }
+  if (window.__booted) layoutTop(); placeToast();
+}
+function mbarRender(){
+  if (!$('#mbar')) return;
+  const cv = $('#mbParts canvas'); if (cv && window.__booted) thumb.draw(sel.t, sel.c, cv.getContext('2d'));
+  $('#mbColor .mswatch').style.setProperty('--c', COLORS[sel.c].hex);
+  $('#mbRemove').setAttribute('aria-pressed', String(tool === 'remove'));
+  for (const b of document.querySelectorAll('#moreSheet [data-more]')) b.setAttribute('aria-pressed', String(b.dataset.more === tool));
+}
+$('#mbParts').addEventListener('click', () => { audio.ui(); if (tool !== 'build'){ setTool('build', true); trayOpen(true); return; } trayOpen(!document.body.classList.contains('tray-open')); });
+$('#mbColor').addEventListener('click', () => { trayOpen(false); openSheet('#paletteSheet'); });
+$('#mbRotate').addEventListener('click', () => rotateSel());
+$('#mbRemove').addEventListener('click', () => { trayOpen(false); setTool(tool === 'remove' ? 'build' : 'remove'); });
+$('#mbMore').addEventListener('click', () => { trayOpen(false); mbarRender(); openSheet('#moreSheet'); });
+for (const b of document.querySelectorAll('#moreSheet [data-more]')) b.addEventListener('click', () => {
+  const k = b.dataset.more; closeSheet('#moreSheet');
+  if (k === 'palette') openSheet('#paletteSheet');
+  else if (k === 'bock') $('#btnBock').click();
+  else { setTool(k); if (k === 'terrain') trayOpen(true); }
+});
+for (const b of document.querySelectorAll('#moreSheet [data-quake]')) b.addEventListener('click', () => { closeSheet('#moreSheet'); startQuake(+b.dataset.quake); });
+for (const [id, k] of [['#segPhone', 'phoneUI'], ['#segPlace2', 'place2']]) for (const b of document.querySelectorAll(id + ' button')) b.addEventListener('click', () => { settings[k] = b.dataset.v; store.set(SET_KEY, settings); applyPhone(); audio.ui(); });
+// Vorschau-Stein: Richtung der Pfeile passt sich der Blickrichtung an
+function viewAxes(){
+  const fx = cam.g.target.x - camera.position.x, fz = cam.g.target.z - camera.position.z;
+  const f = Math.abs(fx) > Math.abs(fz) ? [Math.sign(fx), 0] : [0, Math.sign(fz)];
+  return { f, r: [-f[1], f[0]] };
+}
+function plCheck(pl){
+  const ok = inBounds(pl.t, pl.ax, pl.ay, pl.az, pl.r) && !collides(pl.t, pl.ax, pl.ay, pl.az, pl.r) && isConnected(pl.t, pl.ax, pl.ay, pl.az, pl.r) && !hitsVehicle(pl.t, pl.ax, pl.ay, pl.az, pl.r);
+  return Object.assign(pl, { ok, rebock: null });
+}
+function pendSet(pl){
+  pend = pl ? plCheck({ t: pl.t, ax: pl.ax, ay: pl.ay, az: pl.az, r: pl.r }) : null;
+  const nd = $('#nudge');
+  nd.hidden = !pend;
+  if (pend){ nd.querySelector('[data-n="ok"]').disabled = !pend.ok; setGhost(pend); }
+  else setGhost(null);
+  placeToast();
+}
+function pendClear(){ if (pend || !$('#nudge').hidden) pendSet(null); }
+// waagerecht schieben: liegt der Stein dann in etwas, steigt er nach oben; schwebt er, sinkt er auf die nächste Fläche
+function pendSettle(pl){
+  const { t, ax, az, r } = pl; let ay = pl.ay;
+  if (!inBounds(t, ax, Math.max(MIN_L, ay), az, r)) return null;
+  for (let k = 0; k < 80 && collides(t, ax, ay, az, r); k++) ay++;
+  while (ay > MIN_L && !supportedBelow(t, ax, ay, az, r) && !collides(t, ax, ay - 1, az, r)) ay--;
+  return { ...pl, ay };
+}
+function pendNudge(n){
+  if (!pend) return;
+  const p = PARTS[pend.t], { f, r } = viewAxes();
+  let nx = { ...pend };
+  if (n === 'ok'){ if (pend.ok){ sel.r = pend.r; doPlace(pend); const t = pend; pendSet(null); if (activeGuide()) guideSoon(); return t; } audio.tock(); return; }
+  if (n === 'cancel'){ pendSet(null); audio.ui(); return; }
+  if (n === 'rot'){
+    const L0 = p.rot[pend.r], r2 = (pend.r + 1) % 4, L1 = p.rot[r2];
+    nx.r = r2; nx.ax = pend.ax + Math.round((L0.W - L1.W) / 2); nx.az = pend.az + Math.round((L0.D - L1.D) / 2);
+    sel.r = r2; rotTurns++; $('#btnRotate svg').style.transform = `rotate(${rotTurns * 90}deg)`;
+    nx = pendSettle(nx) || pend;
+  } else if (n === 'up' || n === 'down'){
+    nx.ay += (n === 'up' ? 1 : -1) * p.h;
+    if (!inBounds(nx.t, nx.ax, nx.ay, nx.az, nx.r)) return;
+  } else {
+    const d = n === 'fwd' ? f : n === 'back' ? [-f[0], -f[1]] : n === 'right' ? r : [-r[0], -r[1]];
+    nx.ax += d[0]; nx.az += d[1];
+    nx = pendSettle(nx); if (!nx) { audio.tock(); return; }
+  }
+  pendSet(nx); audio.ui();
+}
+for (const b of document.querySelectorAll('#nudge button')) b.addEventListener('click', () => pendNudge(b.dataset.n));
+const samePl = (a, b) => a && b && a.t === b.t && a.ax === b.ax && a.ay === b.ay && a.az === b.az && a.r === b.r;
 /* ---------- Eingabe: Finger, Maus, Tastatur ---------- */
 const ptrs = new Map();
 let gesture = null, lockUntilUp = false, hoverX = -1, hoverY = -1, orbitTravel = 0;
@@ -5461,7 +5642,7 @@ function endPrimary(s, cancelled){
   if (tool === 'terrain'){ endStroke(); return; }
   if (cancelled){
     if (s.moving){ addPart({ ...s.moving }, true); }
-    setGhost(null); showHighlight(null);
+    setGhost(pend || null); showHighlight(null);
     if (s.items.length) pushUndo({ type: 'paint', items: s.items });
     return;
   }
@@ -5474,11 +5655,14 @@ function endPrimary(s, cancelled){
         pushUndo({ type: 'move', from: s.moving, to, fx: runStatics() });
         audio.snap(PARTS[rec.t].size); wakeDebris();
       } else { addPart({ ...s.moving }, true); audio.tock(); }
+    } else if (pl && place2()){
+      // zwei Schritte: erst Vorschau, dann Setzen (oder dieselbe Stelle nochmal antippen)
+      if (!s.moved && samePl(pend, pl) && pend.ok) pendNudge('ok'); else { pendSet(pl); audio.ui(); }
     } else if (pl){
       if (pl.ok) doPlace(pl);
       else { audio.tock(); if (PARTS[pl.t].kind === 'fus' || PARTS[pl.t].key === 'fus_nose') tut.toastOnce('nofus', 'Rumpfstücke halten nicht seitlich aneinander. Leg Platten oder die Tragfläche darunter und steck die Rumpfstücke darauf. Ein Stück, das über zwei Platten reicht, verbindet sie.'); else tut.toastOnce('nohold', 'Hier hält der Stein nicht. Er braucht Noppen darunter oder darüber.'); }
     }
-    if (COARSE) setGhost(null); else setGhost(placementAt(s.x, s.y));
+    if (pend) setGhost(pend); else if (COARSE) setGhost(null); else setGhost(placementAt(s.x, s.y));
   } else if (tool === 'paint'){
     if (!s.moved && !s.painted.size) paintAt(s.x, s.y, s);
     if (s.items.length) pushUndo({ type: 'paint', items: s.items });
@@ -6293,7 +6477,8 @@ function endTestDrive(){
 // Modus wechseln
 function enterPlay(){
   if (mode === 'play') return;
-  mode = 'play'; document.body.dataset.mode = 'play'; guideRefresh(); setTimeout(lifeSoon, 400);
+  mode = 'play'; document.body.dataset.mode = 'play'; guideRefresh(); setTimeout(lifeSoon, 400); pendClear(); trayOpen(false);
+  if (document.body.classList.contains('phone') && innerHeight > innerWidth) tut.toastOnce('landscape', 'Tipp: Dreh das iPhone quer, dann hast du mehr Platz zum Fahren und Fliegen.');
   setGhost(null); showHighlight(null); showRing(null); closeQuakePop(); closeWeatherPop();
   playSaved = { target: cam.g.target.clone(), az: cam.g.az, el: cam.g.el, dist: cam.g.dist };
   pcam.dist = 0; pcam.off = 0; pcam.el = 0.32;
@@ -7755,7 +7940,7 @@ async function startGuide(g){
   gd.g = null; buildRev++; guideRefresh();
   // Kamera auf das Modell
   const it = g.items; let x = 0, z = 0; for (const i of it){ x += i.x; z += i.z; } x /= it.length; z /= it.length;
-  cam.g.target.set(x + 1, 2, z + 1); cam.g.dist = g.kind === 'garage' ? 40 : 34; cam.g.el = 0.62; cam.g.az = 0.7; dirty = true;
+  cam.g.target.set(x + 1, 2, z + 1); cam.g.dist = (g.kind === 'garage' ? 40 : 34) * camScale(); cam.g.el = 0.62; cam.g.az = 0.7; dirty = true;
   audio.plopp(); toast('Bauanleitung: ' + g.title, 1800);
 }
 // angefangene Anleitung weiterbauen, eine fertige neu beginnen
@@ -8554,7 +8739,9 @@ function clearWorld(){
   terrH.fill(0); terrG.fill(0); terrW.fill(WNONE); markAllTerrain(); flushTerrain();
   undoStack.length = 0; redoStack.length = 0; debrisAlias.clear(); updateUndoButtons();
 }
-function resetCamera(){ cam.g.target.set(GRID / 2, 2, GRID / 2); cam.g.az = 0.55; cam.g.el = 0.55; cam.g.dist = curKind === 'garage' ? 34 : 46; }
+// Auf dem iPhone näher heran, damit die Noppen groß genug zum Antippen sind
+function camScale(){ return typeof phoneUI === 'function' && phoneUI() ? (innerHeight > innerWidth ? 0.55 : 0.45) : 1; }
+function resetCamera(){ cam.g.target.set(GRID / 2, 2, GRID / 2); cam.g.az = 0.55; cam.g.el = 0.55; cam.g.dist = (curKind === 'garage' ? 34 : 46) * camScale(); }
 function setKind(k){
   curKind = k === 'garage' ? 'garage' : 'world';
   document.body.dataset.kind = curKind;
@@ -9092,7 +9279,7 @@ async function start(data){
   else { if (curKind === 'garage') garageFloor(); resetCamera(); if (e.synced) e.stale = true; }
   lastSig.set(e.id, contentSig(serialize()));
   flushTerrain();
-  renderCats(); renderTiles(); renderColors(); buildPalette(); updateUndoButtons(); updateCleanButton();
+  renderCats(); renderTiles(); renderColors(); buildPalette(); updateUndoButtons(); updateCleanButton(); applyPhone();
   ghost.geometry = ghostGeoFor(PARTS[sel.t]);
   applySettings();
   if (settings.q === 'auto') applyQuality(2);
@@ -9103,7 +9290,7 @@ async function start(data){
   document.addEventListener('visibilitychange', () => { if (document.hidden) save(); });
   cloud.init();
   if ('serviceWorker' in navigator && document.querySelector('link[rel="manifest"]')){ try { navigator.serviceWorker.register('sw.js').catch(() => {}); } catch (err) {} }
-  window.__booted = true;
+  window.__booted = true; mbarRender();
   { const e0 = curEntry(); if (e0 && !thumbs.get(e0.id)){ updateCamera(1); makeThumb(); } }
   renderHome(); renderBockBtn();
   try { figPrevInit(); } catch (err) {}
