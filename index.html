@@ -296,7 +296,10 @@ body[data-mode="play"] .mcard{left:calc(env(safe-area-inset-left,0px) + var(--ga
   .mchip{position:relative;padding:9px 10px}
   .mchip b{position:absolute;right:-7px;top:-7px;font-size:11px;padding:1px 6px}
   #btnCenter{display:none}
+  body:not([data-mode="play"]) #btnNight{display:none}
 }
+.mtool.night-only{display:none}
+@media (max-width:520px){ .mtool.night-only{display:grid} }
 
 /* Spielen */
 .play-btn{display:flex;align-items:center;gap:8px;padding:11px 20px 11px 15px;border:0;border-radius:999px;font-family:var(--font-display);font-size:21px;line-height:1;letter-spacing:.3px;background:var(--sun);box-shadow:inset 0 -4px 0 var(--sun-deep),var(--shadow);white-space:nowrap}
@@ -723,6 +726,8 @@ body[data-kind="garage"] .world-only{display:none!important}
     <button id="btnGallery" class="icon-btn build-only" type="button" aria-label="Meine Bauwerke" title="Meine Bauwerke"><svg viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="7" height="7" rx="1.6"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.6"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.6"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.6"/></svg><span id="cloudBadge" class="cloud-badge" aria-hidden="true"><svg viewBox="0 0 20 14"><path d="M5.6 13h8.9a3.9 3.9 0 0 0 .5-7.8A5.4 5.4 0 0 0 4.7 6.3 3.4 3.4 0 0 0 5.6 13z"/></svg></span></button>
     <button id="btnTop" class="icon-btn build-only" type="button" aria-label="Von oben auf den Baupunkt schauen" title="Von oben schauen" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M12 2.5v5M9.5 5 12 7.5 14.5 5"/><rect x="5" y="11" width="14" height="10" rx="2"/><circle cx="9.5" cy="16" r="1.4"/><circle cx="14.5" cy="16" r="1.4"/></svg></button>
     <button id="btnCenter" class="icon-btn build-only" type="button" aria-label="Bauwerk zeigen" title="Bauwerk zeigen"><svg viewBox="0 0 24 24"><path d="M4 9V4h5M15 4h5v5M20 15v5h-5M9 20H4v-5"/><circle cx="12" cy="12" r="2.6"/></svg></button>
+    <button id="btnNight" class="icon-btn" type="button" aria-label="Nacht werden lassen" title="Tag und Nacht"><svg viewBox="0 0 24 24"></svg></button>
+    <button id="btnEye" class="icon-btn play-only" type="button" aria-label="Mit den Augen der Figur sehen" title="Ich-Sicht" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></button>
     <button id="btnWeather" class="icon-btn" type="button" aria-label="Wetter und Tageszeit" title="Wetter und Tageszeit" aria-expanded="false"><svg viewBox="0 0 24 24"><circle cx="8.5" cy="8.5" r="3.3"/><path d="M8.5 1.8v1.4M1.8 8.5h1.4M3.8 3.8l1 1M13.2 3.8l-1 1"/><path d="M8.6 20.5h9a3.6 3.6 0 0 0 .5-7.2 5 5 0 0 0-9.6 1.4 2.9 2.9 0 0 0 .1 5.8z"/></svg></button>
     <button id="btnSettings" class="icon-btn" type="button" aria-label="Einstellungen" title="Einstellungen"><svg viewBox="0 0 24 24"><path d="M4 7h9M19 7h1M4 17h3M13 17h7"/><circle cx="16" cy="7" r="2.6"/><circle cx="10" cy="17" r="2.6"/></svg></button>
   </div>
@@ -786,6 +791,7 @@ body[data-kind="garage"] .world-only{display:none!important}
       <button type="button" class="mtool world-only" data-more="terrain"><svg viewBox="0 0 24 24"><path d="M2.5 19.5 9 9l4 6 2.5-3.5 6 8z"/><circle cx="17" cy="5.5" r="2"/></svg><b>Landschaft</b><small>Hügel, Wasser, Straße</small></button>
       <button type="button" class="mtool garage-only" data-more="bock"><svg viewBox="0 0 24 24"><path d="M4 21h16"/><path d="m8 21 2.5-8h3L16 21"/><path d="M7 13h10"/><path d="M12 10V3M9.5 5.5 12 3l2.5 2.5"/></svg><b>Aufbocken</b><small>für Teile unten</small></button>
       <button type="button" class="mtool" data-more="palette"><svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 0 18c1.2 0 2-.8 2-2 0-.6-.3-1-.6-1.4-.3-.4-.5-.8-.5-1.3 0-1.1.9-2 2-2H17a4 4 0 0 0 4-4c0-4-4-7.3-9-7.3z"/></svg><b>Alle Farben</b><small>Farbkasten</small></button>
+      <button type="button" class="mtool night-only" data-more="night"><svg viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg><b>Tag / Nacht</b><small>Lichter ansehen</small></button>
       <button type="button" class="mtool" data-more="build"><svg viewBox="0 0 24 24"><path d="M3 12h12v8H3z"/><path d="M5.5 12v-2h3v2M10 12v-2h3v2"/><path d="M19 4v6M16 7h6"/></svg><b>Bauen</b><small>zurück zum Bauen</small></button>
     </div>
     <div class="group-label">Wackeltest</div>
@@ -1083,7 +1089,7 @@ const colorByName = new Map(COLORS.map(c => [c.name, c.i]));
 const FAMILIES = [['neutral','Weiß bis Schwarz'],['red','Rot und Rosa'],['purple','Lila'],['orange','Orange und Gelb'],['green','Grün'],['blue','Blau'],['brown','Braun und Beige'],['glass','Glas'],['metal','Metall']];
 
 /* ---------- Teilekatalog ---------- */
-const CATS = [['bricks','Steine'],['plates','Platten'],['tiles','Fliesen'],['slopes','Dach'],['rounds','Rund'],['arches','Bögen'],['light','Licht'],['veh','Fahrzeug'],['air','Flugzeug'],['star','Belohnungen']];
+const CATS = [['bricks','Steine'],['plates','Platten'],['tiles','Fliesen'],['slopes','Dach'],['rounds','Rund'],['arches','Bögen'],['doors','Türen'],['light','Licht'],['veh','Fahrzeug'],['air','Flugzeug'],['star','Belohnungen']];
 const PARTS = [];
 const partByKey = new Map();
 function def(o){ o.idx = PARTS.length; PARTS.push(o); partByKey.set(o.key, o.idx); return o; }
@@ -1111,6 +1117,17 @@ def({ key:'gl_rb1', cat:'light', name:'Leuchtstein rund 1×1', label:'1×1', kin
 def({ key:'gl_rp1', cat:'light', name:'Leuchtplatte rund 1×1', label:'1×1 flach', kind:'round', w:1, d:1, h:1, mainCls:'glow', light:{ y:0.6, r:1.6 } });
 def({ key:'gl_b12', cat:'light', name:'Leuchtstein 1×2', label:'1×2', kind:'box', w:2, d:1, h:3, studs:true, mainCls:'glow', light:{ y:1.5, r:2.6 } });
 def({ key:'gl_t22', cat:'light', name:'Leuchtfliese 2×2', label:'2×2 Fliese', kind:'box', w:2, d:2, h:1, studs:false, mainCls:'glow', light:{ y:0.6, r:2.8 } });
+def({ key:'gl_b11', cat:'light', name:'Leuchtstein 1×1', label:'1×1 eckig', kind:'box', w:1, d:1, h:3, studs:true, mainCls:'glow', light:{ y:1.5, r:2.2 } });
+def({ key:'gl_b14', cat:'light', name:'Leuchtstein 1×4', label:'1×4', kind:'box', w:4, d:1, h:3, studs:true, mainCls:'glow', light:{ y:1.5, r:3.2 } });
+def({ key:'gl_b22', cat:'light', name:'Leuchtstein 2×2', label:'2×2', kind:'box', w:2, d:2, h:3, studs:true, mainCls:'glow', light:{ y:1.5, r:3.0 } });
+def({ key:'gl_b24', cat:'light', name:'Leuchtstein 2×4', label:'2×4', kind:'box', w:4, d:2, h:3, studs:true, mainCls:'glow', light:{ y:1.5, r:3.6 } });
+def({ key:'gl_p22', cat:'light', name:'Leuchtplatte 2×2', label:'2×2 Platte', kind:'box', w:2, d:2, h:1, studs:true, mainCls:'glow', light:{ y:0.6, r:2.6 } });
+def({ key:'gl_t12', cat:'light', name:'Leuchtfliese 1×2', label:'1×2 Fliese', kind:'box', w:2, d:1, h:1, studs:false, mainCls:'glow', light:{ y:0.6, r:2.0 } });
+// Türen öffnen sich im Spiel von selbst, wenn jemand davorsteht; Fenster mit Glasscheibe
+def({ key:'door14', cat:'doors', name:'Tür 1×4×4', label:'Tür', kind:'doorf', w:4, d:1, h:12, door:{ a:1, b:3 }, layout: p => doorLayout(p), build: p => doorFrameGeo(p), extras: p => doorLeafExtras(p) });
+def({ key:'door16', cat:'doors', name:'Doppeltür 1×6×4', label:'Doppeltür', kind:'doorf', w:6, d:1, h:12, door:{ a:1, b:5, dbl:true }, layout: p => doorLayout(p), build: p => doorFrameGeo(p), extras: p => doorLeafExtras(p) });
+def({ key:'win12', cat:'doors', name:'Fenster 1×2×2', label:'Fenster klein', kind:'winf', w:2, d:1, h:6, window:true, layout: p => GK.full(p, true, true), build: p => winFrameGeo(p), extras: p => winGlass(p) });
+def({ key:'win14', cat:'doors', name:'Fenster 1×4×3', label:'Fenster groß', kind:'winf', w:4, d:1, h:9, window:true, layout: p => GK.full(p, true, true), build: p => winFrameGeo(p), extras: p => winGlass(p) });
 def({ key:'lamp', cat:'light', name:'Laterne', label:'Laterne', kind:'lamp', w:1, d:1, h:15, light:{ y:13.1, r:3.4, color:'#FFE3AA' } });
 /* Fahrzeugteile. Teil-Koordinaten: Mitte der Grundfläche im Ursprung, vorn = +z.
    Die Daten (wheel, engine, prop, jet, aero, seat …) nutzt die Fahrzeugsimulation. */
@@ -1806,6 +1823,49 @@ function lampGeo(p){
   const hood = cleanGeo(new THREE.LatheGeometry([V2(0.36, H - 0.47), V2(0.47, H - 0.5), V2(0.44, H - 0.42), V2(0.12, H - 0.04), V2(0.001, H - 0.02)], 24));
   return mergeGeometries([base, pole, collar, hood]);
 }
+// Türrahmen: zwei Pfosten und ein Sturz; die Öffnung bleibt frei, damit die Figur hindurchgehen kann
+function doorLayout(p){
+  const { a, b } = p.door, vox = [], tops = [], bottoms = [];
+  for (let i = 0; i < p.w; i++){
+    const post = i < a || i >= b;
+    for (let l = 0; l < p.h; l++) if (post || l === p.h - 1) vox.push([i, l, 0]);
+    if (post) bottoms.push([i, 0]);
+    tops.push([i, 0]);
+  }
+  return { vox, tops, bottoms };
+}
+function doorFrameGeo(p){
+  const H = p.h * P, X = p.w / 2 - GAP, Z = 0.5 - GAP, o0 = -p.w / 2 + p.door.a, o1 = -p.w / 2 + p.door.b;
+  const pcs = [GK.box(-X, 0, -Z, o0, H, Z), GK.box(o1, 0, -Z, X, H, Z), GK.box(o0 - 0.01, H - P, -Z, o1 + 0.01, H, Z),
+    GK.box(o0, 0, -0.17, o0 + 0.08, H - P, 0.17, 0.02), GK.box(o1 - 0.08, 0, -0.17, o1, H - P, 0.17, 0.02), GK.box(o0, H - P - 0.08, -0.17, o1, H - P, 0.17, 0.02)];
+  addStuds(pcs, p, H);
+  return mergeGeometries(pcs);
+}
+// Türblätter: je Blatt Scharnier-x, Öffnungsrichtung und Teile in Koordinaten ab dem Scharnier
+function doorLeaves(p){
+  if (p._leaves) return p._leaves;
+  const H = p.h * P, o0 = -p.w / 2 + p.door.a + 0.08, o1 = -p.w / 2 + p.door.b - 0.08, hl = H - P - 0.1;
+  const one = (w, dir) => {
+    const bx = (x0, y0, z0, x1, y1, z1, r) => GK.box(dir > 0 ? x0 : -x1, y0, z0, dir > 0 ? x1 : -x0, y1, z1, r);
+    return [
+      { geo: bx(0.02, 0.03, -0.07, w - 0.02, hl, 0.07, 0.03) },
+      { geo: bx(0.18, 0.4, -0.095, w - 0.18, hl * 0.48, 0.095, 0.03) },
+      { geo: bx(0.2, hl * 0.6, -0.09, w - 0.2, hl - 0.28, 0.09, 0.02), hex: '#BFE3F2', cls: 'trans' },
+      { geo: GK.cyl(0.075, 0.075, 0.38, 'z', dir * (w - 0.24), hl * 0.52, 0, 12), hex: '#E3B23C', cls: 'metal' }
+    ];
+  };
+  const W = o1 - o0;
+  return p._leaves = p.door.dbl ? [{ hx: o0, dir: 1, pcs: one(W / 2, 1) }, { hx: o1, dir: -1, pcs: one(W / 2, -1) }] : [{ hx: o0, dir: 1, pcs: one(W, 1) }];
+}
+function doorLeafExtras(p){ return doorLeaves(p).flatMap(l => l.pcs.map(c => ({ geo: c.geo.clone().translate(l.hx, 0, 0), hex: c.hex, cls: c.cls, role: 'leaf' }))); }
+function winFrameGeo(p){
+  const H = p.h * P, X = p.w / 2 - GAP, Z = 0.5 - GAP, f = 0.22;
+  const pcs = [GK.box(-X, 0, -Z, X, 0.42, Z), GK.box(-X, H - 0.3, -Z, X, H, Z), GK.box(-X, 0, -Z, -X + f, H, Z), GK.box(X - f, 0, -Z, X, H, Z)];
+  if (p.w >= 4) pcs.push(GK.box(-0.06, 0.4, -0.18, 0.06, H - 0.3, 0.18, 0.02));
+  addStuds(pcs, p, H);
+  return mergeGeometries(pcs);
+}
+function winGlass(p){ const H = p.h * P, X = p.w / 2 - GAP; return [{ geo: GK.box(-X + 0.2, 0.4, -0.05, X - 0.2, H - 0.28, 0.05, 0.01), hex: '#BFE3F2', cls: 'trans' }]; }
 const geoCache = new Map();
 function geoFor(p){
   let g = geoCache.get(p.idx);
@@ -2494,7 +2554,7 @@ function updateLights(t){
 function updateEnv(dt, t){
   const tgt = WEATHERS[settings.weather] || WEATHERS.sun, w = env.w;
   const k = 1 - Math.exp(-dt / 2.2);
-  let anim = false;
+  let anim = typeof todTweenTick === 'function' && todTweenTick();
   for (const key of WKEYS){ const d = tgt[key] - w[key]; if (Math.abs(d) > 0.002){ w[key] += d * k; anim = true; } else w[key] = tgt[key]; }
   if (settings.timeRun && started){
     env.tod = (env.tod + dt * 24 / DAY_LEN) % 24;
@@ -2732,6 +2792,7 @@ function addPart(rec, anim = false){
   addVisual(rec, matrixOf(rec, anim ? 0.6 : 0));
   physAddStatic(rec);
   if (PARTS[rec.t].light){ lightRecs.add(rec); lightsDirty = true; }
+  if (PARTS[rec.t].door) doorRecs.add(rec);
   if (anim) anims.push({ kind: 'drop', rec, t0: now(), dur: 210 });
   changed();
   return rec;
@@ -2742,7 +2803,61 @@ function removePartRaw(rec){
   physRemoveStatic(rec);
   parts.delete(rec.id);
   if (lightRecs.delete(rec)) lightsDirty = true;
+  if (doorRecs.delete(rec)) doorDrop(rec, false);
   changed();
+}
+// Türen: im Spiel schwingen die Blätter auf, wenn die Figur, ein Fahrzeug oder ein Bewohner davorsteht
+const doorRecs = new Set(), doorFx = new Map();
+const ZERO_M = new THREE.Matrix4().makeScale(0, 0, 0), _dm = new THREE.Matrix4(), _dv = new THREE.Vector3();
+function doorMake(rec){
+  const p = PARTS[rec.t], g = new THREE.Group(), col = COLORS[rec.c].col, mc = mainCls(p, rec.c), piv = [];
+  g.matrixAutoUpdate = false; g.matrix.copy(matrixOf(rec));
+  for (const l of doorLeaves(p)){
+    const o = new THREE.Group(); o.position.x = l.hx; g.add(o);
+    for (const c of l.pcs){
+      const cls = c.cls || mc, m = new THREE.Mesh(c.geo, matFor(c.hex ? new THREE.Color(c.hex) : col, cls));
+      m.castShadow = !SHADOWLESS.has(cls); m.receiveShadow = true; o.add(m);
+    }
+    piv.push({ o, dir: l.dir });
+  }
+  worldRoot.add(g);
+  const d = { g, piv, ang: 0, target: 0, side: 1 };
+  doorFx.set(rec.id, d);
+  return d;
+}
+function doorDrop(rec, restore = true){
+  const d = doorFx.get(rec.id); if (!d) return;
+  worldRoot.remove(d.g); doorFx.delete(rec.id);
+  if (restore && parts.has(rec.id)) recSetMatrix(rec, matrixOf(rec));
+  dirty = true;
+}
+function doorTick(dt){
+  if (!doorRecs.size) return false;
+  const ops = [];
+  if (mode === 'play'){
+    if (driving) ops.push(driving.body.position); else if (fig.active && fig.body) ops.push(fig.body.position);
+    for (const H of life.houses.values()) for (const r of H.res) if (r.m && r.m.root.parent && r.m.root.visible) ops.push(r.m.root.position);
+  }
+  let any = false;
+  for (const rec of doorRecs){
+    const p = PARTS[rec.t], L = p.rot[rec.r], cx = rec.x + L.W / 2, cy = rec.y * P, cz = rec.z + L.D / 2, reach = 3.2 + p.w * 0.3;
+    let near = null;
+    for (const o of ops) if (o.y > cy - 3 && o.y < cy + p.h * P && Math.hypot(o.x - cx, o.z - cz) < reach){ near = o; break; }
+    let d = doorFx.get(rec.id);
+    if (!near && !d) continue;
+    if (!d) d = doorMake(rec);
+    if (near && d.target === 0){
+      _dm.copy(matrixOf(rec)).invert(); _dv.set(near.x, near.y, near.z).applyMatrix4(_dm);
+      if (d.ang < 0.05){ d.side = _dv.z > 0 ? 1 : -1; audio.ui(); }
+    }
+    d.target = near ? 1 : 0;
+    d.ang += (d.target - d.ang) * (1 - Math.exp(-dt * 5));
+    if (!near && d.ang < 0.01){ doorDrop(rec); continue; }
+    for (const pv of d.piv) pv.o.rotation.y = pv.dir * d.side * d.ang * 1.45;
+    if (rec.ex) for (const e of rec.ex) e.pool.setMatrix(e, ZERO_M);
+    any = true;
+  }
+  return any;
 }
 function findFloating(){
   const seen = new Set(), queue = [];
@@ -5480,10 +5595,32 @@ const wPop = $('#weatherPop'), wBtn = $('#btnWeather');
 const fmtTod = h => { const m = Math.round(h * 60) % 1440; return String(Math.floor(m / 60)).padStart(2, '0') + ':' + String(m % 60).padStart(2, '0'); };
 const ICON_SUN = '<circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M18.7 5.3l-1.6 1.6M6.9 17.1l-1.6 1.6"/>';
 const ICON_MOON = '<path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/>';
+var todTween = null;
+function isDay(){ return env.tod >= 6.5 && env.tod < 19.5; }
 function updateTodUI(){
   $('#tod').value = env.tod; $('#todVal').textContent = fmtTod(env.tod);
   $('#todIcon').innerHTML = env.tod >= 6 && env.tod < 19 ? ICON_SUN : ICON_MOON;
+  const nb = $('#btnNight'), day = todTween ? todTween.to === 22 : isDay();
+  nb.querySelector('svg').innerHTML = day ? ICON_MOON : ICON_SUN;
+  nb.setAttribute('aria-label', day ? 'Nacht werden lassen' : 'Tag werden lassen');
 }
+// Tag und Nacht per Knopf: die Zeit läuft in gut zwei Sekunden auf 22 Uhr oder 10 Uhr vor
+function toggleDayNight(){
+  const to = (todTween ? todTween.to === 22 : isDay()) ? 22 : 10, from = env.tod;
+  todTween = { from, to, diff: (to - from + 24) % 24, t0: now(), dur: 2400 };
+  if (to === 22) tut.toastOnce('night', 'Nacht! Jetzt leuchten Leuchtsteine, Laternen und die Lichter der Fahrzeuge.');
+  audio.ui(); updateTodUI(); dirty = true;
+}
+function todTweenTick(){
+  if (!todTween) return false;
+  const k = clamp((now() - todTween.t0) / todTween.dur, 0, 1), e = k * k * (3 - 2 * k);
+  env.tod = (todTween.from + todTween.diff * e) % 24;
+  if (k >= 1){ settings.tod = env.tod = todTween.to; todTween = null; store.set(SET_KEY, settings); }
+  updateTodUI();
+  return true;
+}
+$('#btnNight').addEventListener('click', toggleDayNight);
+updateTodUI();
 function renderWeatherUI(){
   for (const b of wPop.querySelectorAll('[data-w]')) b.setAttribute('aria-pressed', String(b.dataset.w === settings.weather));
   $('#tglTime').setAttribute('aria-pressed', String(!!settings.timeRun));
@@ -5600,6 +5737,7 @@ for (const b of document.querySelectorAll('#moreSheet [data-more]')) b.addEventL
   const k = b.dataset.more; closeSheet('#moreSheet');
   if (k === 'palette') openSheet('#paletteSheet');
   else if (k === 'bock') $('#btnBock').click();
+  else if (k === 'night') toggleDayNight();
   else { setTool(k); if (k === 'terrain') trayOpen(true); }
 });
 for (const b of document.querySelectorAll('#moreSheet [data-quake]')) b.addEventListener('click', () => { closeSheet('#moreSheet'); startQuake(+b.dataset.quake); });
@@ -5839,7 +5977,10 @@ function playPointer(e, kind){
   if (kind === 'up'){ pgest.ptrs.delete(e.pointerId); pgest.dist = 0; return; }
   if (!p) return;
   const dx = e.clientX - p.x, dy = e.clientY - p.y; p.x = e.clientX; p.y = e.clientY;
-  if (pgest.ptrs.size === 1){
+  if (pgest.ptrs.size === 1 && fpv.on){
+    if (driving){ fpv.look -= dx * 0.006; fpv.lookT = now(); } else fpv.yaw -= dx * 0.006;
+    fpv.pitch = clamp(fpv.pitch - dy * 0.005, -1.2, 1.1);
+  } else if (pgest.ptrs.size === 1){
     if (driving){ pcam.off -= dx * 0.008; } else cam.g.az -= dx * 0.008;
     pcam.el = clamp(pcam.el + dy * 0.005, 0.05, 1.3); pcam.lastInput = now();
   } else if (pgest.ptrs.size === 2){
@@ -5904,6 +6045,7 @@ addEventListener('keydown', e => {
     if (m){ keys[m] = true; e.preventDefault(); if (m === 'space' && !driving) fig.jump = true; if (m !== 'e') return; }
     if (k === 'e'){ if (driving && (!garageTest || (driving.kind !== 'car' && skyHigh(driving)))) exitVehicle(); else if (!driving && fig.near) enterNear(); }
     else if (k === 'h' && driving) driving.horn = true;
+    else if (k === 'v'){ setFpv(!fpv.on); }
     else if (k === 'b' && driving && driving.hasBlue){ driving.siren = !driving.siren; padState = ''; renderPad(); }
     else if (k === 'l' && driving){ driving.lightsOn = !driving.lightsOn; padState = ''; renderPad(); }
     else if (k === 'r' && driving) repairVehicle();
@@ -6390,6 +6532,36 @@ function updateHud(t){
 }
 // Kamera im Spielmodus
 const pcam = { off: 0, lastInput: 0, dist: 0, el: 0.32 };
+// Ich-Sicht: Kamera im Kopf der Figur (zu Fuß) oder auf dem Fahrersitz; mit einem Finger umschauen
+const fpv = { on: false, yaw: 0, pitch: -0.08, look: 0, lookT: 0 };
+const _fe = new THREE.Euler(0, 0, 0, 'YXZ'), _fq = new THREE.Quaternion(), _fv = new THREE.Vector3();
+function setFpv(on){
+  fpv.on = on;
+  if (on){ fpv.yaw = cam.az; fpv.pitch = -0.08; fpv.look = 0; tut.toastOnce('fpv', 'Ich-Sicht: Wisch mit einem Finger, um dich umzuschauen. Der Joystick bewegt dich in Blickrichtung.'); }
+  camera.fov = on ? 70 : 40; camera.updateProjectionMatrix();
+  if (fig.m) fig.m.root.visible = !on;
+  $('#btnEye').setAttribute('aria-pressed', String(on));
+  dirty = true;
+}
+function applyFpv(dt, t){
+  if (fig.m) fig.m.root.visible = false;
+  if (fpv.wasDriving && !driving) fpv.yaw = cam.g.az;
+  fpv.wasDriving = !!driving;
+  if (driving){
+    const v = driving, b = v.body, q = qOf(b);
+    if (t - fpv.lookT > 2200){ fpv.look *= Math.exp(-dt * 2); fpv.pitch += (-0.06 - fpv.pitch) * (1 - Math.exp(-dt * 2)); }
+    camera.position.copy(_fv.set(v.seatPos.x, v.seatPos.y + 1.45, v.seatPos.z + 0.15).applyQuaternion(q).add(b.position));
+    camera.quaternion.copy(q).multiply(_fq.setFromEuler(_fe.set(fpv.pitch, Math.PI + fpv.look, 0)));
+  } else if (fig.active && fig.body){
+    const b = fig.body;
+    cam.az = cam.g.az = fpv.yaw;   // der Joystick läuft in Blickrichtung
+    camera.position.set(b.position.x - Math.sin(fpv.yaw) * 0.2, b.position.y + 2.9, b.position.z - Math.cos(fpv.yaw) * 0.2);
+    camera.quaternion.setFromEuler(_fe.set(fpv.pitch, fpv.yaw, 0));
+    fig.yaw = fpv.yaw + Math.PI;
+  }
+  sky.position.copy(camera.position);
+}
+$('#btnEye').addEventListener('click', () => { setFpv(!fpv.on); audio.ui(); });
 function updatePlayCamera(dt, t){
   if (driving){
     const v = driving, b = v.body, q = qOf(b), f = _v1.set(0, 0, 1).applyQuaternion(q);
@@ -6595,6 +6767,7 @@ function startTestDrive(){
   else toast(D.kind === 'air' ? 'Schub hochziehen und abheben!' : 'Gas geben!', 1800);
 }
 function endTestDrive(){
+  if (fpv.on) setFpv(false);
   const v = driving;
   if (v){ driving = null; vAudio.stop(); v.dispose(); }
   for (const t of vehicles.filter(x => x.test)) t.dispose();
@@ -6623,6 +6796,7 @@ function startWalk(){
   renderPad();
 }
 function leavePlay(){
+  if (fpv.on) setFpv(false);
   if (driving && !garageTest) exitVehicle();
   if (fig.sky){ fig.sky = false; closeChute(); }
   figRemoveBody();
@@ -7081,7 +7255,7 @@ function houseStats(){
   const Iset = new Set(I), ring = new Set();
   for (const i of I) for (const j of [i - 1, i + 1, i - W, i + W]) if (!Iset.has(j)) ring.add(j);
   for (const r of parts.values()){
-    if (COLORS[r.c].cls !== 'trans') continue;
+    if (COLORS[r.c].cls !== 'trans' && !PARTS[r.t].window) continue;
     for (const [x, l, z] of PARTS[r.t].rot[r.r].vox){
       const X = r.x + x, Z = r.z + z, L = r.y + l - y0;
       if (X >= x0 && X <= x1 && Z >= z0 && Z <= z1 && L > floorL + 1 && ring.has(idx(X, Z))){ st.windows++; break; }
@@ -8628,7 +8802,8 @@ const TOUR = [
     { sel: '#btnUndo', t: 'Rückgängig', x: 'Ein Schritt zurück. Der Pfeil daneben holt ihn wieder. Auch ein Einsturz lässt sich zurücknehmen.' },
     { sel: '#world', hole: false, t: 'Die Ansicht', x: 'Zwei Finger gemeinsam ziehen schiebt die Ansicht, verdrehen dreht sie, auseinanderziehen holt sie näher. Zwei Finger nebeneinander hoch oder runter wischen kippt sie. Am Computer: rechte Maustaste ziehen und Mausrad.' },
     { sel: '#btnTop', t: 'Von oben', x: 'Schaut senkrecht von oben auf die Stelle, an der du gerade baust. Nochmal drücken bringt die alte Ansicht zurück.' },
-    { sel: '#btnCenter', t: 'Bauwerk zeigen', x: 'Holt die Kamera zurück zu deinem Bauwerk.' }
+    { sel: '#btnCenter', t: 'Bauwerk zeigen', x: 'Holt die Kamera zurück zu deinem Bauwerk.' },
+    { sel: '#btnNight', t: 'Tag und Nacht', x: 'Lässt es Nacht werden und wieder Tag. Nachts leuchten Leuchtsteine, Laternen und die Lichter der Fahrzeuge.' }
   ] },
   { id: 'landschaft', title: 'Landschaft und Wetter', sub: 'Hügel, Wasser, Sonne und Nacht', steps: [
     { sel: '.tools [data-tool="terrain"]', mode: 'build', t: 'Landschaft', x: 'Hügel, Graben, Wasser und Straße. Wähle unten das Werkzeug und streiche über die Platte. Gedrückt halten lässt einen Hügel wachsen. Wasser in einer Grube läuft bis zum Rand voll.' },
@@ -9374,6 +9549,8 @@ function loop(t){
   if (stepPhysics(dt) || playing) active = true;
   if (playing){ syncFigure(dt); updatePlayCamera(dt, t); }
   if (updateCamera(dt)) active = true;
+  if (playing && fpv.on){ applyFpv(dt, t); active = true; }
+  if (doorTick(dt)) active = true;
   if (updateQuake(t)) active = true;
   if (playing && camShake > 0){ camera.position.x += (Math.random() - 0.5) * camShake; camera.position.y += (Math.random() - 0.5) * camShake * 0.6; camShake *= Math.exp(-dt * 6); if (camShake < 0.02) camShake = 0; }
   drawFigPreview(t);
